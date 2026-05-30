@@ -20,6 +20,8 @@ import TaskListPage from './pages/tasks/TaskListPage';
 import TaskTemplateListPage from './pages/tasks/TaskTemplateListPage';
 import TaskTemplateFormPage from './pages/tasks/TaskTemplateFormPage';
 import MyTasksPage from './pages/tasks/MyTasksPage';
+import InvoiceListPage from './pages/invoices/InvoiceListPage';
+import InvoiceDetailPage from './pages/invoices/InvoiceDetailPage';
 
 // Placeholder pages for app routes
 function PlaceholderPage({ title }: { title: string }) {
@@ -62,7 +64,9 @@ function App() {
         <Route path="/tasks/templates/new" element={<TaskTemplateFormPage />} />
         <Route path="/tasks/templates/:id/edit" element={<TaskTemplateFormPage />} />
         <Route path="/tasks/my-tasks" element={<MyTasksPage />} />
-        <Route path="/invoices" element={<PlaceholderPage title="Invoices" />} />
+        <Route path="/invoices" element={<InvoiceListPage />} />
+        <Route path="/invoices/:id" element={<InvoiceDetailPage />} />
+        <Route path="/my-invoices" element={<InvoiceListPage />} />
         <Route path="/meters" element={<PlaceholderPage title="Meters" />} />
         <Route path="/maintenance" element={<PlaceholderPage title="Maintenance" />} />
         <Route path="/reports" element={<PlaceholderPage title="Reports" />} />

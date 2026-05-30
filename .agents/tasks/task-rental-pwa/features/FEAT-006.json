@@ -2,7 +2,7 @@
   "id": "FEAT-006",
   "type": "feat",
   "description": "PHASE 5: Finance & Invoicing - Backend invoice API with VietQR generation, payment webhook, and frontend invoice pages with QR display. Covers TASK-014 and TASK-015.",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "Create backend/app/models/invoice.py with models: InvoiceCreate, InvoiceItemCreate, InvoiceResponse, InvoiceDetailResponse, PaymentWebhookPayload",
     "Create backend/app/services/vietqr_service.py with: generate_ref_code(contract_id, billing_month), build_vietqr_string (EMVCo format, support bank BINs for VCB/BIDV/TCB/MB/VPB), generate_qr_image (base64 PNG using qrcode lib)",
