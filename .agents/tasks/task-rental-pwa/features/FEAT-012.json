@@ -2,7 +2,7 @@
   "id": "FEAT-012",
   "type": "feat",
   "description": "Add Google Sign-In/Sign-Up support using Supabase Auth OAuth provider, including backend endpoint, frontend Supabase client, auth callback page, and Google buttons on Login/Register pages.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Add GOOGLE_CLIENT_ID to backend/app/config.py Settings class",
     "Add GOOGLE_CLIENT_ID to backend/.env.example",
@@ -31,5 +31,5 @@
     "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/frontend && npm run build"
   ],
   "blocked_reason": null,
-  "findings": null
+  "findings": "Backend Python imports verified. Frontend TypeScript build passes with no errors (1381 modules transformed). Used @supabase/supabase-js for OAuth flow on frontend. The callback page extracts session via supabase.auth.getSession() after Google redirect. Backend google_auth uses supabase.auth.get_user(access_token) to validate the token and then ensures profile/org exist."
 }
