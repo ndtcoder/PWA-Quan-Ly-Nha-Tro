@@ -5,6 +5,10 @@ import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
 import AcceptInvitePage from './pages/auth/AcceptInvitePage';
 import DashboardPage from './pages/DashboardPage';
+import PropertyListPage from './pages/properties/PropertyListPage';
+import PropertyDetailPage from './pages/properties/PropertyDetailPage';
+import PropertyFormPage from './pages/properties/PropertyFormPage';
+import UnitDetailPage from './pages/units/UnitDetailPage';
 
 // Placeholder pages for app routes
 function PlaceholderPage({ title }: { title: string }) {
@@ -29,7 +33,11 @@ function App() {
       {/* App routes (protected) */}
       <Route element={<AppLayout />}>
         <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/properties" element={<PlaceholderPage title="Properties" />} />
+        <Route path="/properties" element={<PropertyListPage />} />
+        <Route path="/properties/new" element={<PropertyFormPage />} />
+        <Route path="/properties/:id" element={<PropertyDetailPage />} />
+        <Route path="/properties/:id/edit" element={<PropertyFormPage />} />
+        <Route path="/units/:id" element={<UnitDetailPage />} />
         <Route path="/contracts" element={<PlaceholderPage title="Contracts" />} />
         <Route path="/renters" element={<PlaceholderPage title="Renters" />} />
         <Route path="/staff" element={<PlaceholderPage title="Staff" />} />
