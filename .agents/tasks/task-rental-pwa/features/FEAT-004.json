@@ -2,7 +2,7 @@
   "id": "FEAT-004",
   "type": "feat",
   "description": "PHASE 3: Contracts & Renters - Backend APIs for renter profiles, contracts with PDF export, and frontend pages. Covers TASK-009, TASK-010, and TASK-011.",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "Create backend/app/models/renter.py with Pydantic models: RenterCreate, RenterUpdate, RenterResponse, RenterDetailResponse",
     "Create backend/app/services/renter_service.py with CRUD: list (filter search, has_active_contract), create, get_detail (with contracts history), update, upload_id_photo (Supabase Storage)",

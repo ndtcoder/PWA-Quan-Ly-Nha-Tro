@@ -37,9 +37,13 @@ async def ping():
 from app.routers.auth import router as auth_router
 from app.routers.properties import router as properties_router
 from app.routers.properties import units_router
+from app.routers.renters import router as renters_router
+from app.routers.contracts import router as contracts_router
 
 api_v1_router.include_router(auth_router)
 api_v1_router.include_router(properties_router)
 api_v1_router.include_router(units_router)
+api_v1_router.include_router(renters_router)
+api_v1_router.include_router(contracts_router)
 
 app.include_router(api_v1_router)
