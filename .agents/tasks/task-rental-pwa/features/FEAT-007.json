@@ -1,0 +1,34 @@
+{
+  "id": "FEAT-007",
+  "type": "feat",
+  "description": "PHASE 6: Meter Readings with AI OCR - Backend meter reading API with Google Vision integration, and frontend upload/approval pages. Covers TASK-016 and TASK-016B.",
+  "status": "pending",
+  "steps": [
+    "Create backend/app/models/meter.py with models: MeterReadingSubmit, MeterReadingApprove, MeterReadingResponse, MeterHistoryResponse",
+    "Create backend/app/services/ocr_service.py with: ocr_meter_image(image_bytes) using Google Vision TEXT_DETECTION, parse numbers with regex for 4-7 digit meter values, estimate_confidence based on number count and validity, return detected_value/confidence/raw_text",
+    "Create backend/app/services/meter_service.py with: upload_reading (validate unit, upload to Supabase Storage, call OCR, create record), list_readings (filter unit/type/month/approved), approve_reading (set manual_override or use AI value, calculate consumption), get_unit_meter_history (12 months)",
+    "Create backend/app/routers/meters.py with: POST /meter-readings/upload (multipart), GET /meter-readings, GET /meter-readings/{id}, PATCH /meter-readings/{id}/approve, GET /units/{id}/meter-history",
+    "Register meters router in main.py",
+    "Create frontend/src/types/meter.ts with MeterReading, MeterHistory interfaces",
+    "Create frontend/src/api/meters.ts with API functions",
+    "Create frontend/src/pages/meters/MeterReadingListPage.tsx with month picker, table with approval status badges, inline approve button",
+    "Create frontend/src/pages/meters/MeterUploadPage.tsx with meter type selection, previous reading input, image upload (drag-drop + camera capture on mobile), preview, loading state during OCR",
+    "Create frontend/src/components/meter/OCRResultCard.tsx showing image on left, AI-detected value on right (large font), confidence bar, editable input pre-filled with AI value, confirm button, warning banner if confidence < 0.6",
+    "Create frontend/src/components/meter/MeterHistoryChart.tsx using Recharts LineChart with 2 lines (electricity + water) over 12 months, hover tooltip with consumption + cost",
+    "Add meter routes to App.tsx"
+  ],
+  "acceptance_criteria": [
+    "OCR service parses meter images and returns detected values with confidence scores",
+    "Approval endpoint calculates consumption correctly (current - previous reading)",
+    "Upload page shows camera capture option on mobile",
+    "OCRResultCard displays warning when confidence is below 0.6",
+    "MeterHistoryChart renders 12-month line chart",
+    "Frontend builds successfully"
+  ],
+  "verification": [
+    "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/backend && python -c \"from app.routers.meters import router; from app.services.ocr_service import ocr_meter_image; print('OK')\"",
+    "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/frontend && npm run build"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

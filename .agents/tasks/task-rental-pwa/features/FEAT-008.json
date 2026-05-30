@@ -1,0 +1,35 @@
+{
+  "id": "FEAT-008",
+  "type": "feat",
+  "description": "PHASE 7: Maintenance - Backend API supporting property-level and unit-level scopes with validation rules, and frontend pages with scope toggle, timeline, and photo gallery. Covers TASK-017 and TASK-018.",
+  "status": "pending",
+  "steps": [
+    "Create backend/app/models/maintenance.py with models: MaintenanceCreate (scope literal, conditional validation), MaintenanceAssign, MaintenanceResolve, MaintenanceRate, MaintenanceResponse, MaintenanceDetailResponse",
+    "Create backend/app/services/maintenance_service.py with: validate_create (scope-based validation: unit scope requires unit_id, renter must have active contract; property scope requires owner/manager role and location_detail), list (filter scope/status/property/unit/category/priority, RLS: renter sees only own unit requests, staff sees assigned requests), create, assign, update_status, resolve (with cost + photos), rate (only renter who submitted)",
+    "Create backend/app/routers/maintenance.py with: GET/POST /maintenance, GET /maintenance/{id}, PATCH /maintenance/{id}/assign, PATCH /maintenance/{id}/status, POST /maintenance/{id}/resolve, POST /maintenance/{id}/rate, POST /maintenance/{id}/photos, GET /properties/{id}/maintenance, GET /units/{id}/maintenance-history",
+    "Register maintenance router in main.py",
+    "Create frontend/src/types/maintenance.ts with MaintenanceRequest, MaintenanceFilter interfaces",
+    "Create frontend/src/api/maintenance.ts with all API functions",
+    "Create frontend/src/pages/maintenance/MaintenanceListPage.tsx with 2 tabs (Common Areas / By Room), table with priority and status badges",
+    "Create frontend/src/pages/maintenance/MaintenanceFormPage.tsx with 3-step form: Step 1 scope selection (renter only sees unit option), Step 2 location (property dropdown + location_detail for common, or property + unit for room), Step 3 details (title, description, category, priority, photos up to 5)",
+    "Create frontend/src/pages/maintenance/MaintenanceDetailPage.tsx with header, photo gallery, status timeline, info section, after-photos, rating form (for renter who submitted), action buttons (assign/resolve for owner/manager)",
+    "Create frontend/src/components/maintenance/MaintenanceStatusTimeline.tsx vertical timeline: Open -> Assigned -> In Progress -> Resolved",
+    "Create frontend/src/components/maintenance/ScopeToggle.tsx component for switching between property and unit scope views",
+    "Add maintenance routes to App.tsx"
+  ],
+  "acceptance_criteria": [
+    "Backend validates scope correctly: renter cannot create property-level requests",
+    "location_detail is required when scope is property",
+    "Rating endpoint only allows the original submitter (renter) to rate",
+    "Frontend form hides 'Common Area' option for renter users",
+    "Timeline component shows progression of status changes",
+    "Photo gallery displays before/after images",
+    "Frontend builds successfully"
+  ],
+  "verification": [
+    "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/backend && python -c \"from app.routers.maintenance import router; print('OK')\"",
+    "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/frontend && npm run build"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

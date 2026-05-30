@@ -1,0 +1,35 @@
+{
+  "id": "FEAT-003",
+  "type": "feat",
+  "description": "PHASE 2: Property & Unit Management - Backend CRUD API and Frontend pages. Covers TASK-007 and TASK-008.",
+  "status": "pending",
+  "steps": [
+    "Create backend/app/models/property.py with Pydantic models: PropertyCreate, PropertyUpdate, PropertyResponse, UnitCreate, UnitUpdate, UnitResponse, UnitHistoryResponse",
+    "Create backend/app/services/property_service.py with CRUD business logic: list_properties (filter by city/status), create_property (owner only), get_property (with units count), update_property, soft_delete_property (409 if active contracts), list_units, create_unit, get_unit (with current contract info), update_unit, delete_unit (409 if occupied), get_unit_history",
+    "Create backend/app/routers/properties.py with all endpoints: GET/POST /properties, GET/PATCH/DELETE /properties/{id}, GET/POST /properties/{id}/units, GET/PATCH/DELETE /units/{id}, GET /units/{id}/history",
+    "Register properties router in backend/app/main.py",
+    "Create frontend/src/types/property.ts with TypeScript interfaces for Property, Unit, PropertyFilter",
+    "Create frontend/src/api/properties.ts with all API functions using TanStack Query patterns",
+    "Create frontend/src/pages/properties/PropertyListPage.tsx with grid cards, filter bar (city, type, status), skeleton loading, empty state",
+    "Create frontend/src/pages/properties/PropertyDetailPage.tsx with property header, UnitGrid, tabs placeholder",
+    "Create frontend/src/pages/properties/PropertyFormPage.tsx for create/edit property",
+    "Create frontend/src/components/property/PropertyCard.tsx showing name, address, occupied/total units, badge",
+    "Create frontend/src/components/property/UnitGrid.tsx with color-coded unit tiles (green=vacant, red=occupied, yellow=maintenance)",
+    "Create frontend/src/pages/units/UnitDetailPage.tsx with info, tabs for contract/invoice/maintenance",
+    "Create frontend/src/pages/units/UnitFormModal.tsx modal for add/edit unit",
+    "Add property routes to App.tsx router configuration"
+  ],
+  "acceptance_criteria": [
+    "Backend property/unit endpoints are registered and importable",
+    "Frontend builds with property list, detail, and unit pages",
+    "UnitGrid component renders colored tiles based on unit status",
+    "PropertyCard shows occupied/total count",
+    "Filter functionality is wired up in PropertyListPage"
+  ],
+  "verification": [
+    "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/backend && python -c \"from app.routers.properties import router; print('Properties router OK')\"",
+    "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/frontend && npm run build"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

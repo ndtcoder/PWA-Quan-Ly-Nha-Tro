@@ -1,0 +1,42 @@
+{
+  "id": "FEAT-010",
+  "type": "feat",
+  "description": "PHASE 9: Reports & Analytics - Backend reports API (finance, staff performance, property KPIs) and frontend dashboard with Recharts. Covers TASK-021 and TASK-022.",
+  "status": "pending",
+  "steps": [
+    "Create backend/app/services/reports/__init__.py",
+    "Create backend/app/services/reports/finance_reports.py with: get_revenue_report (aggregate invoices by period, include linear regression forecast if 3+ months data), get_occupancy_report, get_overdue_report, get_maintenance_costs_report",
+    "Create backend/app/services/reports/staff_reports.py with: get_staff_performance (calculate tasks metrics + maintenance metrics + quality_score per staff), calculate_quality_score (completion 35% + timeliness 25% + rating 25% + speed 15%), get_staff_trend (monthly quality_score over N months), get_leaderboard (sorted by quality_score)",
+    "Create backend/app/services/reports/property_kpi_reports.py with: get_property_kpis (occupancy, utility_efficiency, maintenance stats, financial_efficiency, auto-generated alerts), compare_properties (multi-property radar data), get_units_breakdown (per-unit drill-down), generate_property_alerts (threshold-based)",
+    "Create backend/app/routers/reports.py with all endpoints: GET /reports/revenue, /reports/occupancy, /reports/overdue, /reports/maintenance-costs, /reports/staff-performance, /reports/staff-performance/{id}/trend, /reports/staff-performance/leaderboard, /reports/property-kpis, /reports/property-kpis/compare, /reports/property-kpis/{id}/units-breakdown",
+    "Register reports router in main.py",
+    "Create frontend/src/types/report.ts with RevenueData, StaffPerformance, PropertyKPI, Alert interfaces",
+    "Create frontend/src/api/reports.ts with all API functions",
+    "Create frontend/src/pages/reports/ReportsPage.tsx with 3 tabs: Finance, Staff, Property KPIs",
+    "Create frontend/src/pages/reports/FinanceReportPage.tsx with filter bar, RevenueChart (grouped BarChart), summary cards, overdue table",
+    "Create frontend/src/pages/reports/StaffReportPage.tsx with filter, leaderboard table (sortable, top 3 badges), radar chart on click, trend line chart",
+    "Create frontend/src/pages/reports/PropertyKPIPage.tsx with property selector, KPI cards with comparison arrows, alerts section, heatmap, compare radar",
+    "Create frontend/src/components/reports/RevenueChart.tsx using Recharts BarChart with forecast dashed line",
+    "Create frontend/src/components/reports/StaffLeaderboard.tsx sortable table with sparkline trend",
+    "Create frontend/src/components/reports/StaffRadarChart.tsx using Recharts RadarChart (4 dimensions)",
+    "Create frontend/src/components/reports/PropertyKPICards.tsx with 4 metric cards showing period comparison",
+    "Create frontend/src/components/reports/PropertyHeatmap.tsx grid colored by incident count (green->yellow->orange->red)",
+    "Create frontend/src/components/reports/PropertyCompareRadar.tsx Recharts RadarChart comparing up to 5 properties on 5 axes",
+    "Add reports routes to App.tsx"
+  ],
+  "acceptance_criteria": [
+    "Revenue forecast uses linear regression (scipy.stats.linregress)",
+    "Quality score calculation follows the weighted formula from PRD",
+    "Property alerts are auto-generated based on configurable thresholds",
+    "Frontend charts render with proper data binding",
+    "Radar chart supports comparing multiple properties",
+    "Heatmap colors units based on incident intensity",
+    "Frontend builds successfully"
+  ],
+  "verification": [
+    "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/backend && python -c \"from app.routers.reports import router; from app.services.reports.finance_reports import get_revenue_report; from app.services.reports.staff_reports import calculate_quality_score; print('OK')\"",
+    "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/frontend && npm run build"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

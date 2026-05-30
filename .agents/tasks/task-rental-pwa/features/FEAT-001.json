@@ -1,0 +1,42 @@
+{
+  "id": "FEAT-001",
+  "type": "feat",
+  "description": "PHASE 0: Initialize Backend (FastAPI) and Frontend (React+Vite) project structures, plus SQL migration files. Covers TASK-001 through TASK-004 from the execution plan.",
+  "status": "in_progress",
+  "steps": [
+    "Create backend/ directory with FastAPI project structure: app/main.py, app/config.py, app/database.py, app/dependencies.py, app/models/__init__.py, app/routers/__init__.py, app/services/__init__.py",
+    "Create backend/requirements.txt with: fastapi, uvicorn[standard], supabase, python-dotenv, pydantic-settings, slowapi, python-jose[cryptography], python-slugify, jinja2, weasyprint, python-multipart, qrcode[pil], Pillow, google-cloud-vision, resend, pywebpush, apscheduler, scipy, numpy",
+    "Implement backend/app/config.py using Pydantic BaseSettings reading SUPABASE_URL, SUPABASE_SERVICE_KEY, JWT_SECRET, ENVIRONMENT, and other env vars",
+    "Implement backend/app/database.py with Supabase client singleton",
+    "Implement backend/app/dependencies.py with get_current_user JWT dependency that decodes Supabase JWT and returns user dict with user_id, email, role, organization_id",
+    "Implement backend/app/main.py with FastAPI app, CORS (localhost:5173 + production), mount /api/v1 router, health check GET /health",
+    "Create backend/.env.example with all required environment variables",
+    "Create frontend/ using Vite + React 18 + TypeScript setup with package.json including: react, react-dom, react-router-dom, @tanstack/react-query, zustand, axios, tailwindcss, postcss, autoprefixer, react-hook-form, @hookform/resolvers, zod, recharts, @dnd-kit/core, @dnd-kit/sortable, date-fns",
+    "Configure frontend/vite.config.ts with vite-plugin-pwa, proxy /api to http://localhost:8000",
+    "Configure frontend/tailwind.config.ts with primary color blue-600 (#2563eb), font Be Vietnam Pro",
+    "Create frontend/public/manifest.json for PWA with name QuanLyNhaTro, theme_color #2563eb, display standalone",
+    "Create frontend/src/main.tsx, App.tsx with React Router setup (AuthLayout for /login /register, AppLayout with sidebar for app routes)",
+    "Create frontend/src/api/client.ts with axios instance, JWT interceptor, 401 redirect",
+    "Create frontend/src/components/ui/ with Spinner, EmptyState, ErrorBoundary components",
+    "Create frontend/.env.example with VITE_API_URL, VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_VAPID_PUBLIC_KEY",
+    "Create backend/migrations/001_core_tables.sql with organizations, profiles, properties, units, unit_co_owners, renter_profiles, contracts, contract_co_renters tables, indexes, triggers, and RLS policies",
+    "Create backend/migrations/002_operations_tables.sql with staff_assignments, task_templates, tasks, service_fee_configs, invoices, invoice_items, meter_readings, maintenance_requests, notifications, push_subscriptions tables, indexes, and RLS policies",
+    "Create backend/migrations/003_invitations.sql with invitations table for the invite flow"
+  ],
+  "acceptance_criteria": [
+    "Running 'cd backend && pip install -r requirements.txt' succeeds without errors",
+    "Running 'cd backend && python -c \"from app.main import app; print(app.title)\"' prints the app title",
+    "Running 'cd frontend && npm install && npm run build' succeeds without errors",
+    "backend/app/main.py defines a FastAPI app with /health endpoint and CORS middleware",
+    "backend/app/dependencies.py has get_current_user function that decodes JWT",
+    "frontend/src/App.tsx has React Router with AuthLayout and AppLayout",
+    "All 3 migration SQL files exist with proper CREATE TABLE statements and RLS policies"
+  ],
+  "verification": [
+    "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/backend && pip install -r requirements.txt",
+    "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/backend && python -c \"from app.main import app; print('OK')\"",
+    "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/frontend && npm install && npm run build"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

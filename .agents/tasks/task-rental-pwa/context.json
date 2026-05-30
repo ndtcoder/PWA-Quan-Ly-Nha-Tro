@@ -1,0 +1,19 @@
+{
+  "project_type": "Full-stack SaaS PWA - FastAPI backend + React frontend",
+  "language": "Python 3.11 (backend), TypeScript (frontend)",
+  "build_system": "pip/requirements.txt (backend), npm/vite (frontend)",
+  "test_framework": "pytest (backend), vitest potential (frontend) - greenfield, to be set up",
+  "build_command": "cd backend && pip install -r requirements.txt && cd ../frontend && npm install && npm run build",
+  "test_command": "cd backend && python -m pytest tests/ --tb=short; cd ../frontend && npm run build",
+  "verification_instructions": "Backend: uvicorn app.main:app runs, GET /health returns 200. Frontend: npm run build succeeds, npm run dev serves app at localhost:5173",
+  "snapshot_or_generated_files": null,
+  "setup_instructions": "1. cd backend && pip install -r requirements.txt 2. cd frontend && npm install",
+  "environment_constraints": "OPEN_INTERNET - full access. Python 3.11 via pyenv, Node.js v22 via nvm. No Supabase instance available for live testing - code must be structurally valid. No WeasyPrint system deps (cairo/pango) likely missing. Google Vision API key not available for testing.",
+  "contribution_requirements": "Follow AGENT_EXECUTION_PLAN.md task ordering. Backend in backend/, frontend in frontend/. Use FastAPI+Supabase-py for backend, React 18+Vite+TailwindCSS+TypeScript for frontend.",
+  "key_patterns": "Greenfield project. Patterns defined by PRD: Pydantic v2 models, FastAPI routers under app/routers/, services under app/services/, Zustand stores, TanStack Query for data fetching, React Router v6 with nested layouts.",
+  "relevant_files": [
+    "AGENT_EXECUTION_PLAN.md",
+    "PRD_RentalManagement_SaaS.md"
+  ],
+  "directory_structure": "backend/ - FastAPI app with app/main.py, app/config.py, app/routers/, app/services/, app/models/, migrations/. frontend/ - React+Vite app with src/pages/, src/components/, src/api/, src/stores/, src/hooks/, src/types/, public/"
+}

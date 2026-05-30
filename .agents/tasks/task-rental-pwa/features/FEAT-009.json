@@ -1,0 +1,41 @@
+{
+  "id": "FEAT-009",
+  "type": "feat",
+  "description": "PHASE 8: Notifications & Automation - Backend notification service (email via Resend, Web Push via VAPID), cron jobs (APScheduler), and frontend notification UI with PWA push. Covers TASK-019 and TASK-020.",
+  "status": "pending",
+  "steps": [
+    "Create backend/app/services/notification_service.py with send_notification(recipient_id, type, title, body, data, channels) that saves to DB and dispatches to email/push channels",
+    "Create backend/app/services/email_service.py with Resend integration and HTML templates for: invoice_sent, payment_reminder, payment_overdue, contract_expiring, maintenance_update, task_assigned",
+    "Create backend/app/services/push_service.py with VAPID Web Push: send_push(endpoint, p256dh, auth_key, title, body, data), send_push_to_user(profile_id, title, body, data)",
+    "Create backend/app/routers/notifications.py with: GET /notifications (last 50 for user), PATCH /notifications/mark-read (body: {ids} or {all: true})",
+    "Create backend/app/routers/push.py with: POST /push/subscribe, DELETE /push/subscribe",
+    "Create backend/app/cron/__init__.py",
+    "Create backend/app/cron/scheduler.py with APScheduler setup, start in FastAPI lifespan event",
+    "Create backend/app/cron/jobs.py with all job functions: spawn_recurring_tasks (daily 5AM), auto_generate_invoices (1st monthly 6AM), send_monthly_invoices (3rd monthly 8AM), payment_reminder (daily 8AM, 3 days before due), overdue_check (daily 9AM, 5 and 10 days overdue), contract_expiry_check (daily 8AM, 30 and 7 days), expire_contracts (daily midnight)",
+    "Integrate notification calls into existing services: task_service (on assign), maintenance_service (on resolve), contract_service (on activate/terminate), invoice_service (on send)",
+    "Register notification and push routers in main.py, start scheduler in lifespan",
+    "Create frontend/src/api/notifications.ts with API functions",
+    "Create frontend/src/hooks/usePushNotification.ts with requestPermission, isSupported, permissionStatus",
+    "Create frontend/src/components/layout/NotificationBell.tsx with bell icon + unread count badge, polling every 30s",
+    "Create frontend/src/components/layout/NotificationDropdown.tsx with recent 10 notifications, read/unread styling, mark all read, navigate on click",
+    "Create frontend/src/pages/notifications/NotificationPage.tsx full list grouped by day",
+    "Create frontend/src/services/pwa.ts for service worker registration",
+    "Create frontend/public/sw.js with: app shell caching (Cache First), API network-first with cache fallback, push event handler, notification click handler",
+    "Add push permission banner to AppLayout (shown after login, dismissible)",
+    "Add notification routes to App.tsx"
+  ],
+  "acceptance_criteria": [
+    "Notification service saves to DB and dispatches to configured channels",
+    "APScheduler jobs are registered with correct cron expressions",
+    "Push service uses VAPID for web push delivery",
+    "NotificationBell polls and shows unread count",
+    "Service worker handles push events and notification clicks",
+    "Frontend builds successfully"
+  ],
+  "verification": [
+    "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/backend && python -c \"from app.routers.notifications import router; from app.routers.push import router as pr; from app.cron.scheduler import scheduler; print('OK')\"",
+    "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/frontend && npm run build"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

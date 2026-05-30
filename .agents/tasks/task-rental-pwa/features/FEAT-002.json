@@ -1,0 +1,37 @@
+{
+  "id": "FEAT-002",
+  "type": "feat",
+  "description": "PHASE 1: Authentication - Backend Auth Router and Frontend Auth Pages. Covers TASK-005 and TASK-006.",
+  "status": "pending",
+  "steps": [
+    "Create backend/app/models/auth.py with Pydantic models: RegisterOwnerRequest, LoginRequest, InviteUserRequest, AcceptInviteRequest, AuthResponse, UserResponse",
+    "Create backend/app/services/auth_service.py with business logic: register_owner (create Supabase auth user + organization + profile), login (sign_in_with_password), invite_user (create invitation token), accept_invite (validate token, create user, create profile, optionally create staff_assignment)",
+    "Create backend/app/routers/auth.py with endpoints: POST /register-owner, POST /login, POST /logout, GET /me, POST /invite (owner/manager only), POST /accept-invite",
+    "Add @require_roles decorator in backend/app/dependencies.py for role-based access control",
+    "Register auth router in backend/app/main.py under /api/v1/auth prefix",
+    "Create frontend/src/stores/authStore.ts with Zustand + persist: user, token, setAuth, logout, isAuthenticated",
+    "Create frontend/src/api/auth.ts with API functions: registerOwner, login, logout, getMe, inviteUser, acceptInvite",
+    "Create frontend/src/hooks/useAuth.ts hook wrapping authStore and API calls",
+    "Create frontend/src/pages/auth/LoginPage.tsx with email/password form, React Hook Form + Zod validation, error display, redirect to /dashboard on success",
+    "Create frontend/src/pages/auth/RegisterPage.tsx with full_name, email, password, confirm_password, organization_name fields",
+    "Create frontend/src/pages/auth/AcceptInvitePage.tsx reading token from URL query param",
+    "Create frontend/src/components/layout/AppLayout.tsx with sidebar navigation (role-based menu items), header, and auth guard (redirect to /login if no token)",
+    "Create frontend/src/components/layout/AuthLayout.tsx for auth pages (centered card layout)",
+    "Create frontend/src/components/layout/Sidebar.tsx with navigation items based on user role",
+    "Update frontend/src/App.tsx routes to use AuthLayout and AppLayout with proper route nesting",
+    "Create frontend/src/pages/DashboardPage.tsx as a placeholder landing page after login"
+  ],
+  "acceptance_criteria": [
+    "Backend auth endpoints are registered and importable without errors",
+    "Frontend builds successfully with auth pages, stores, and layouts",
+    "AuthStore persists to localStorage and provides isAuthenticated check",
+    "AppLayout redirects to /login when no token is present",
+    "Role-based sidebar shows different items for owner vs renter"
+  ],
+  "verification": [
+    "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/backend && python -c \"from app.routers.auth import router; print('Auth router OK')\"",
+    "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/frontend && npm run build"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}
