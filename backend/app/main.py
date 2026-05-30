@@ -1,7 +1,21 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI(title="Rental Management API", version="1.0.0")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Startup and shutdown events."""
+    from app.cron.scheduler import scheduler, setup_scheduler
+
+    setup_scheduler()
+    scheduler.start()
+    yield
+    scheduler.shutdown()
+
+
+app = FastAPI(title="Rental Management API", version="1.0.0", lifespan=lifespan)
 
 # CORS middleware
 app.add_middleware(
@@ -45,6 +59,8 @@ from app.routers.invoices import router as invoices_router
 from app.routers.meters import router as meters_router
 from app.routers.maintenance import router as maintenance_router
 from app.routers.maintenance import properties_maintenance_router
+from app.routers.notifications import router as notifications_router
+from app.routers.push import router as push_router
 
 api_v1_router.include_router(auth_router)
 api_v1_router.include_router(properties_router)
@@ -57,5 +73,7 @@ api_v1_router.include_router(invoices_router)
 api_v1_router.include_router(meters_router)
 api_v1_router.include_router(maintenance_router)
 api_v1_router.include_router(properties_maintenance_router)
+api_v1_router.include_router(notifications_router)
+api_v1_router.include_router(push_router)
 
 app.include_router(api_v1_router)

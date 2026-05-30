@@ -2,7 +2,7 @@
   "id": "FEAT-009",
   "type": "feat",
   "description": "PHASE 8: Notifications & Automation - Backend notification service (email via Resend, Web Push via VAPID), cron jobs (APScheduler), and frontend notification UI with PWA push. Covers TASK-019 and TASK-020.",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "Create backend/app/services/notification_service.py with send_notification(recipient_id, type, title, body, data, channels) that saves to DB and dispatches to email/push channels",
     "Create backend/app/services/email_service.py with Resend integration and HTML templates for: invoice_sent, payment_reminder, payment_overdue, contract_expiring, maintenance_update, task_assigned",

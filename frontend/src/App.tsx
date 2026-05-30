@@ -27,6 +27,7 @@ import MeterUploadPage from './pages/meters/MeterUploadPage';
 import MaintenanceListPage from './pages/maintenance/MaintenanceListPage';
 import MaintenanceFormPage from './pages/maintenance/MaintenanceFormPage';
 import MaintenanceDetailPage from './pages/maintenance/MaintenanceDetailPage';
+import NotificationPage from './pages/notifications/NotificationPage';
 
 // Placeholder pages for app routes
 function PlaceholderPage({ title }: { title: string }) {
@@ -78,7 +79,7 @@ function App() {
         <Route path="/maintenance/new" element={<MaintenanceFormPage />} />
         <Route path="/maintenance/:id" element={<MaintenanceDetailPage />} />
         <Route path="/reports" element={<PlaceholderPage title="Reports" />} />
-        <Route path="/notifications" element={<PlaceholderPage title="Notifications" />} />
+        <Route path="/notifications" element={<NotificationPage />} />
       </Route>
 
       {/* Default redirect */}
