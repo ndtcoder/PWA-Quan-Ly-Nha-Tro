@@ -1,21 +1,60 @@
+import logging
+import os
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
+
+from app.config import settings
+from app.middleware.logging import LoggingMiddleware
+from app.middleware.security import SecurityHeadersMiddleware
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
+logger = logging.getLogger("app")
+
+# Rate limiter
+limiter = Limiter(key_func=get_remote_address, default_limits=["100/minute"])
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Startup and shutdown events."""
-    from app.cron.scheduler import scheduler, setup_scheduler
+    logger.info("Starting Rental Management API v1.0.0")
+    logger.info(f"Environment: {settings.ENVIRONMENT}")
 
-    setup_scheduler()
-    scheduler.start()
-    yield
-    scheduler.shutdown()
+    if settings.ENVIRONMENT != "test":
+        from app.cron.scheduler import scheduler, setup_scheduler
+
+        setup_scheduler()
+        scheduler.start()
+        logger.info("Scheduler started")
+        yield
+        scheduler.shutdown()
+    else:
+        yield
+
+    logger.info("Shutting down Rental Management API")
 
 
 app = FastAPI(title="Rental Management API", version="1.0.0", lifespan=lifespan)
+
+# Attach limiter to app state
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+# Security headers middleware
+app.add_middleware(SecurityHeadersMiddleware)
+
+# Logging middleware
+app.add_middleware(LoggingMiddleware)
 
 # CORS middleware
 app.add_middleware(
@@ -23,7 +62,7 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:5173",
         "http://localhost:3000",
-        "*",
+        "https://*.vercel.app",
     ],
     allow_credentials=True,
     allow_methods=["*"],

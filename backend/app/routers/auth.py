@@ -1,5 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from typing import Any
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
 from app.dependencies import get_current_user, require_roles
 from app.models.auth import (
@@ -14,9 +16,12 @@ from app.services import auth_service
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
+limiter = Limiter(key_func=get_remote_address)
+
 
 @router.post("/register-owner", response_model=AuthResponse)
-async def register_owner(data: RegisterOwnerRequest):
+@limiter.limit("10/minute")
+async def register_owner(request: Request, data: RegisterOwnerRequest):
     """Register a new property owner with their organization."""
     try:
         result = auth_service.register_owner(data)
@@ -29,7 +34,8 @@ async def register_owner(data: RegisterOwnerRequest):
 
 
 @router.post("/login", response_model=AuthResponse)
-async def login(data: LoginRequest):
+@limiter.limit("10/minute")
+async def login(request: Request, data: LoginRequest):
     """Login with email and password."""
     try:
         result = auth_service.login(data)
@@ -77,7 +83,8 @@ async def invite_user(
 
 
 @router.post("/accept-invite", response_model=AuthResponse)
-async def accept_invite(data: AcceptInviteRequest):
+@limiter.limit("10/minute")
+async def accept_invite(request: Request, data: AcceptInviteRequest):
     """Accept an invitation and create account."""
     try:
         result = auth_service.accept_invite(data)

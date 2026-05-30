@@ -1,6 +1,8 @@
+import hashlib
+import hmac
 from typing import Optional
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Query, status
+from fastapi import APIRouter, Body, Depends, Header, HTTPException, Query, Request, status
 
 from app.config import settings
 from app.dependencies import get_current_user, require_roles
@@ -101,15 +103,30 @@ async def auto_generate_invoices(
 
 @router.post("/payments/webhook")
 async def payment_webhook(
+    request: Request,
     payload: PaymentWebhookPayload,
     x_api_key: Optional[str] = Header(None),
+    x_casso_signature: Optional[str] = Header(None),
 ):
     """Process payment webhook from Casso.
 
-    Verifies API key and processes the payment notification.
+    Verifies HMAC-SHA256 signature or API key and processes the payment notification.
     """
-    # Verify API key
-    if not settings.CASSO_API_KEY or x_api_key != settings.CASSO_API_KEY:
+    # HMAC-SHA256 signature verification (preferred)
+    if settings.CASSO_API_KEY and x_casso_signature:
+        body = await request.body()
+        expected_signature = hmac.new(
+            settings.CASSO_API_KEY.encode("utf-8"),
+            body,
+            hashlib.sha256,
+        ).hexdigest()
+        if not hmac.compare_digest(x_casso_signature, expected_signature):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid webhook signature",
+            )
+    elif not settings.CASSO_API_KEY or x_api_key != settings.CASSO_API_KEY:
+        # Fallback: API key verification
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid API key",
