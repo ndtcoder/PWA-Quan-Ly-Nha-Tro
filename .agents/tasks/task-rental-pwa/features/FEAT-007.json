@@ -2,7 +2,7 @@
   "id": "FEAT-007",
   "type": "feat",
   "description": "PHASE 6: Meter Readings with AI OCR - Backend meter reading API with Google Vision integration, and frontend upload/approval pages. Covers TASK-016 and TASK-016B.",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "Create backend/app/models/meter.py with models: MeterReadingSubmit, MeterReadingApprove, MeterReadingResponse, MeterHistoryResponse",
     "Create backend/app/services/ocr_service.py with: ocr_meter_image(image_bytes) using Google Vision TEXT_DETECTION, parse numbers with regex for 4-7 digit meter values, estimate_confidence based on number count and validity, return detected_value/confidence/raw_text",
