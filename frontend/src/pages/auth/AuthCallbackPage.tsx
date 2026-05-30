@@ -36,9 +36,14 @@ export default function AuthCallbackPage() {
           full_name: fullName,
         });
 
-        const { access_token: token, user: userData } = response.data;
+        const { access_token: token, user: userData, needs_org_setup: needsOrgSetup } = response.data;
         setAuth(userData, token);
-        navigate('/dashboard', { replace: true });
+
+        if (needsOrgSetup) {
+          navigate('/organization-setup', { replace: true });
+        } else {
+          navigate('/dashboard', { replace: true });
+        }
       } catch (err: unknown) {
         const errorObj = err as { message?: string };
         setError(errorObj?.message || 'Authentication failed. Please try again.');

@@ -101,6 +101,7 @@ from app.routers.maintenance import properties_maintenance_router
 from app.routers.notifications import router as notifications_router
 from app.routers.push import router as push_router
 from app.routers.reports import router as reports_router
+from app.routers.organizations import router as organizations_router
 
 api_v1_router.include_router(auth_router)
 api_v1_router.include_router(properties_router)
@@ -116,5 +117,6 @@ api_v1_router.include_router(properties_maintenance_router)
 api_v1_router.include_router(notifications_router)
 api_v1_router.include_router(push_router)
 api_v1_router.include_router(reports_router)
+api_v1_router.include_router(organizations_router)
 
 app.include_router(api_v1_router)

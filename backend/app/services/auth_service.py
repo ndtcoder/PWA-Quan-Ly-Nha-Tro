@@ -296,6 +296,7 @@ def google_auth(data: GoogleAuthRequest) -> dict:
                 "organization_id": profile.get("organization_id", ""),
                 "full_name": profile.get("full_name", full_name),
             },
+            "needs_org_setup": False,
         }
 
     # New user - create organization and profile
@@ -328,4 +329,5 @@ def google_auth(data: GoogleAuthRequest) -> dict:
             "organization_id": org_data["id"],
             "full_name": full_name,
         },
+        "needs_org_setup": True,
     }
