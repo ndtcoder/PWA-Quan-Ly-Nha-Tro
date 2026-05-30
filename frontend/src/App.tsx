@@ -30,6 +30,8 @@ import MaintenanceFormPage from './pages/maintenance/MaintenanceFormPage';
 import MaintenanceDetailPage from './pages/maintenance/MaintenanceDetailPage';
 import NotificationPage from './pages/notifications/NotificationPage';
 import ReportsPage from './pages/reports/ReportsPage';
+import OrganizationSetupPage from './pages/onboarding/OrganizationSetupPage';
+import OrganizationSettingsPage from './pages/settings/OrganizationSettingsPage';
 
 
 function App() {
@@ -44,6 +46,9 @@ function App() {
 
       {/* OAuth callback (no layout needed) */}
       <Route path="/auth/callback" element={<AuthCallbackPage />} />
+
+      {/* Organization setup (no layout needed, shown after Google sign-up) */}
+      <Route path="/organization-setup" element={<OrganizationSetupPage />} />
 
       {/* App routes (protected) */}
       <Route element={<AppLayout />}>
@@ -76,6 +81,7 @@ function App() {
         <Route path="/maintenance/:id" element={<MaintenanceDetailPage />} />
         <Route path="/reports" element={<ReportsPage />} />
         <Route path="/notifications" element={<NotificationPage />} />
+        <Route path="/settings/organization" element={<OrganizationSettingsPage />} />
       </Route>
 
       {/* Default redirect */}

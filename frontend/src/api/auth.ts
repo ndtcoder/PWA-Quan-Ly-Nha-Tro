@@ -36,6 +36,10 @@ export interface AuthResponse {
   };
 }
 
+export interface GoogleAuthResponse extends AuthResponse {
+  needs_org_setup: boolean;
+}
+
 export interface GoogleAuthData {
   access_token: string;
   full_name?: string | null;
@@ -78,7 +82,7 @@ export function validateInvite(token: string) {
 }
 
 export function googleAuth(data: GoogleAuthData) {
-  return apiClient.post<AuthResponse>('/api/v1/auth/google', data);
+  return apiClient.post<GoogleAuthResponse>('/api/v1/auth/google', data);
 }
 
 export async function signInWithGoogle() {

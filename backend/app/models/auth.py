@@ -43,3 +43,9 @@ class UserResponse(BaseModel):
 class GoogleAuthRequest(BaseModel):
     access_token: str
     full_name: Optional[str] = None
+
+
+class GoogleAuthResponse(BaseModel):
+    access_token: str
+    user: dict
+    needs_org_setup: bool = False

@@ -12,6 +12,7 @@ from app.models.auth import (
     AuthResponse,
     UserResponse,
     GoogleAuthRequest,
+    GoogleAuthResponse,
 )
 from app.services import auth_service
 
@@ -120,7 +121,7 @@ async def validate_invite(token: str = Query(...)):
         )
 
 
-@router.post("/google", response_model=AuthResponse)
+@router.post("/google", response_model=GoogleAuthResponse)
 @limiter.limit("10/minute")
 async def google_auth(request: Request, data: GoogleAuthRequest):
     """Handle Google OAuth sign-in/sign-up via Supabase."""
