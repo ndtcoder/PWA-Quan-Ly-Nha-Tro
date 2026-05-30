@@ -28,16 +28,8 @@ import MaintenanceListPage from './pages/maintenance/MaintenanceListPage';
 import MaintenanceFormPage from './pages/maintenance/MaintenanceFormPage';
 import MaintenanceDetailPage from './pages/maintenance/MaintenanceDetailPage';
 import NotificationPage from './pages/notifications/NotificationPage';
+import ReportsPage from './pages/reports/ReportsPage';
 
-// Placeholder pages for app routes
-function PlaceholderPage({ title }: { title: string }) {
-  return (
-    <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-4">{title}</h1>
-      <p className="text-gray-600">This page is under construction.</p>
-    </div>
-  );
-}
 
 function App() {
   return (
@@ -78,7 +70,7 @@ function App() {
         <Route path="/maintenance" element={<MaintenanceListPage />} />
         <Route path="/maintenance/new" element={<MaintenanceFormPage />} />
         <Route path="/maintenance/:id" element={<MaintenanceDetailPage />} />
-        <Route path="/reports" element={<PlaceholderPage title="Reports" />} />
+        <Route path="/reports" element={<ReportsPage />} />
         <Route path="/notifications" element={<NotificationPage />} />
       </Route>
 
