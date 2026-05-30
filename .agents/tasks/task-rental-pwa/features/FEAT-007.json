@@ -2,7 +2,7 @@
   "id": "FEAT-007",
   "type": "feat",
   "description": "PHASE 6: Meter Readings with AI OCR - Backend meter reading API with Google Vision integration, and frontend upload/approval pages. Covers TASK-016 and TASK-016B.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Create backend/app/models/meter.py with models: MeterReadingSubmit, MeterReadingApprove, MeterReadingResponse, MeterHistoryResponse",
     "Create backend/app/services/ocr_service.py with: ocr_meter_image(image_bytes) using Google Vision TEXT_DETECTION, parse numbers with regex for 4-7 digit meter values, estimate_confidence based on number count and validity, return detected_value/confidence/raw_text",
@@ -30,5 +30,5 @@
     "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/frontend && npm run build"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "All verification commands pass. Backend import check succeeds: router and ocr_service load properly. Frontend builds clean with tsc + vite (no type errors). The OCR service uses a mock when no GOOGLE_VISION_API_KEY is configured. recharts already installed in package.json so MeterHistoryChart compiles fine."
 }
