@@ -2,7 +2,7 @@
   "id": "FEAT-003",
   "type": "feat",
   "description": "PHASE 2: Property & Unit Management - Backend CRUD API and Frontend pages. Covers TASK-007 and TASK-008.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Create backend/app/models/property.py with Pydantic models: PropertyCreate, PropertyUpdate, PropertyResponse, UnitCreate, UnitUpdate, UnitResponse, UnitHistoryResponse",
     "Create backend/app/services/property_service.py with CRUD business logic: list_properties (filter by city/status), create_property (owner only), get_property (with units count), update_property, soft_delete_property (409 if active contracts), list_units, create_unit, get_unit (with current contract info), update_unit, delete_unit (409 if occupied), get_unit_history",
@@ -31,5 +31,5 @@
     "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/frontend && npm run build"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "Backend properties router and units_router both import cleanly. Frontend build passes with no TS errors. Removed unused imports (useQueryClient in DetailPage, Spinner in ListPage) to satisfy strict TS compilation. Used same patterns as auth: Supabase client queries, Pydantic models, React Hook Form + Zod validation, TanStack Query for data fetching."
 }
