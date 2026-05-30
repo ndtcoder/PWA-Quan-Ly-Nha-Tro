@@ -2,7 +2,7 @@
   "id": "FEAT-006",
   "type": "feat",
   "description": "PHASE 5: Finance & Invoicing - Backend invoice API with VietQR generation, payment webhook, and frontend invoice pages with QR display. Covers TASK-014 and TASK-015.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Create backend/app/models/invoice.py with models: InvoiceCreate, InvoiceItemCreate, InvoiceResponse, InvoiceDetailResponse, PaymentWebhookPayload",
     "Create backend/app/services/vietqr_service.py with: generate_ref_code(contract_id, billing_month), build_vietqr_string (EMVCo format, support bank BINs for VCB/BIDV/TCB/MB/VPB), generate_qr_image (base64 PNG using qrcode lib)",
@@ -32,5 +32,5 @@
     "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/frontend && npm run build"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "VietQR service generates valid EMVCo-format QR strings with CRC checksum. The qrcode[pil] package was already available. Backend verification imports succeed. Frontend builds cleanly with TypeScript compilation passing. Auto-generate route placed after /invoices/{id} routes to avoid route conflicts in FastAPI."
 }
