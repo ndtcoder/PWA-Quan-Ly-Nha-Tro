@@ -1,0 +1,171 @@
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { useAuth } from '../../hooks/useAuth';
+
+const registerSchema = z
+  .object({
+    full_name: z.string().min(1, 'Full name is required'),
+    email: z.string().email('Please enter a valid email address'),
+    password: z.string().min(6, 'Password must be at least 6 characters'),
+    confirm_password: z.string().min(1, 'Please confirm your password'),
+    organization_name: z.string().min(1, 'Organization name is required'),
+  })
+  .refine((data) => data.password === data.confirm_password, {
+    message: 'Passwords do not match',
+    path: ['confirm_password'],
+  });
+
+type RegisterFormData = z.infer<typeof registerSchema>;
+
+export default function RegisterPage() {
+  const { register: registerUser } = useAuth();
+  const [serverError, setServerError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
+  });
+
+  const onSubmit = async (data: RegisterFormData) => {
+    setServerError('');
+    setIsLoading(true);
+    try {
+      await registerUser({
+        full_name: data.full_name,
+        email: data.email,
+        password: data.password,
+        organization_name: data.organization_name,
+      });
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { detail?: string } } };
+      setServerError(error?.response?.data?.detail || 'Registration failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div>
+      <h1 className="text-2xl font-bold text-center text-gray-900 mb-6">
+        Create Account
+      </h1>
+
+      {serverError && (
+        <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-md text-sm">
+          {serverError}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div>
+          <label htmlFor="full_name" className="block text-sm font-medium text-gray-700 mb-1">
+            Full Name
+          </label>
+          <input
+            id="full_name"
+            type="text"
+            {...register('full_name')}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+            placeholder="Your full name"
+          />
+          {errors.full_name && (
+            <p className="mt-1 text-sm text-red-600">{errors.full_name.message}</p>
+          )}
+        </div>
+
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+            Email
+          </label>
+          <input
+            id="email"
+            type="email"
+            {...register('email')}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+            placeholder="you@example.com"
+          />
+          {errors.email && (
+            <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+          )}
+        </div>
+
+        <div>
+          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+            Password
+          </label>
+          <input
+            id="password"
+            type="password"
+            {...register('password')}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+            placeholder="At least 6 characters"
+          />
+          {errors.password && (
+            <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+          )}
+        </div>
+
+        <div>
+          <label htmlFor="confirm_password" className="block text-sm font-medium text-gray-700 mb-1">
+            Confirm Password
+          </label>
+          <input
+            id="confirm_password"
+            type="password"
+            {...register('confirm_password')}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+            placeholder="Repeat your password"
+          />
+          {errors.confirm_password && (
+            <p className="mt-1 text-sm text-red-600">{errors.confirm_password.message}</p>
+          )}
+        </div>
+
+        <div>
+          <label htmlFor="organization_name" className="block text-sm font-medium text-gray-700 mb-1">
+            Organization Name
+          </label>
+          <input
+            id="organization_name"
+            type="text"
+            {...register('organization_name')}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+            placeholder="Your property management company"
+          />
+          {errors.organization_name && (
+            <p className="mt-1 text-sm text-red-600">{errors.organization_name.message}</p>
+          )}
+        </div>
+
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="w-full py-2 px-4 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-md shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+        >
+          {isLoading ? (
+            <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+            </svg>
+          ) : (
+            'Create Account'
+          )}
+        </button>
+      </form>
+
+      <p className="mt-4 text-center text-sm text-gray-600">
+        Already have an account?{' '}
+        <Link to="/login" className="text-primary-600 hover:text-primary-700 font-medium">
+          Sign In
+        </Link>
+      </p>
+    </div>
+  );
+}

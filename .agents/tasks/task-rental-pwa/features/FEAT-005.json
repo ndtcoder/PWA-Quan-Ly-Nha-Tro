@@ -1,0 +1,40 @@
+{
+  "id": "FEAT-005",
+  "type": "feat",
+  "description": "PHASE 4: Staff & Task Management - Backend APIs for staff, task templates, recurring task scheduler, and frontend Kanban/calendar UI. Covers TASK-012 and TASK-013.",
+  "status": "completed",
+  "steps": [
+    "Create backend/app/models/staff.py with Pydantic models for staff listing and role management",
+    "Create backend/app/models/task.py with models: TaskTemplateCreate (with recurrence validation), TaskTemplateResponse, TaskCreate, TaskUpdate, TaskResponse, CalendarTaskResponse",
+    "Create backend/app/services/staff_service.py with list staff (filter role, property_id), update role, deactivate",
+    "Create backend/app/services/task_service.py with CRUD for tasks: list (filter assigned_to, status, property, date_range), get, update status, get my-tasks, get calendar view",
+    "Create backend/app/services/task_scheduler.py with spawn_recurring_tasks(today) logic: check active templates, determine should_spawn based on recurrence_type (daily/weekly/monthly/quarterly), prevent duplicates, create task from template",
+    "Create backend/app/routers/staff.py with: GET /staff, POST /staff/invite, PATCH /staff/{id}/role, DELETE /staff/{id}",
+    "Create backend/app/routers/tasks.py with: GET/POST /task-templates, GET/PATCH/DELETE /task-templates/{id}, GET /tasks, GET /tasks/{id}, PATCH /tasks/{id}, GET /tasks/my-tasks, GET /tasks/calendar, POST /tasks/trigger-scheduler",
+    "Register staff and tasks routers in main.py",
+    "Create frontend/src/types/task.ts with TaskTemplate, Task, CalendarTask interfaces",
+    "Create frontend/src/api/staff.ts and frontend/src/api/tasks.ts",
+    "Create frontend/src/pages/staff/StaffListPage.tsx with table, role badges, invite button",
+    "Create frontend/src/pages/tasks/TaskListPage.tsx with Kanban view (4 columns) and List view toggle",
+    "Create frontend/src/components/tasks/KanbanBoard.tsx with drag-and-drop using @dnd-kit",
+    "Create frontend/src/components/tasks/TaskCard.tsx with title, property, deadline, priority badge",
+    "Create frontend/src/pages/tasks/TaskTemplateListPage.tsx showing templates with recurrence badges",
+    "Create frontend/src/pages/tasks/TaskTemplateFormPage.tsx with dynamic fields based on recurrence_type selection (show/hide day_of_week, day_of_month, month_of_quarter), preview of next 5 spawn dates",
+    "Create frontend/src/components/tasks/RecurrenceFormFields.tsx reusable component",
+    "Create frontend/src/pages/tasks/MyTasksPage.tsx grouped by Today/This Week/Upcoming/Done",
+    "Add staff and task routes to App.tsx"
+  ],
+  "acceptance_criteria": [
+    "Backend task scheduler logic correctly determines spawn dates for all recurrence types",
+    "Task template form dynamically shows/hides fields based on recurrence_type",
+    "Kanban board component renders 4 columns with drag-and-drop capability",
+    "Frontend builds successfully with all staff and task pages",
+    "MyTasksPage only shows tasks for the current user"
+  ],
+  "verification": [
+    "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/backend && python -c \"from app.routers.staff import router; from app.routers.tasks import router; from app.services.task_scheduler import spawn_recurring_tasks; print('OK')\"",
+    "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/frontend && npm run build"
+  ],
+  "blocked_reason": null,
+  "findings": "All backend and frontend files created successfully. Backend Python imports verified. Frontend build passes with no TypeScript errors. TaskListPage had an unused TaskCard import that was removed. The @dnd-kit packages were already in node_modules. Routes registered in both main.py (backend) and App.tsx (frontend)."
+}

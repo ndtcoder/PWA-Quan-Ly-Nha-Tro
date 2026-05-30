@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Hoa Don - {{ invoice_number }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+        }
+        body {
+            font-family: 'Be Vietnam Pro', 'Arial', sans-serif;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #333;
+            max-width: 21cm;
+            margin: 0 auto;
+            padding: 2cm;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #2563eb;
+            padding-bottom: 20px;
+        }
+        .header h1 {
+            font-size: 22px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            color: #1a1a1a;
+        }
+        .header .invoice-number {
+            font-size: 16px;
+            color: #2563eb;
+            font-weight: bold;
+        }
+        .info-section {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+        .info-block {
+            width: 48%;
+        }
+        .info-block h3 {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #1a1a1a;
+        }
+        .info-row {
+            margin-bottom: 5px;
+        }
+        .info-label {
+            font-weight: bold;
+            color: #555;
+        }
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .items-table th {
+            background-color: #2563eb;
+            color: white;
+            padding: 10px 12px;
+            text-align: left;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+        .items-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .items-table tr:nth-child(even) {
+            background-color: #f9fafb;
+        }
+        .items-table .amount {
+            text-align: right;
+            font-weight: bold;
+        }
+        .total-section {
+            text-align: right;
+            margin-bottom: 30px;
+            padding: 15px;
+            background-color: #f0f9ff;
+            border-radius: 8px;
+        }
+        .total-section .total-label {
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .total-section .total-amount {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2563eb;
+        }
+        .payment-section {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f9fafb;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+        .payment-section h3 {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .qr-placeholder {
+            text-align: center;
+            margin-top: 15px;
+            padding: 20px;
+            border: 2px dashed #d1d5db;
+            border-radius: 8px;
+            color: #6b7280;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 11px;
+            color: #666;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>HOA DON TIEN PHONG</h1>
+        <p class="invoice-number">{{ invoice_number }}</p>
+    </div>
+
+    <div class="info-section">
+        <div class="info-block">
+            <h3>Thong tin nguoi thue</h3>
+            <div class="info-row">
+                <span class="info-label">Ho ten:</span> {{ renter_name }}
+            </div>
+            <div class="info-row">
+                <span class="info-label">Phong:</span> {{ unit_number }}
+            </div>
+            <div class="info-row">
+                <span class="info-label">Nha tro:</span> {{ property_name }}
+            </div>
+        </div>
+        <div class="info-block">
+            <h3>Thong tin hoa don</h3>
+            <div class="info-row">
+                <span class="info-label">Ky thanh toan:</span> {{ billing_period }}
+            </div>
+            <div class="info-row">
+                <span class="info-label">Han thanh toan:</span> {{ due_date }}
+            </div>
+            <div class="info-row">
+                <span class="info-label">Trang thai:</span> {{ status }}
+            </div>
+        </div>
+    </div>
+
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th>STT</th>
+                <th>Khoan muc</th>
+                <th>So luong</th>
+                <th>Don gia</th>
+                <th style="text-align: right">Thanh tien</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ item.description }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ "{:,.0f}".format(item.unit_price) }} VND</td>
+                <td class="amount">{{ "{:,.0f}".format(item.amount) }} VND</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="total-section">
+        <span class="total-label">TONG CONG: </span>
+        <span class="total-amount">{{ "{:,.0f}".format(total) }} VND</span>
+    </div>
+
+    <div class="payment-section">
+        <h3>Thong tin thanh toan</h3>
+        <div class="info-row">
+            <span class="info-label">Ngan hang:</span> {{ bank_name }}
+        </div>
+        <div class="info-row">
+            <span class="info-label">So tai khoan:</span> {{ bank_account_number }}
+        </div>
+        <div class="info-row">
+            <span class="info-label">Chu tai khoan:</span> {{ bank_account_name }}
+        </div>
+        <div class="info-row">
+            <span class="info-label">Noi dung chuyen khoan:</span> {{ ref_code }}
+        </div>
+        <div class="qr-placeholder">
+            [QR Code se duoc hien thi tren ung dung]
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Hoa don duoc tao tu dong boi he thong quan ly nha tro.</p>
+        <p>Vui long thanh toan dung han de tranh phat sinh phi tre han.</p>
+    </div>
+</body>
+</html>

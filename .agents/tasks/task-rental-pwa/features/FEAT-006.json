@@ -1,0 +1,36 @@
+{
+  "id": "FEAT-006",
+  "type": "feat",
+  "description": "PHASE 5: Finance & Invoicing - Backend invoice API with VietQR generation, payment webhook, and frontend invoice pages with QR display. Covers TASK-014 and TASK-015.",
+  "status": "completed",
+  "steps": [
+    "Create backend/app/models/invoice.py with models: InvoiceCreate, InvoiceItemCreate, InvoiceResponse, InvoiceDetailResponse, PaymentWebhookPayload",
+    "Create backend/app/services/vietqr_service.py with: generate_ref_code(contract_id, billing_month), build_vietqr_string (EMVCo format, support bank BINs for VCB/BIDV/TCB/MB/VPB), generate_qr_image (base64 PNG using qrcode lib)",
+    "Create backend/app/services/invoice_service.py with: list_invoices, create_invoice, get_invoice_detail (with items + QR image), send_invoice (draft->sent), mark_paid (manual), auto_generate_for_month (create draft invoices for all active contracts with rent + meter readings + service fees), export_pdf",
+    "Create backend/app/routers/invoices.py with: GET/POST /invoices, GET /invoices/{id}, POST /invoices/{id}/send, POST /invoices/{id}/mark-paid, POST /invoices/auto-generate, GET /invoices/{id}/pdf, POST /payments/webhook (verify x-api-key, parse ref_code from description, match invoice, update status)",
+    "Create backend/app/templates/invoice_template.html for PDF export with Jinja2",
+    "Register invoices router in main.py",
+    "Create frontend/src/types/invoice.ts with Invoice, InvoiceItem, InvoiceFilter interfaces",
+    "Create frontend/src/api/invoices.ts with all API functions",
+    "Create frontend/src/pages/invoices/InvoiceListPage.tsx with table, overdue row highlight, status badges, batch generate button",
+    "Create frontend/src/pages/invoices/InvoiceDetailPage.tsx with items table, total, QR card, action buttons",
+    "Create frontend/src/components/invoice/QRPaymentCard.tsx displaying QR image (200x200), bank info, copy transfer content button, auto-poll status every 30s",
+    "Create frontend/src/components/invoice/InvoiceStatusBadge.tsx (draft=gray, sent=blue, paid=green, overdue=red, cancelled=darkgray)",
+    "Create frontend/src/components/invoice/InvoiceItemsTable.tsx showing line items",
+    "Add invoice routes to App.tsx, including /my-invoices route for renter view with card layout"
+  ],
+  "acceptance_criteria": [
+    "VietQR service generates valid EMVCo-format QR strings",
+    "Payment webhook endpoint parses ref_code from description and matches invoices",
+    "Auto-generate creates invoices with proper items (rent, electricity, water, services)",
+    "Frontend QR card displays base64 QR image and bank transfer info",
+    "Invoice status polling refreshes every 30 seconds",
+    "Frontend builds successfully"
+  ],
+  "verification": [
+    "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/backend && python -c \"from app.routers.invoices import router; from app.services.vietqr_service import generate_ref_code, build_vietqr_string; print('OK')\"",
+    "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/frontend && npm run build"
+  ],
+  "blocked_reason": null,
+  "findings": "VietQR service generates valid EMVCo-format QR strings with CRC checksum. The qrcode[pil] package was already available. Backend verification imports succeed. Frontend builds cleanly with TypeScript compilation passing. Auto-generate route placed after /invoices/{id} routes to avoid route conflicts in FastAPI."
+}

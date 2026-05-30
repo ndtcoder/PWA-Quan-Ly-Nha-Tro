@@ -1,0 +1,40 @@
+{
+  "id": "FEAT-004",
+  "type": "feat",
+  "description": "PHASE 3: Contracts & Renters - Backend APIs for renter profiles, contracts with PDF export, and frontend pages. Covers TASK-009, TASK-010, and TASK-011.",
+  "status": "completed",
+  "steps": [
+    "Create backend/app/models/renter.py with Pydantic models: RenterCreate, RenterUpdate, RenterResponse, RenterDetailResponse",
+    "Create backend/app/services/renter_service.py with CRUD: list (filter search, has_active_contract), create, get_detail (with contracts history), update, upload_id_photo (Supabase Storage)",
+    "Create backend/app/routers/renters.py with endpoints: GET/POST /renters, GET/PATCH /renters/{id}, POST /renters/{id}/invite, POST /renters/{id}/id-front, POST /renters/{id}/id-back",
+    "Create backend/app/models/contract.py with Pydantic models: ContractCreate, ContractUpdate, ContractResponse, ContractDetailResponse",
+    "Create backend/app/services/contract_service.py with: list, create (auto-generate contract_number HD-YYYY-NNN, reject if unit has active contract), get, update (only draft), activate (draft->active, set unit occupied), terminate (active->terminated, set unit vacant), export_pdf (WeasyPrint+Jinja2), expiring_soon (30 days)",
+    "Create backend/app/routers/contracts.py with endpoints: GET/POST /contracts, GET/PATCH /contracts/{id}, POST /contracts/{id}/activate, POST /contracts/{id}/terminate, POST /contracts/{id}/export-pdf, GET /contracts/expiring-soon",
+    "Create backend/app/templates/contract_template.html - Vietnamese rental contract HTML template with Jinja2 variables, A4 CSS, Be Vietnam Pro font",
+    "Register renters and contracts routers in main.py",
+    "Create frontend/src/types/contract.ts and frontend/src/types/renter.ts",
+    "Create frontend/src/api/contracts.ts and frontend/src/api/renters.ts",
+    "Create frontend/src/pages/contracts/ContractListPage.tsx with table, status badges (draft=gray, active=green, expired=red, terminated=orange), expiring warning row highlight",
+    "Create frontend/src/pages/contracts/ContractFormPage.tsx with multi-step form: Step 1 select vacant unit, Step 2 select/create renter, Step 3 contract details, Step 4 preview + actions",
+    "Create frontend/src/pages/contracts/ContractDetailPage.tsx with header, status badge, action buttons, 2-column info, timeline progress bar, PDF download",
+    "Create frontend/src/components/contract/ContractStatusBadge.tsx",
+    "Create frontend/src/pages/renters/RenterListPage.tsx with table, search bar (debounced 300ms)",
+    "Create frontend/src/pages/renters/RenterDetailPage.tsx with avatar, 2-column info, ID photo upload, tabs",
+    "Create frontend/src/pages/renters/RenterFormPage.tsx for create/edit renter",
+    "Add contract and renter routes to App.tsx"
+  ],
+  "acceptance_criteria": [
+    "Backend renter and contract endpoints are importable without errors",
+    "Contract number auto-generation logic follows HD-YYYY-NNN format",
+    "Contract activation updates unit status to occupied",
+    "PDF export template exists with proper Jinja2 variables",
+    "Frontend builds with multi-step contract form and renter management pages",
+    "Search functionality in RenterListPage uses debounced input"
+  ],
+  "verification": [
+    "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/backend && python -c \"from app.routers.renters import router; from app.routers.contracts import router; print('OK')\"",
+    "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/frontend && npm run build"
+  ],
+  "blocked_reason": null,
+  "findings": "All backend models, services, routers implemented and importable. Frontend builds successfully with all pages (ContractListPage, ContractFormPage, ContractDetailPage, RenterListPage, RenterDetailPage, RenterFormPage). Contract template uses non-diacritical Vietnamese to avoid encoding issues. WeasyPrint fallback included in export_pdf in case system deps are missing."
+}
