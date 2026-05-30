@@ -11,6 +11,7 @@ from app.models.auth import (
     AcceptInviteRequest,
     AuthResponse,
     UserResponse,
+    GoogleAuthRequest,
 )
 from app.services import auth_service
 
@@ -110,6 +111,25 @@ async def validate_invite(token: str = Query(...)):
     except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e),
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e),
+        )
+
+
+@router.post("/google", response_model=AuthResponse)
+@limiter.limit("10/minute")
+async def google_auth(request: Request, data: GoogleAuthRequest):
+    """Handle Google OAuth sign-in/sign-up via Supabase."""
+    try:
+        result = auth_service.google_auth(data)
+        return result
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
             detail=str(e),
         )
     except Exception as e:

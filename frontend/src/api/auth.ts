@@ -1,4 +1,5 @@
 import apiClient from './client';
+import { supabase } from '../lib/supabase';
 
 export interface RegisterOwnerData {
   email: string;
@@ -35,6 +36,11 @@ export interface AuthResponse {
   };
 }
 
+export interface GoogleAuthData {
+  access_token: string;
+  full_name?: string | null;
+}
+
 export interface ValidateInviteResponse {
   email: string;
   role: string;
@@ -69,4 +75,21 @@ export function validateInvite(token: string) {
   return apiClient.get<ValidateInviteResponse>('/api/v1/auth/validate-invite', {
     params: { token },
   });
+}
+
+export function googleAuth(data: GoogleAuthData) {
+  return apiClient.post<AuthResponse>('/api/v1/auth/google', data);
+}
+
+export async function signInWithGoogle() {
+  const redirectTo = window.location.origin + '/auth/callback';
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo,
+    },
+  });
+  if (error) {
+    throw error;
+  }
 }

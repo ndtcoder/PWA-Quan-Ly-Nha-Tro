@@ -4,6 +4,7 @@ import AppLayout from './components/layout/AppLayout';
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
 import AcceptInvitePage from './pages/auth/AcceptInvitePage';
+import AuthCallbackPage from './pages/auth/AuthCallbackPage';
 import DashboardPage from './pages/DashboardPage';
 import PropertyListPage from './pages/properties/PropertyListPage';
 import PropertyDetailPage from './pages/properties/PropertyDetailPage';
@@ -40,6 +41,9 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/accept-invite" element={<AcceptInvitePage />} />
       </Route>
+
+      {/* OAuth callback (no layout needed) */}
+      <Route path="/auth/callback" element={<AuthCallbackPage />} />
 
       {/* App routes (protected) */}
       <Route element={<AppLayout />}>

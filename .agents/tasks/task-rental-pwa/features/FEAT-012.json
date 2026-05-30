@@ -1,0 +1,35 @@
+{
+  "id": "FEAT-012",
+  "type": "feat",
+  "description": "Add Google Sign-In/Sign-Up support using Supabase Auth OAuth provider, including backend endpoint, frontend Supabase client, auth callback page, and Google buttons on Login/Register pages.",
+  "status": "in_progress",
+  "steps": [
+    "Add GOOGLE_CLIENT_ID to backend/app/config.py Settings class",
+    "Add GOOGLE_CLIENT_ID to backend/.env.example",
+    "Create GoogleAuthRequest model in backend/app/models/auth.py",
+    "Add google_auth method to backend/app/services/auth_service.py",
+    "Add POST /api/v1/auth/google endpoint to backend/app/routers/auth.py",
+    "Install @supabase/supabase-js in frontend",
+    "Create frontend/src/lib/supabase.ts with Supabase client instance",
+    "Add signInWithGoogle function to frontend/src/api/auth.ts",
+    "Add googleAuth backend call to frontend/src/api/auth.ts",
+    "Create frontend/src/pages/auth/AuthCallbackPage.tsx to handle OAuth redirect",
+    "Add /auth/callback route to frontend/src/App.tsx",
+    "Add Google Sign-In button with divider to LoginPage.tsx",
+    "Add Google Sign-Up button with divider to RegisterPage.tsx",
+    "Add VITE_GOOGLE_CLIENT_ID to frontend/.env.example"
+  ],
+  "acceptance_criteria": [
+    "Backend /api/v1/auth/google endpoint is importable and handles token-based auth",
+    "Frontend Supabase client is configured with environment variables",
+    "AuthCallbackPage handles OAuth redirect and syncs with backend",
+    "Login and Register pages show Google button below form with 'hoac' divider",
+    "Frontend builds successfully with all new components"
+  ],
+  "verification": [
+    "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/backend && python -c \"from app.routers.auth import router; print('Auth router OK')\"",
+    "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/frontend && npm run build"
+  ],
+  "blocked_reason": null,
+  "findings": null
+}
