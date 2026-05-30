@@ -2,7 +2,7 @@
   "id": "FEAT-005",
   "type": "feat",
   "description": "PHASE 4: Staff & Task Management - Backend APIs for staff, task templates, recurring task scheduler, and frontend Kanban/calendar UI. Covers TASK-012 and TASK-013.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Create backend/app/models/staff.py with Pydantic models for staff listing and role management",
     "Create backend/app/models/task.py with models: TaskTemplateCreate (with recurrence validation), TaskTemplateResponse, TaskCreate, TaskUpdate, TaskResponse, CalendarTaskResponse",
@@ -36,5 +36,5 @@
     "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/frontend && npm run build"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "All backend and frontend files created successfully. Backend Python imports verified. Frontend build passes with no TypeScript errors. TaskListPage had an unused TaskCard import that was removed. The @dnd-kit packages were already in node_modules. Routes registered in both main.py (backend) and App.tsx (frontend)."
 }
