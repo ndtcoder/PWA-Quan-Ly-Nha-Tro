@@ -2,7 +2,7 @@
   "id": "FEAT-004",
   "type": "feat",
   "description": "PHASE 3: Contracts & Renters - Backend APIs for renter profiles, contracts with PDF export, and frontend pages. Covers TASK-009, TASK-010, and TASK-011.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Create backend/app/models/renter.py with Pydantic models: RenterCreate, RenterUpdate, RenterResponse, RenterDetailResponse",
     "Create backend/app/services/renter_service.py with CRUD: list (filter search, has_active_contract), create, get_detail (with contracts history), update, upload_id_photo (Supabase Storage)",
@@ -36,5 +36,5 @@
     "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/frontend && npm run build"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "All backend models, services, routers implemented and importable. Frontend builds successfully with all pages (ContractListPage, ContractFormPage, ContractDetailPage, RenterListPage, RenterDetailPage, RenterFormPage). Contract template uses non-diacritical Vietnamese to avoid encoding issues. WeasyPrint fallback included in export_pdf in case system deps are missing."
 }
