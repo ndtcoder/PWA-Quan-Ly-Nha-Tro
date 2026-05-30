@@ -24,6 +24,9 @@ import InvoiceListPage from './pages/invoices/InvoiceListPage';
 import InvoiceDetailPage from './pages/invoices/InvoiceDetailPage';
 import MeterReadingListPage from './pages/meters/MeterReadingListPage';
 import MeterUploadPage from './pages/meters/MeterUploadPage';
+import MaintenanceListPage from './pages/maintenance/MaintenanceListPage';
+import MaintenanceFormPage from './pages/maintenance/MaintenanceFormPage';
+import MaintenanceDetailPage from './pages/maintenance/MaintenanceDetailPage';
 
 // Placeholder pages for app routes
 function PlaceholderPage({ title }: { title: string }) {
@@ -71,7 +74,9 @@ function App() {
         <Route path="/my-invoices" element={<InvoiceListPage />} />
         <Route path="/meters" element={<MeterReadingListPage />} />
         <Route path="/meters/upload" element={<MeterUploadPage />} />
-        <Route path="/maintenance" element={<PlaceholderPage title="Maintenance" />} />
+        <Route path="/maintenance" element={<MaintenanceListPage />} />
+        <Route path="/maintenance/new" element={<MaintenanceFormPage />} />
+        <Route path="/maintenance/:id" element={<MaintenanceDetailPage />} />
         <Route path="/reports" element={<PlaceholderPage title="Reports" />} />
         <Route path="/notifications" element={<PlaceholderPage title="Notifications" />} />
       </Route>

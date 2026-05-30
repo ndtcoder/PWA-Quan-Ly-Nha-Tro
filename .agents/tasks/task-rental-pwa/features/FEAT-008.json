@@ -2,7 +2,7 @@
   "id": "FEAT-008",
   "type": "feat",
   "description": "PHASE 7: Maintenance - Backend API supporting property-level and unit-level scopes with validation rules, and frontend pages with scope toggle, timeline, and photo gallery. Covers TASK-017 and TASK-018.",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "Create backend/app/models/maintenance.py with models: MaintenanceCreate (scope literal, conditional validation), MaintenanceAssign, MaintenanceResolve, MaintenanceRate, MaintenanceResponse, MaintenanceDetailResponse",
     "Create backend/app/services/maintenance_service.py with: validate_create (scope-based validation: unit scope requires unit_id, renter must have active contract; property scope requires owner/manager role and location_detail), list (filter scope/status/property/unit/category/priority, RLS: renter sees only own unit requests, staff sees assigned requests), create, assign, update_status, resolve (with cost + photos), rate (only renter who submitted)",

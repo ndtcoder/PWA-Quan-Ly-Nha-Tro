@@ -43,6 +43,8 @@ from app.routers.staff import router as staff_router
 from app.routers.tasks import router as tasks_router
 from app.routers.invoices import router as invoices_router
 from app.routers.meters import router as meters_router
+from app.routers.maintenance import router as maintenance_router
+from app.routers.maintenance import properties_maintenance_router
 
 api_v1_router.include_router(auth_router)
 api_v1_router.include_router(properties_router)
@@ -53,5 +55,7 @@ api_v1_router.include_router(staff_router)
 api_v1_router.include_router(tasks_router)
 api_v1_router.include_router(invoices_router)
 api_v1_router.include_router(meters_router)
+api_v1_router.include_router(maintenance_router)
+api_v1_router.include_router(properties_maintenance_router)
 
 app.include_router(api_v1_router)

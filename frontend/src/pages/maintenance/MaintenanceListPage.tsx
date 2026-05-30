@@ -1,0 +1,251 @@
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { getMaintenanceRequests } from '../../api/maintenance';
+import type { MaintenanceRequest, MaintenanceFilter } from '../../types/maintenance';
+import ScopeToggle from '../../components/maintenance/ScopeToggle';
+
+function MaintenanceListPage() {
+  const [requests, setRequests] = useState<MaintenanceRequest[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [activeScope, setActiveScope] = useState<'property' | 'unit'>('property');
+  const [statusFilter, setStatusFilter] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('');
+  const [priorityFilter, setPriorityFilter] = useState('');
+  const [propertyFilter] = useState('');
+
+  const fetchRequests = async () => {
+    setLoading(true);
+    try {
+      const params: MaintenanceFilter = { scope: activeScope };
+      if (statusFilter) params.status = statusFilter;
+      if (categoryFilter) params.category = categoryFilter;
+      if (priorityFilter) params.priority = priorityFilter;
+      if (propertyFilter) params.property_id = propertyFilter;
+      const data = await getMaintenanceRequests(params);
+      setRequests(data);
+    } catch (err) {
+      console.error('Failed to fetch maintenance requests', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchRequests();
+  }, [activeScope, statusFilter, categoryFilter, priorityFilter, propertyFilter]);
+
+  const propertyScopeCount = requests.filter((r) => r.scope === 'property').length;
+  const unitScopeCount = requests.filter((r) => r.scope === 'unit').length;
+
+  const getPriorityBadge = (priority: string) => {
+    const styles: Record<string, string> = {
+      urgent: 'bg-red-100 text-red-800 animate-pulse',
+      high: 'bg-orange-100 text-orange-800',
+      normal: 'bg-blue-100 text-blue-800',
+      low: 'bg-gray-100 text-gray-800',
+    };
+    return (
+      <span
+        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+          styles[priority] || styles.normal
+        }`}
+      >
+        {priority.charAt(0).toUpperCase() + priority.slice(1)}
+      </span>
+    );
+  };
+
+  const getStatusBadge = (status: string) => {
+    const styles: Record<string, string> = {
+      open: 'bg-gray-100 text-gray-800',
+      assigned: 'bg-blue-100 text-blue-800',
+      in_progress: 'bg-yellow-100 text-yellow-800',
+      resolved: 'bg-green-100 text-green-800',
+      closed: 'bg-purple-100 text-purple-800',
+    };
+    const labels: Record<string, string> = {
+      open: 'Open',
+      assigned: 'Assigned',
+      in_progress: 'In Progress',
+      resolved: 'Resolved',
+      closed: 'Closed',
+    };
+    return (
+      <span
+        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+          styles[status] || styles.open
+        }`}
+      >
+        {labels[status] || status}
+      </span>
+    );
+  };
+
+  const getCategoryIcon = (category: string) => {
+    const icons: Record<string, string> = {
+      electrical: '⚡',
+      plumbing: '🔧',
+      furniture: '🪑',
+      structure: '🏗️',
+      other: '📋',
+    };
+    return icons[category] || '📋';
+  };
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">Maintenance</h1>
+        <Link
+          to="/maintenance/new"
+          className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        >
+          + New Request
+        </Link>
+      </div>
+
+      {/* Scope Toggle */}
+      <div className="mb-4">
+        <ScopeToggle
+          activeScope={activeScope}
+          onScopeChange={setActiveScope}
+          propertyScopeCount={propertyScopeCount}
+          unitScopeCount={unitScopeCount}
+        />
+      </div>
+
+      {/* Filters */}
+      <div className="bg-white rounded-lg shadow p-4 mb-6 flex flex-wrap gap-4 items-end">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Status
+          </label>
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="border border-gray-300 rounded-md px-3 py-2 text-sm"
+          >
+            <option value="">All</option>
+            <option value="open">Open</option>
+            <option value="assigned">Assigned</option>
+            <option value="in_progress">In Progress</option>
+            <option value="resolved">Resolved</option>
+          </select>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Category
+          </label>
+          <select
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+            className="border border-gray-300 rounded-md px-3 py-2 text-sm"
+          >
+            <option value="">All</option>
+            <option value="electrical">Electrical</option>
+            <option value="plumbing">Plumbing</option>
+            <option value="furniture">Furniture</option>
+            <option value="structure">Structure</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Priority
+          </label>
+          <select
+            value={priorityFilter}
+            onChange={(e) => setPriorityFilter(e.target.value)}
+            className="border border-gray-300 rounded-md px-3 py-2 text-sm"
+          >
+            <option value="">All</option>
+            <option value="low">Low</option>
+            <option value="normal">Normal</option>
+            <option value="high">High</option>
+            <option value="urgent">Urgent</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Table */}
+      <div className="bg-white rounded-lg shadow overflow-hidden">
+        {loading ? (
+          <div className="p-8 text-center text-gray-500">Loading...</div>
+        ) : requests.length === 0 ? (
+          <div className="p-8 text-center text-gray-500">
+            No maintenance requests found.
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Title
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    {activeScope === 'property' ? 'Property' : 'Unit'}
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Category
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Priority
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Assignee
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Status
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Date
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {requests.map((request) => (
+                  <tr key={request.id} className="hover:bg-gray-50">
+                    <td className="px-4 py-3 text-sm">
+                      <Link
+                        to={`/maintenance/${request.id}`}
+                        className="text-blue-600 hover:text-blue-800 font-medium"
+                      >
+                        {request.title}
+                      </Link>
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-900">
+                      {activeScope === 'property'
+                        ? request.property_name || '-'
+                        : request.unit_number || '-'}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-900">
+                      <span className="mr-1">{getCategoryIcon(request.category)}</span>
+                      {request.category}
+                    </td>
+                    <td className="px-4 py-3 text-sm">
+                      {getPriorityBadge(request.priority)}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-900">
+                      {request.assigned_to_name || '-'}
+                    </td>
+                    <td className="px-4 py-3 text-sm">
+                      {getStatusBadge(request.status)}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-500">
+                      {request.created_at
+                        ? new Date(request.created_at).toLocaleDateString('vi-VN')
+                        : '-'}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default MaintenanceListPage;
