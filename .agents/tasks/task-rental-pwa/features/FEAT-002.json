@@ -2,7 +2,7 @@
   "id": "FEAT-002",
   "type": "feat",
   "description": "PHASE 1: Authentication - Backend Auth Router and Frontend Auth Pages. Covers TASK-005 and TASK-006.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Create backend/app/models/auth.py with Pydantic models: RegisterOwnerRequest, LoginRequest, InviteUserRequest, AcceptInviteRequest, AuthResponse, UserResponse",
     "Create backend/app/services/auth_service.py with business logic: register_owner (create Supabase auth user + organization + profile), login (sign_in_with_password), invite_user (create invitation token), accept_invite (validate token, create user, create profile, optionally create staff_assignment)",
@@ -33,5 +33,5 @@
     "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/frontend && npm run build"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "Python 3.9 in sandbox requires Optional[] instead of type|None syntax - fixed database.py. Zustand persist uses onRehydrateStorage (not onRehydrate) in v4.5.x. Frontend build passes cleanly. Backend auth router imports successfully. The dependencies.py already had require_roles implemented from FEAT-001."
 }
