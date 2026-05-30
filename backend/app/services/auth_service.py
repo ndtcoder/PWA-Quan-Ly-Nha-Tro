@@ -1,5 +1,6 @@
 import uuid
 from datetime import datetime, timedelta, timezone
+from typing import Optional
 
 from slugify import slugify
 
@@ -9,6 +10,7 @@ from app.models.auth import (
     LoginRequest,
     InviteUserRequest,
     AcceptInviteRequest,
+    GoogleAuthRequest,
 )
 
 
@@ -246,4 +248,84 @@ def validate_invite(token: str) -> dict:
         "email": invitation["email"],
         "role": invitation["role"],
         "organization_id": invitation["organization_id"],
+    }
+
+
+def google_auth(data: GoogleAuthRequest) -> dict:
+    """Handle Google OAuth sign-in/sign-up.
+
+    Uses the Supabase access token from the OAuth flow to get the user,
+    then ensures a profile and organization exist.
+    """
+    supabase = get_supabase()
+
+    # Use the access token to get the authenticated user from Supabase
+    user_response = supabase.auth.get_user(data.access_token)
+    user = user_response.user
+
+    if not user:
+        raise ValueError("Invalid access token")
+
+    user_id = str(user.id)
+    email = user.email or ""
+    # Use the provided full_name, or fall back to user_metadata from Google
+    full_name = data.full_name or (
+        user.user_metadata.get("full_name")
+        or user.user_metadata.get("name")
+        or email.split("@")[0]
+    )
+
+    # Check if profile already exists
+    profile_response = (
+        supabase.table("profiles")
+        .select("*")
+        .eq("id", user_id)
+        .maybeSingle()
+        .execute()
+    )
+    profile = profile_response.data
+
+    if profile:
+        # Existing user - return profile
+        return {
+            "access_token": data.access_token,
+            "user": {
+                "id": user_id,
+                "email": profile.get("email", email),
+                "role": profile.get("role", "owner"),
+                "organization_id": profile.get("organization_id", ""),
+                "full_name": profile.get("full_name", full_name),
+            },
+        }
+
+    # New user - create organization and profile
+    org_name = full_name if full_name else email.split("@")[0]
+    org_slug = slugify(org_name)
+    org_data = {
+        "id": str(uuid.uuid4()),
+        "name": org_name,
+        "slug": org_slug,
+        "owner_id": user_id,
+    }
+    supabase.table("organizations").insert(org_data).execute()
+
+    # Create profile with owner role
+    profile_data = {
+        "id": user_id,
+        "email": email,
+        "full_name": full_name,
+        "role": "owner",
+        "organization_id": org_data["id"],
+    }
+    supabase.table("profiles").insert(profile_data).execute()
+
+    return {
+        "access_token": data.access_token,
+        "user": {
+            "id": user_id,
+            "email": email,
+            "role": "owner",
+            "organization_id": org_data["id"],
+            "full_name": full_name,
+        },
     }

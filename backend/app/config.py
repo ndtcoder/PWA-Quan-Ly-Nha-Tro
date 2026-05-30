@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     BANK_BIN: str = ""
     BANK_ACCOUNT_NUMBER: str = ""
     BANK_ACCOUNT_NAME: str = ""
+    GOOGLE_CLIENT_ID: str = ""
 
     class Config:
         env_file = ".env"

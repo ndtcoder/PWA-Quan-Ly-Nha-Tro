@@ -38,3 +38,8 @@ class UserResponse(BaseModel):
     role: str
     organization_id: str
     full_name: Optional[str] = None
+
+
+class GoogleAuthRequest(BaseModel):
+    access_token: str
+    full_name: Optional[str] = None
