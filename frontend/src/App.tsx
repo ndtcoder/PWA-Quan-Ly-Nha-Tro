@@ -15,6 +15,11 @@ import ContractDetailPage from './pages/contracts/ContractDetailPage';
 import RenterListPage from './pages/renters/RenterListPage';
 import RenterDetailPage from './pages/renters/RenterDetailPage';
 import RenterFormPage from './pages/renters/RenterFormPage';
+import StaffListPage from './pages/staff/StaffListPage';
+import TaskListPage from './pages/tasks/TaskListPage';
+import TaskTemplateListPage from './pages/tasks/TaskTemplateListPage';
+import TaskTemplateFormPage from './pages/tasks/TaskTemplateFormPage';
+import MyTasksPage from './pages/tasks/MyTasksPage';
 
 // Placeholder pages for app routes
 function PlaceholderPage({ title }: { title: string }) {
@@ -51,8 +56,12 @@ function App() {
         <Route path="/renters/new" element={<RenterFormPage />} />
         <Route path="/renters/:id" element={<RenterDetailPage />} />
         <Route path="/renters/:id/edit" element={<RenterFormPage />} />
-        <Route path="/staff" element={<PlaceholderPage title="Staff" />} />
-        <Route path="/tasks" element={<PlaceholderPage title="Tasks" />} />
+        <Route path="/staff" element={<StaffListPage />} />
+        <Route path="/tasks" element={<TaskListPage />} />
+        <Route path="/tasks/templates" element={<TaskTemplateListPage />} />
+        <Route path="/tasks/templates/new" element={<TaskTemplateFormPage />} />
+        <Route path="/tasks/templates/:id/edit" element={<TaskTemplateFormPage />} />
+        <Route path="/tasks/my-tasks" element={<MyTasksPage />} />
         <Route path="/invoices" element={<PlaceholderPage title="Invoices" />} />
         <Route path="/meters" element={<PlaceholderPage title="Meters" />} />
         <Route path="/maintenance" element={<PlaceholderPage title="Maintenance" />} />

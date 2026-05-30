@@ -2,7 +2,7 @@
   "id": "FEAT-005",
   "type": "feat",
   "description": "PHASE 4: Staff & Task Management - Backend APIs for staff, task templates, recurring task scheduler, and frontend Kanban/calendar UI. Covers TASK-012 and TASK-013.",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "Create backend/app/models/staff.py with Pydantic models for staff listing and role management",
     "Create backend/app/models/task.py with models: TaskTemplateCreate (with recurrence validation), TaskTemplateResponse, TaskCreate, TaskUpdate, TaskResponse, CalendarTaskResponse",

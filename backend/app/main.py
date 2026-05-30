@@ -39,11 +39,15 @@ from app.routers.properties import router as properties_router
 from app.routers.properties import units_router
 from app.routers.renters import router as renters_router
 from app.routers.contracts import router as contracts_router
+from app.routers.staff import router as staff_router
+from app.routers.tasks import router as tasks_router
 
 api_v1_router.include_router(auth_router)
 api_v1_router.include_router(properties_router)
 api_v1_router.include_router(units_router)
 api_v1_router.include_router(renters_router)
 api_v1_router.include_router(contracts_router)
+api_v1_router.include_router(staff_router)
+api_v1_router.include_router(tasks_router)
 
 app.include_router(api_v1_router)
