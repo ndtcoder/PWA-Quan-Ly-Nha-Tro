@@ -1,54 +1,49 @@
-import { Routes, Route, Outlet, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import AuthLayout from './components/layout/AuthLayout';
+import AppLayout from './components/layout/AppLayout';
+import LoginPage from './pages/auth/LoginPage';
+import RegisterPage from './pages/auth/RegisterPage';
+import AcceptInvitePage from './pages/auth/AcceptInvitePage';
+import DashboardPage from './pages/DashboardPage';
 
-function AuthLayout() {
+// Placeholder pages for app routes
+function PlaceholderPage({ title }: { title: string }) {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="w-full max-w-md p-6">
-        <Outlet />
-      </div>
+    <div>
+      <h1 className="text-2xl font-bold text-gray-900 mb-4">{title}</h1>
+      <p className="text-gray-600">This page is under construction.</p>
     </div>
   );
-}
-
-function AppLayout() {
-  return (
-    <div className="min-h-screen flex bg-gray-100">
-      <aside className="w-64 bg-white shadow-sm hidden md:block">
-        <div className="p-4 font-bold text-primary-600">Nha Tro</div>
-        <nav className="p-2">
-          <p className="text-sm text-gray-500 p-2">Menu placeholder</p>
-        </nav>
-      </aside>
-      <main className="flex-1 p-6">
-        <Outlet />
-      </main>
-    </div>
-  );
-}
-
-function LoginPage() {
-  return <h1 className="text-2xl font-bold">Login</h1>;
-}
-
-function RegisterPage() {
-  return <h1 className="text-2xl font-bold">Register</h1>;
-}
-
-function DashboardPage() {
-  return <h1 className="text-2xl font-bold">Dashboard</h1>;
 }
 
 function App() {
   return (
     <Routes>
+      {/* Auth routes */}
       <Route element={<AuthLayout />}>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/accept-invite" element={<AcceptInvitePage />} />
       </Route>
+
+      {/* App routes (protected) */}
       <Route element={<AppLayout />}>
         <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/properties" element={<PlaceholderPage title="Properties" />} />
+        <Route path="/contracts" element={<PlaceholderPage title="Contracts" />} />
+        <Route path="/renters" element={<PlaceholderPage title="Renters" />} />
+        <Route path="/staff" element={<PlaceholderPage title="Staff" />} />
+        <Route path="/tasks" element={<PlaceholderPage title="Tasks" />} />
+        <Route path="/invoices" element={<PlaceholderPage title="Invoices" />} />
+        <Route path="/meters" element={<PlaceholderPage title="Meters" />} />
+        <Route path="/maintenance" element={<PlaceholderPage title="Maintenance" />} />
+        <Route path="/reports" element={<PlaceholderPage title="Reports" />} />
+        <Route path="/notifications" element={<PlaceholderPage title="Notifications" />} />
       </Route>
+
+      {/* Default redirect */}
+      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
   );
 }

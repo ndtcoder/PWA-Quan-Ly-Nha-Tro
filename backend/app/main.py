@@ -33,4 +33,9 @@ async def ping():
     return {"message": "pong"}
 
 
+# Register routers
+from app.routers.auth import router as auth_router
+
+api_v1_router.include_router(auth_router)
+
 app.include_router(api_v1_router)

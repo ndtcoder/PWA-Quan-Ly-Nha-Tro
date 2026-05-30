@@ -2,7 +2,7 @@
   "id": "FEAT-002",
   "type": "feat",
   "description": "PHASE 1: Authentication - Backend Auth Router and Frontend Auth Pages. Covers TASK-005 and TASK-006.",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "Create backend/app/models/auth.py with Pydantic models: RegisterOwnerRequest, LoginRequest, InviteUserRequest, AcceptInviteRequest, AuthResponse, UserResponse",
     "Create backend/app/services/auth_service.py with business logic: register_owner (create Supabase auth user + organization + profile), login (sign_in_with_password), invite_user (create invitation token), accept_invite (validate token, create user, create profile, optionally create staff_assignment)",
