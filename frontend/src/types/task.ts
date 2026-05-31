@@ -87,19 +87,34 @@ export interface CalendarTask {
 export interface StaffMember {
   id: string;
   full_name: string;
-  email: string;
+  email?: string;
   role: string;
   phone?: string;
-  is_active: boolean;
-  assigned_properties: string[];
+  property_name?: string;
+  status: 'active' | 'pending';
+  address?: string;
   notes?: string;
   created_at: string;
 }
 
-export interface StaffInvite {
+export interface StaffCreate {
   email: string;
+  full_name: string;
+  phone?: string;
   role: 'manager' | 'accountant' | 'maintenance' | 'cleaner';
   property_id?: string;
+  address?: string;
+  notes?: string;
+}
+
+export interface StaffUpdate {
+  email?: string;
+  full_name?: string;
+  phone?: string;
+  role?: 'manager' | 'accountant' | 'maintenance' | 'cleaner';
+  property_id?: string;
+  address?: string;
+  notes?: string;
 }
 
 export interface StaffRoleUpdate {
