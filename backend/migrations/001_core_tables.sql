@@ -1,5 +1,6 @@
 -- Migration 001: Core Tables
 -- Creates the foundational tables for the rental management system
+-- Version: FINAL (includes all features as of current release)
 
 -- Enable extensions
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -26,6 +27,22 @@ CREATE TABLE profiles (
     role TEXT NOT NULL CHECK (role IN ('sysadmin', 'owner', 'manager', 'accountant', 'maintenance', 'cleaner', 'renter')),
     avatar_url TEXT,
     is_active BOOLEAN DEFAULT TRUE,
+    notes TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ============================================================
+-- INVITATIONS
+-- ============================================================
+CREATE TABLE invitations (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    token UUID UNIQUE DEFAULT gen_random_uuid(),
+    email TEXT NOT NULL,
+    role TEXT NOT NULL CHECK (role IN ('owner', 'manager', 'accountant', 'maintenance', 'cleaner', 'renter')),
+    organization_id UUID NOT NULL REFERENCES organizations(id),
+    property_id UUID REFERENCES properties(id),
+    expires_at TIMESTAMPTZ NOT NULL,
+    accepted_at TIMESTAMPTZ,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -101,6 +118,7 @@ CREATE TABLE renter_profiles (
     hometown TEXT,
     occupation TEXT,
     workplace TEXT,
+    notes TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -124,6 +142,7 @@ CREATE TABLE contracts (
     max_occupants INT DEFAULT 2,
     terms TEXT,
     pdf_url TEXT,
+    scan_pdf_url TEXT,
     signed_at TIMESTAMPTZ,
     terminated_at TIMESTAMPTZ,
     termination_reason TEXT,
@@ -166,6 +185,9 @@ CREATE TRIGGER set_updated_at_contracts
 -- INDEXES
 -- ============================================================
 CREATE INDEX idx_profiles_organization_id ON profiles(organization_id);
+CREATE INDEX idx_invitations_token ON invitations(token);
+CREATE INDEX idx_invitations_email ON invitations(email);
+CREATE INDEX idx_invitations_organization_id ON invitations(organization_id);
 CREATE INDEX idx_properties_organization_id ON properties(organization_id);
 CREATE INDEX idx_units_organization_id ON units(organization_id);
 CREATE INDEX idx_units_property_id_status ON units(property_id, status);
@@ -178,6 +200,7 @@ CREATE INDEX idx_contracts_unit_id_status ON contracts(unit_id, status);
 -- ============================================================
 ALTER TABLE organizations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE invitations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE properties ENABLE ROW LEVEL SECURITY;
 ALTER TABLE units ENABLE ROW LEVEL SECURITY;
 ALTER TABLE unit_co_owners ENABLE ROW LEVEL SECURITY;
@@ -185,99 +208,38 @@ ALTER TABLE renter_profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE contracts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE contract_co_renters ENABLE ROW LEVEL SECURITY;
 
--- RLS Policies: Tenant isolation by organization_id
+-- RLS Policies
 CREATE POLICY "Users can view their own organization"
     ON organizations FOR SELECT
-    USING (id IN (
-        SELECT organization_id FROM profiles WHERE id = auth.uid()
-    ));
+    USING (id IN (SELECT organization_id FROM profiles WHERE id = auth.uid()));
 
 CREATE POLICY "Users can view profiles in their organization"
-    ON profiles FOR SELECT
-    USING (organization_id IN (
-        SELECT organization_id FROM profiles WHERE id = auth.uid()
-    ));
-
-CREATE POLICY "Users can manage profiles in their organization"
     ON profiles FOR ALL
-    USING (organization_id IN (
-        SELECT organization_id FROM profiles WHERE id = auth.uid()
-    ));
+    USING (organization_id IN (SELECT organization_id FROM profiles WHERE id = auth.uid()));
 
-CREATE POLICY "Users can view properties in their organization"
-    ON properties FOR SELECT
-    USING (organization_id IN (
-        SELECT organization_id FROM profiles WHERE id = auth.uid()
-    ));
+CREATE POLICY "org_isolation" ON invitations FOR ALL
+    USING (organization_id IN (SELECT organization_id FROM profiles WHERE id = auth.uid()));
 
-CREATE POLICY "Users can manage properties in their organization"
-    ON properties FOR ALL
-    USING (organization_id IN (
-        SELECT organization_id FROM profiles WHERE id = auth.uid()
-    ));
+CREATE POLICY "org_isolation" ON properties FOR ALL
+    USING (organization_id IN (SELECT organization_id FROM profiles WHERE id = auth.uid()));
 
-CREATE POLICY "Users can view units in their organization"
-    ON units FOR SELECT
-    USING (organization_id IN (
-        SELECT organization_id FROM profiles WHERE id = auth.uid()
-    ));
+CREATE POLICY "org_isolation" ON units FOR ALL
+    USING (organization_id IN (SELECT organization_id FROM profiles WHERE id = auth.uid()));
 
-CREATE POLICY "Users can manage units in their organization"
-    ON units FOR ALL
-    USING (organization_id IN (
-        SELECT organization_id FROM profiles WHERE id = auth.uid()
-    ));
-
-CREATE POLICY "Users can view unit_co_owners in their organization"
-    ON unit_co_owners FOR SELECT
+CREATE POLICY "org_isolation" ON unit_co_owners FOR ALL
     USING (unit_id IN (
         SELECT id FROM units WHERE organization_id IN (
             SELECT organization_id FROM profiles WHERE id = auth.uid()
         )
     ));
 
-CREATE POLICY "Users can manage unit_co_owners in their organization"
-    ON unit_co_owners FOR ALL
-    USING (unit_id IN (
-        SELECT id FROM units WHERE organization_id IN (
-            SELECT organization_id FROM profiles WHERE id = auth.uid()
-        )
-    ));
+CREATE POLICY "org_isolation" ON renter_profiles FOR ALL
+    USING (organization_id IN (SELECT organization_id FROM profiles WHERE id = auth.uid()));
 
-CREATE POLICY "Users can view renter_profiles in their organization"
-    ON renter_profiles FOR SELECT
-    USING (organization_id IN (
-        SELECT organization_id FROM profiles WHERE id = auth.uid()
-    ));
+CREATE POLICY "org_isolation" ON contracts FOR ALL
+    USING (organization_id IN (SELECT organization_id FROM profiles WHERE id = auth.uid()));
 
-CREATE POLICY "Users can manage renter_profiles in their organization"
-    ON renter_profiles FOR ALL
-    USING (organization_id IN (
-        SELECT organization_id FROM profiles WHERE id = auth.uid()
-    ));
-
-CREATE POLICY "Users can view contracts in their organization"
-    ON contracts FOR SELECT
-    USING (organization_id IN (
-        SELECT organization_id FROM profiles WHERE id = auth.uid()
-    ));
-
-CREATE POLICY "Users can manage contracts in their organization"
-    ON contracts FOR ALL
-    USING (organization_id IN (
-        SELECT organization_id FROM profiles WHERE id = auth.uid()
-    ));
-
-CREATE POLICY "Users can view contract_co_renters in their organization"
-    ON contract_co_renters FOR SELECT
-    USING (contract_id IN (
-        SELECT id FROM contracts WHERE organization_id IN (
-            SELECT organization_id FROM profiles WHERE id = auth.uid()
-        )
-    ));
-
-CREATE POLICY "Users can manage contract_co_renters in their organization"
-    ON contract_co_renters FOR ALL
+CREATE POLICY "org_isolation" ON contract_co_renters FOR ALL
     USING (contract_id IN (
         SELECT id FROM contracts WHERE organization_id IN (
             SELECT organization_id FROM profiles WHERE id = auth.uid()

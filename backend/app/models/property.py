@@ -1,5 +1,6 @@
-from pydantic import BaseModel, Field
-from typing import Optional, Literal
+import json
+from pydantic import BaseModel, Field, field_validator
+from typing import Any, Optional, Literal
 from datetime import datetime
 
 
@@ -74,6 +75,22 @@ class UnitResponse(BaseModel):
     notes: Optional[str] = None
     current_renter_name: Optional[str] = None
     property_id: str
+
+    @field_validator('amenities', mode='before')
+    @classmethod
+    def parse_amenities(cls, v: Any) -> list:
+        """Handle amenities coming as JSON string from Supabase JSONB."""
+        if v is None:
+            return []
+        if isinstance(v, str):
+            try:
+                parsed = json.loads(v)
+                return parsed if isinstance(parsed, list) else []
+            except (json.JSONDecodeError, TypeError):
+                return []
+        if isinstance(v, list):
+            return v
+        return []
 
 
 class UnitHistoryResponse(BaseModel):

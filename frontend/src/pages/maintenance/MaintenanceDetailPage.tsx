@@ -99,13 +99,13 @@ function MaintenanceDetailPage() {
     if (scope === 'property') {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-          Common Area
+          Khu vực chung
         </span>
       );
     }
     return (
       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-teal-100 text-teal-800">
-        Room
+        Phòng
       </span>
     );
   };
@@ -119,11 +119,11 @@ function MaintenanceDetailPage() {
       closed: 'bg-purple-100 text-purple-800',
     };
     const labels: Record<string, string> = {
-      open: 'Open',
-      assigned: 'Assigned',
-      in_progress: 'In Progress',
-      resolved: 'Resolved',
-      closed: 'Closed',
+      open: 'Mở',
+      assigned: 'Đã phân công',
+      in_progress: 'Đang thực hiện',
+      resolved: 'Đã giải quyết',
+      closed: 'Đóng',
     };
     return (
       <span
@@ -137,13 +137,13 @@ function MaintenanceDetailPage() {
   };
 
   if (loading) {
-    return <div className="p-8 text-center text-gray-500">Loading...</div>;
+    return <div className="p-8 text-center text-gray-500">Đang tải...</div>;
   }
 
   if (!request) {
     return (
       <div className="p-8 text-center text-gray-500">
-        Maintenance request not found.
+        Không tìm thấy yêu cầu bảo trì.
       </div>
     );
   }
@@ -165,7 +165,7 @@ function MaintenanceDetailPage() {
           to="/maintenance"
           className="text-sm text-blue-600 hover:text-blue-800 mb-2 inline-block"
         >
-          &larr; Back to Maintenance
+          &larr; Quay lại bảo trì
         </Link>
         <div className="flex items-start justify-between">
           <div>
@@ -183,7 +183,7 @@ function MaintenanceDetailPage() {
                   onClick={() => setAssignModal(true)}
                   className="px-3 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700"
                 >
-                  Assign
+                  Phân công
                 </button>
               )}
               {request.status === 'assigned' && (
@@ -191,7 +191,7 @@ function MaintenanceDetailPage() {
                   onClick={handleStartProgress}
                   className="px-3 py-2 bg-yellow-600 text-white text-sm rounded-md hover:bg-yellow-700"
                 >
-                  Start Progress
+                  Bắt đầu
                 </button>
               )}
               {(request.status === 'in_progress' || request.status === 'assigned') && (
@@ -199,7 +199,7 @@ function MaintenanceDetailPage() {
                   onClick={() => setResolveModal(true)}
                   className="px-3 py-2 bg-green-600 text-white text-sm rounded-md hover:bg-green-700"
                 >
-                  Resolve
+                  Giải quyết
                 </button>
               )}
             </div>
@@ -213,7 +213,7 @@ function MaintenanceDetailPage() {
           {/* Photo Gallery */}
           {request.photos && request.photos.length > 0 && (
             <div className="bg-white rounded-lg shadow p-4">
-              <h3 className="text-sm font-semibold text-gray-700 mb-3">Photos</h3>
+              <h3 className="text-sm font-semibold text-gray-700 mb-3">Ảnh</h3>
               <div className="grid grid-cols-3 gap-2">
                 {request.photos.map((photo, i) => (
                   <div
@@ -233,27 +233,27 @@ function MaintenanceDetailPage() {
 
           {/* Info */}
           <div className="bg-white rounded-lg shadow p-4 space-y-3">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">Details</h3>
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">Chi tiết</h3>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <span className="text-gray-500">Submitted by:</span>
+                <span className="text-gray-500">Người gửi:</span>
                 <p className="font-medium">
-                  {request.submitter_name || 'Unknown'}{' '}
+                  {request.submitter_name || 'Không rõ'}{' '}
                   <span className="text-xs text-gray-400">
                     ({request.submitter_role})
                   </span>
                 </p>
               </div>
               <div>
-                <span className="text-gray-500">Category:</span>
+                <span className="text-gray-500">Danh mục:</span>
                 <p className="font-medium capitalize">{request.category}</p>
               </div>
               <div>
-                <span className="text-gray-500">Priority:</span>
+                <span className="text-gray-500">Mức ưu tiên:</span>
                 <p className="font-medium capitalize">{request.priority}</p>
               </div>
               <div>
-                <span className="text-gray-500">Location:</span>
+                <span className="text-gray-500">Vị trí:</span>
                 <p className="font-medium">
                   {request.scope === 'property'
                     ? request.location_detail || request.property_name
@@ -262,13 +262,13 @@ function MaintenanceDetailPage() {
               </div>
               {request.assigned_to_name && (
                 <div>
-                  <span className="text-gray-500">Assigned to:</span>
+                  <span className="text-gray-500">Phân công cho:</span>
                   <p className="font-medium">{request.assigned_to_name}</p>
                 </div>
               )}
               {request.cost > 0 && (
                 <div>
-                  <span className="text-gray-500">Cost:</span>
+                  <span className="text-gray-500">Chi phí:</span>
                   <p className="font-medium">
                     {request.cost.toLocaleString('vi-VN')} VND
                   </p>
@@ -277,7 +277,7 @@ function MaintenanceDetailPage() {
             </div>
             {request.description && (
               <div className="pt-3 border-t">
-                <span className="text-sm text-gray-500">Description:</span>
+                <span className="text-sm text-gray-500">Mô tả:</span>
                 <p className="text-sm mt-1 text-gray-900">
                   {request.description}
                 </p>
@@ -289,7 +289,7 @@ function MaintenanceDetailPage() {
           {request.status === 'resolved' && request.resolution_notes && (
             <div className="bg-white rounded-lg shadow p-4">
               <h3 className="text-sm font-semibold text-gray-700 mb-3">
-                Resolution
+                Kết quả giải quyết
               </h3>
               <p className="text-sm text-gray-900">{request.resolution_notes}</p>
               {request.resolution_photos && request.resolution_photos.length > 0 && (
@@ -315,7 +315,7 @@ function MaintenanceDetailPage() {
           {canRate && (
             <div className="bg-white rounded-lg shadow p-4">
               <h3 className="text-sm font-semibold text-gray-700 mb-3">
-                Rate this resolution
+                Đánh giá giải quyết
               </h3>
               <div className="flex gap-1 mb-3">
                 {[1, 2, 3, 4, 5].map((star) => (
@@ -333,7 +333,7 @@ function MaintenanceDetailPage() {
               <textarea
                 value={feedback}
                 onChange={(e) => setFeedback(e.target.value)}
-                placeholder="Optional feedback..."
+                placeholder="Nhận xét (tùy chọn)..."
                 rows={2}
                 className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm mb-3"
               />
@@ -342,7 +342,7 @@ function MaintenanceDetailPage() {
                 disabled={rating === 0}
                 className="px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 disabled:opacity-50"
               >
-                Submit Rating
+                Gửi đánh giá
               </button>
             </div>
           )}
@@ -351,7 +351,7 @@ function MaintenanceDetailPage() {
           {request.renter_rating && (
             <div className="bg-white rounded-lg shadow p-4">
               <h3 className="text-sm font-semibold text-gray-700 mb-2">
-                Renter Rating
+                Đánh giá từ người thuê
               </h3>
               <div className="flex gap-1 mb-1">
                 {[1, 2, 3, 4, 5].map((star) => (
@@ -378,7 +378,7 @@ function MaintenanceDetailPage() {
         <div className="space-y-6">
           <div className="bg-white rounded-lg shadow p-4">
             <h3 className="text-sm font-semibold text-gray-700 mb-4">
-              Status Timeline
+              Tiến trình xử lý
             </h3>
             <MaintenanceStatusTimeline
               currentStatus={request.status}
@@ -395,17 +395,17 @@ function MaintenanceDetailPage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
             <h3 className="text-lg font-semibold mb-4">
-              Assign Maintenance Request
+              Phân công yêu cầu bảo trì
             </h3>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Assign to (Staff ID)
+                Phân công cho (Mã NV)
               </label>
               <input
                 type="text"
                 value={assignTo}
                 onChange={(e) => setAssignTo(e.target.value)}
-                placeholder="Enter staff member ID"
+                placeholder="Nhập mã nhân viên"
                 className="w-full border border-gray-300 rounded-md px-3 py-2"
               />
             </div>
@@ -415,13 +415,13 @@ function MaintenanceDetailPage() {
                 disabled={!assignTo}
                 className="flex-1 bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 disabled:opacity-50"
               >
-                Assign
+                Phân công
               </button>
               <button
                 onClick={() => setAssignModal(false)}
                 className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-md hover:bg-gray-200"
               >
-                Cancel
+                Hủy
               </button>
             </div>
           </div>
@@ -433,23 +433,23 @@ function MaintenanceDetailPage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
             <h3 className="text-lg font-semibold mb-4">
-              Resolve Maintenance Request
+              Giải quyết yêu cầu bảo trì
             </h3>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Resolution Notes <span className="text-red-500">*</span>
+                Ghi chú giải quyết <span className="text-red-500">*</span>
               </label>
               <textarea
                 value={resolutionNotes}
                 onChange={(e) => setResolutionNotes(e.target.value)}
-                placeholder="Describe how the issue was resolved..."
+                placeholder="Mô tả cách sự cố đã được giải quyết..."
                 rows={3}
                 className="w-full border border-gray-300 rounded-md px-3 py-2"
               />
             </div>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Cost (VND)
+                Chi phí (VND)
               </label>
               <input
                 type="number"
@@ -465,13 +465,13 @@ function MaintenanceDetailPage() {
                 disabled={!resolutionNotes.trim()}
                 className="flex-1 bg-green-600 text-white py-2 rounded-md hover:bg-green-700 disabled:opacity-50"
               >
-                Resolve
+                Giải quyết
               </button>
               <button
                 onClick={() => setResolveModal(false)}
                 className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-md hover:bg-gray-200"
               >
-                Cancel
+                Hủy
               </button>
             </div>
           </div>

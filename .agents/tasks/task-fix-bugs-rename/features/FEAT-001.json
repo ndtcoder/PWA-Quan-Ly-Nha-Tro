@@ -1,0 +1,35 @@
+{
+  "id": "FEAT-001",
+  "type": "fix",
+  "description": "Rename app to 'Luu Tru Thong Minh', fix Dashboard to fetch and display real data, fix invitations schema mismatch, fix storage upload error handling, and fix PDF export error handling.",
+  "status": "completed",
+  "steps": [
+    "1. Rename app in frontend/public/manifest.json: change name to 'Luu Tru Thong Minh' and short_name to 'LTTM'",
+    "2. Rename app in frontend/index.html: change <title> to 'Luu Tru Thong Minh'",
+    "3. Rename app in frontend/public/offline.html: change <title> to 'Ngoai tuyen - Luu Tru Thong Minh'",
+    "4. Fix frontend/src/pages/DashboardPage.tsx: add useQuery hooks to fetch properties (via getProperties from ../api/properties), contracts (via getContracts from ../api/contracts), and tasks. Display actual counts instead of dashes. Follow the useQuery pattern used in frontend/src/pages/properties/PropertyListPage.tsx.",
+    "5. Fix backend/app/services/auth_service.py invite_user function: remove 'invited_by' from the invitation_data dict since the invitations table (migration 003) does not have this column. Keep other fields that exist in the schema (id, email, role, token, organization_id, property_id, expires_at).",
+    "6. Fix backend/app/routers/staff.py invite_staff function: remove 'invited_by' and 'status' from invitation_data since neither column exists in the invitations table schema. Add the required fields that the table expects: 'token' (UUID), 'expires_at' (timestamp 48h from now). Also remove the 'invitation_properties' table insert (this table doesn't exist in any migration) - instead use the 'property_id' column directly on the invitations table.",
+    "7. Fix backend/app/services/renter_service.py upload_id_photo function: wrap the bucket.upload() call in try/except to gracefully handle storage errors (bucket not existing, permissions, etc). Return a user-friendly error via HTTPException with status 502 if storage fails.",
+    "8. Fix backend/app/services/contract_service.py export_pdf function: (a) wrap the WeasyPrint import and PDF generation in try/except, raising HTTPException 422 with message about missing system dependencies if WeasyPrint fails. (b) wrap the bucket.upload() call in try/except, raising HTTPException 502 with informative message about storage failure if upload fails."
+  ],
+  "acceptance_criteria": [
+    "manifest.json has name 'Luu Tru Thong Minh' and short_name 'LTTM'",
+    "index.html title is 'Luu Tru Thong Minh'",
+    "offline.html title references 'Luu Tru Thong Minh'",
+    "DashboardPage.tsx uses useQuery to fetch properties and contracts, displaying real counts",
+    "auth_service.py invite_user does not insert 'invited_by' column",
+    "staff.py invite_staff does not insert 'invited_by' or 'status' columns, includes 'token' and 'expires_at'",
+    "renter_service.py upload_id_photo has try/except around storage upload with HTTPException on failure",
+    "contract_service.py export_pdf has try/except around WeasyPrint and storage upload with proper HTTPExceptions",
+    "Frontend builds successfully (tsc --noEmit passes)",
+    "Backend Python files have no syntax errors"
+  ],
+  "verification": [
+    "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/frontend && npm install && npx tsc --noEmit",
+    "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/frontend && npm run build",
+    "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/backend && python -c \"import ast; ast.parse(open('app/services/auth_service.py').read()); ast.parse(open('app/routers/staff.py').read()); ast.parse(open('app/services/renter_service.py').read()); ast.parse(open('app/services/contract_service.py').read()); print('All Python files parse OK')\""
+  ],
+  "blocked_reason": null,
+  "findings": "All changes verified: frontend tsc --noEmit passes, npm run build succeeds, all Python files parse correctly. Used python3 command since pyenv python was not configured by default."
+}

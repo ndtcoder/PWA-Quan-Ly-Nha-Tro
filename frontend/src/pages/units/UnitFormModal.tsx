@@ -15,11 +15,20 @@ const amenityOptions = [
   'washing_machine',
 ];
 
+const amenityLabels: Record<string, string> = {
+  wifi: 'Wifi',
+  ac: 'Máy lạnh',
+  parking: 'Chỗ đậu xe',
+  water_heater: 'Máy nước nóng',
+  fridge: 'Tủ lạnh',
+  washing_machine: 'Máy giặt',
+};
+
 const unitSchema = z.object({
-  unit_number: z.string().min(1, 'Unit number is required'),
+  unit_number: z.string().min(1, 'Số phòng là bắt buộc'),
   floor: z.coerce.number().int().optional().or(z.literal('')),
   area_sqm: z.coerce.number().positive().optional().or(z.literal('')),
-  base_rent: z.coerce.number().positive('Base rent is required'),
+  base_rent: z.coerce.number().positive('Giá thuê là bắt buộc'),
   deposit_amount: z.coerce.number().optional().or(z.literal('')),
   max_occupants: z.coerce.number().int().min(1).default(2),
   amenities: z.array(z.string()).default([]),
@@ -115,7 +124,7 @@ export default function UnitFormModal({ propertyId, unit, onClose }: UnitFormMod
       <div className="w-full max-w-lg rounded-lg bg-white p-6 shadow-xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-gray-900">
-            {isEdit ? 'Edit Unit' : 'Add Unit'}
+            {isEdit ? 'Sửa phòng' : 'Thêm phòng'}
           </h2>
           <button
             onClick={onClose}
@@ -127,7 +136,7 @@ export default function UnitFormModal({ propertyId, unit, onClose }: UnitFormMod
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Unit Number *</label>
+            <label className="block text-sm font-medium text-gray-700">Số phòng *</label>
             <input
               type="text"
               {...register('unit_number')}
@@ -140,7 +149,7 @@ export default function UnitFormModal({ propertyId, unit, onClose }: UnitFormMod
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Floor</label>
+              <label className="block text-sm font-medium text-gray-700">Tầng</label>
               <input
                 type="number"
                 {...register('floor')}
@@ -148,7 +157,7 @@ export default function UnitFormModal({ propertyId, unit, onClose }: UnitFormMod
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Area (sqm)</label>
+              <label className="block text-sm font-medium text-gray-700">Diện tích (m²)</label>
               <input
                 type="number"
                 step="0.01"
@@ -160,7 +169,7 @@ export default function UnitFormModal({ propertyId, unit, onClose }: UnitFormMod
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Base Rent (VND) *</label>
+              <label className="block text-sm font-medium text-gray-700">Giá thuê (VND) *</label>
               <input
                 type="number"
                 {...register('base_rent')}
@@ -171,7 +180,7 @@ export default function UnitFormModal({ propertyId, unit, onClose }: UnitFormMod
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Deposit (VND)</label>
+              <label className="block text-sm font-medium text-gray-700">Tiền cọc (VND)</label>
               <input
                 type="number"
                 {...register('deposit_amount')}
@@ -181,7 +190,7 @@ export default function UnitFormModal({ propertyId, unit, onClose }: UnitFormMod
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Max Occupants</label>
+            <label className="block text-sm font-medium text-gray-700">Số người tối đa</label>
             <input
               type="number"
               min="1"
@@ -191,7 +200,7 @@ export default function UnitFormModal({ propertyId, unit, onClose }: UnitFormMod
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Amenities</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Tiện nghi</label>
             <div className="grid grid-cols-2 gap-2">
               {amenityOptions.map((amenity) => (
                 <label key={amenity} className="flex items-center gap-2 text-sm text-gray-700">
@@ -201,14 +210,14 @@ export default function UnitFormModal({ propertyId, unit, onClose }: UnitFormMod
                     {...register('amenities')}
                     className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                   />
-                  {amenity.replace('_', ' ')}
+                  {amenityLabels[amenity] || amenity}
                 </label>
               ))}
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Notes</label>
+            <label className="block text-sm font-medium text-gray-700">Ghi chú</label>
             <textarea
               {...register('notes')}
               rows={2}
@@ -222,14 +231,14 @@ export default function UnitFormModal({ propertyId, unit, onClose }: UnitFormMod
               onClick={onClose}
               className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
             >
-              Cancel
+              Hủy
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
               className="inline-flex items-center rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700 disabled:opacity-50"
             >
-              {isSubmitting ? 'Saving...' : isEdit ? 'Update Unit' : 'Create Unit'}
+              {isSubmitting ? 'Đang lưu...' : isEdit ? 'Cập nhật' : 'Tạo mới'}
             </button>
           </div>
         </form>

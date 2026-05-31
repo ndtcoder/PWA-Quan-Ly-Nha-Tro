@@ -7,7 +7,7 @@ import { updateOrganization } from '../../api/organizations';
 import { useAuthStore } from '../../stores/authStore';
 
 const orgSetupSchema = z.object({
-  name: z.string().min(1, 'Organization name is required'),
+  name: z.string().min(1, 'Vui lòng nhập tên hệ thống nhà trọ'),
 });
 
 type OrgSetupFormData = z.infer<typeof orgSetupSchema>;
@@ -38,7 +38,7 @@ export default function OrganizationSetupPage() {
     } catch (err: unknown) {
       const error = err as { response?: { data?: { detail?: string } } };
       setServerError(
-        error?.response?.data?.detail || 'Failed to update organization. Please try again.'
+        error?.response?.data?.detail || 'Cập nhật thất bại. Vui lòng thử lại.'
       );
     } finally {
       setIsLoading(false);
@@ -53,10 +53,10 @@ export default function OrganizationSetupPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8">
         <h1 className="text-2xl font-bold text-center text-gray-900 mb-2">
-          Dat ten to chuc
+          Đặt tên hệ thống nhà trọ
         </h1>
         <p className="text-center text-gray-600 text-sm mb-6">
-          Day la ten hien thi cho he thong quan ly nha tro cua ban
+          Đây là tên hiển thị cho hệ thống quản lý lưu trú của bạn. Bạn có thể thay đổi sau trong phần Cài đặt.
         </p>
 
         {serverError && (
@@ -71,14 +71,14 @@ export default function OrganizationSetupPage() {
               htmlFor="org_name"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              Ten to chuc
+              Tên hệ thống nhà trọ
             </label>
             <input
               id="org_name"
               type="text"
               {...register('name')}
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-              placeholder="VD: Nha tro Binh Minh"
+              placeholder="VD: Nhà trọ Minh Tâm"
             />
             {errors.name && (
               <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
@@ -112,7 +112,7 @@ export default function OrganizationSetupPage() {
                 />
               </svg>
             ) : (
-              'Tiep tuc'
+              'Tiếp tục'
             )}
           </button>
         </form>
@@ -122,7 +122,7 @@ export default function OrganizationSetupPage() {
           onClick={handleSkip}
           className="w-full mt-3 py-2 px-4 text-gray-500 hover:text-gray-700 text-sm font-medium text-center"
         >
-          Bo qua, dung ten mac dinh
+          Bỏ qua, dùng tên mặc định
         </button>
       </div>
     </div>

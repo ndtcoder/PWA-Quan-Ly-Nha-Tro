@@ -40,3 +40,12 @@ export async function getExpiringSoonContracts(): Promise<Contract[]> {
   const response = await apiClient.get('/api/v1/contracts/expiring-soon');
   return response.data;
 }
+
+export async function uploadContractScan(contractId: string, file: File): Promise<{ scan_pdf_url: string }> {
+  const formData = new FormData();
+  formData.append('file', file);
+  const response = await apiClient.post(`/api/v1/contracts/${contractId}/upload-scan`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return response.data;
+}

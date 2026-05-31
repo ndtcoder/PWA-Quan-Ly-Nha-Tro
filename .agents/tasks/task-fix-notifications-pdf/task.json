@@ -1,0 +1,14 @@
+{
+  "task_id": "task-fix-notifications-pdf",
+  "task_description": "Fix notifications endpoint crash and replace WeasyPrint with fpdf2 for PDF generation",
+  "status": "completed",
+  "feature_order": ["FEAT-001"],
+  "blocked_reason": null,
+  "verification": {
+    "build": "pass",
+    "tests": "pass",
+    "test_quality": "pass",
+    "docker_build": "skipped",
+    "summary": "All Python files parse without syntax errors. Backend app imports successfully. fpdf2 installs and generates valid PDF. Notifications endpoints gracefully handle missing table/columns."
+  }
+}

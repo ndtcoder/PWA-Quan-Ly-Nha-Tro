@@ -1,59 +1,60 @@
-from functools import wraps
+"""Authentication dependencies for FastAPI.
+
+Uses Supabase auth.get_user() to verify JWT tokens instead of local decode.
+This ensures compatibility with any signing algorithm Supabase uses
+(HS256, HS384, EdDSA, etc.) without needing to handle secrets ourselves.
+"""
+import logging
 from typing import Any
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from jose import JWTError, jwt
 
-from app.config import settings
 from app.database import get_supabase
 
+logger = logging.getLogger("app")
 security = HTTPBearer()
 
 
 async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
 ) -> dict[str, Any]:
-    """Decode JWT token and return the current user information.
+    """Verify JWT token via Supabase and return user info with role from profiles table.
     
-    Reads role and organization_id from the profiles table since
-    Supabase JWT user_metadata doesn't contain these by default.
+    Instead of decoding the JWT locally (which breaks with different algorithms
+    like HS384, EdDSA, etc.), we call Supabase auth.get_user(token) which
+    handles all verification server-side.
     """
     token = credentials.credentials
+
     try:
-        payload = jwt.decode(
-            token,
-            settings.JWT_SECRET,
-            algorithms=["HS256"],
-            options={"verify_aud": False},
-        )
-    except JWTError:
+        supabase = get_supabase()
+        user_response = supabase.auth.get_user(token)
+        user = user_response.user
+
+        if not user:
+            raise ValueError("No user returned")
+
+    except Exception as e:
+        logger.error(f"Token verification failed: {type(e).__name__}: {e}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid or expired token",
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    user_id = payload.get("sub")
-    email = payload.get("email")
-
-    if not user_id:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token payload",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+    user_id = str(user.id)
+    email = user.email or ""
 
     # Look up profile from database to get role and organization_id
-    supabase = get_supabase()
     profile_response = (
         supabase.table("profiles")
         .select("role, organization_id, full_name")
         .eq("id", user_id)
-        .maybeSingle()
+        .maybe_single()
         .execute()
     )
-    profile = profile_response.data
+    profile = profile_response.data if profile_response else None
 
     role = profile["role"] if profile else "renter"
     organization_id = profile["organization_id"] if profile else None

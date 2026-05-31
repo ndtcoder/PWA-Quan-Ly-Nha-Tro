@@ -11,6 +11,14 @@ const recurrenceBadgeColors: Record<string, string> = {
   quarterly: 'bg-orange-100 text-orange-700',
 };
 
+const recurrenceLabels: Record<string, string> = {
+  once: 'Một lần',
+  daily: 'Hàng ngày',
+  weekly: 'Hàng tuần',
+  monthly: 'Hàng tháng',
+  quarterly: 'Hàng quý',
+};
+
 export default function TaskTemplateListPage() {
   const [activeFilter, setActiveFilter] = useState<boolean | undefined>(true);
   const queryClient = useQueryClient();
@@ -30,12 +38,12 @@ export default function TaskTemplateListPage() {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Task Templates</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Mẫu công việc</h1>
         <Link
           to="/tasks/templates/new"
           className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
         >
-          + Create Template
+          + Tạo mẫu
         </Link>
       </div>
 
@@ -48,7 +56,7 @@ export default function TaskTemplateListPage() {
               : 'bg-white text-gray-700 border-gray-300'
           }`}
         >
-          Active
+          Đang hoạt động
         </button>
         <button
           onClick={() => setActiveFilter(false)}
@@ -58,7 +66,7 @@ export default function TaskTemplateListPage() {
               : 'bg-white text-gray-700 border-gray-300'
           }`}
         >
-          Inactive
+          Ngừng hoạt động
         </button>
         <button
           onClick={() => setActiveFilter(undefined)}
@@ -68,25 +76,25 @@ export default function TaskTemplateListPage() {
               : 'bg-white text-gray-700 border-gray-300'
           }`}
         >
-          All
+          Tất cả
         </button>
       </div>
 
       {isLoading ? (
-        <div className="text-center py-8 text-gray-500">Loading...</div>
+        <div className="text-center py-8 text-gray-500">Đang tải...</div>
       ) : templates.length === 0 ? (
-        <div className="text-center py-8 text-gray-500">No templates found.</div>
+        <div className="text-center py-8 text-gray-500">Chưa có mẫu nào.</div>
       ) : (
         <div className="bg-white shadow rounded-lg overflow-hidden">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Recurrence</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Property</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Assigned To</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tiêu đề</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Loại</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tần suất</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nhà</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Người phụ trách</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thao tác</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -99,8 +107,8 @@ export default function TaskTemplateListPage() {
                     {template.task_type}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${recurrenceBadgeColors[template.recurrence_type] || recurrenceBadgeColors.once}`}>
-                      {template.recurrence_type}
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${recurrenceBadgeColors[template.recurrence_type] || recurrenceBadgeColors.once}`}>
+                      {recurrenceLabels[template.recurrence_type] || template.recurrence_type}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -114,14 +122,14 @@ export default function TaskTemplateListPage() {
                       to={`/tasks/templates/${template.id}/edit`}
                       className="text-blue-600 hover:text-blue-800"
                     >
-                      Edit
+                      Sửa
                     </Link>
                     {template.is_active && (
                       <button
                         onClick={() => deleteMutation.mutate(template.id)}
                         className="text-red-600 hover:text-red-800"
                       >
-                        Deactivate
+                        Vô hiệu hóa
                       </button>
                     )}
                   </td>

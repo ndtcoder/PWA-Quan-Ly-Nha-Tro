@@ -7,13 +7,13 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createProperty, getProperty, updateProperty } from '../../api/properties';
 
 const propertySchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  address: z.string().min(1, 'Address is required'),
+  name: z.string().min(1, 'Tên là bắt buộc'),
+  address: z.string().min(1, 'Địa chỉ là bắt buộc'),
   ward: z.string().optional(),
   district: z.string().optional(),
   city: z.string().optional(),
   property_type: z.enum(['house', 'apartment_building', 'villa'], {
-    required_error: 'Property type is required',
+    required_error: 'Loại nhà là bắt buộc',
   }),
   description: z.string().optional(),
 });
@@ -91,12 +91,12 @@ export default function PropertyFormPage() {
   return (
     <div className="max-w-2xl">
       <h1 className="text-2xl font-bold text-gray-900 mb-6">
-        {isEdit ? 'Edit Property' : 'Add Property'}
+        {isEdit ? 'Sửa nhà cho thuê' : 'Thêm nhà cho thuê'}
       </h1>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Name *</label>
+          <label className="block text-sm font-medium text-gray-700">Tên *</label>
           <input
             type="text"
             {...register('name')}
@@ -108,7 +108,7 @@ export default function PropertyFormPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Address *</label>
+          <label className="block text-sm font-medium text-gray-700">Địa chỉ *</label>
           <input
             type="text"
             {...register('address')}
@@ -121,7 +121,7 @@ export default function PropertyFormPage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Ward</label>
+            <label className="block text-sm font-medium text-gray-700">Phường/Xã</label>
             <input
               type="text"
               {...register('ward')}
@@ -129,7 +129,7 @@ export default function PropertyFormPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">District</label>
+            <label className="block text-sm font-medium text-gray-700">Quận/Huyện</label>
             <input
               type="text"
               {...register('district')}
@@ -137,7 +137,7 @@ export default function PropertyFormPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">City</label>
+            <label className="block text-sm font-medium text-gray-700">Thành phố</label>
             <input
               type="text"
               {...register('city')}
@@ -147,15 +147,15 @@ export default function PropertyFormPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Property Type *</label>
+          <label className="block text-sm font-medium text-gray-700">Loại nhà *</label>
           <select
             {...register('property_type')}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
           >
-            <option value="">Select type...</option>
-            <option value="house">House</option>
-            <option value="apartment_building">Apartment Building</option>
-            <option value="villa">Villa</option>
+            <option value="">Chọn loại...</option>
+            <option value="house">Nhà</option>
+            <option value="apartment_building">Chung cư</option>
+            <option value="villa">Biệt thự</option>
           </select>
           {errors.property_type && (
             <p className="mt-1 text-sm text-red-600">{errors.property_type.message}</p>
@@ -163,7 +163,7 @@ export default function PropertyFormPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Description</label>
+          <label className="block text-sm font-medium text-gray-700">Mô tả</label>
           <textarea
             {...register('description')}
             rows={3}
@@ -177,14 +177,14 @@ export default function PropertyFormPage() {
             disabled={isSubmitting}
             className="inline-flex items-center rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700 disabled:opacity-50"
           >
-            {isSubmitting ? 'Saving...' : isEdit ? 'Update Property' : 'Create Property'}
+            {isSubmitting ? 'Đang lưu...' : isEdit ? 'Cập nhật' : 'Tạo mới'}
           </button>
           <button
             type="button"
             onClick={() => navigate(-1)}
             className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
           >
-            Cancel
+            Hủy
           </button>
         </div>
       </form>

@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { getMyOrganization, updateOrganization } from '../../api/organizations';
 
 const orgSettingsSchema = z.object({
-  name: z.string().min(1, 'Organization name is required'),
+  name: z.string().min(1, 'Vui lòng nhập tên hệ thống nhà trọ'),
 });
 
 type OrgSettingsFormData = z.infer<typeof orgSettingsSchema>;
@@ -31,7 +31,7 @@ export default function OrganizationSettingsPage() {
         const response = await getMyOrganization();
         reset({ name: response.data.name });
       } catch {
-        setServerError('Failed to load organization details.');
+        setServerError('Không thể tải thông tin hệ thống.');
       } finally {
         setIsFetching(false);
       }
@@ -45,11 +45,11 @@ export default function OrganizationSettingsPage() {
     setIsLoading(true);
     try {
       await updateOrganization({ name: data.name });
-      setSuccessMessage('Luu thay doi thanh cong!');
+      setSuccessMessage('Đã cập nhật thành công');
     } catch (err: unknown) {
       const error = err as { response?: { data?: { detail?: string } } };
       setServerError(
-        error?.response?.data?.detail || 'Failed to update organization. Please try again.'
+        error?.response?.data?.detail || 'Cập nhật thất bại. Vui lòng thử lại.'
       );
     } finally {
       setIsLoading(false);
@@ -69,7 +69,7 @@ export default function OrganizationSettingsPage() {
 
   return (
     <div className="p-6 max-w-2xl">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Cai dat to chuc</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">Cài đặt hệ thống</h1>
 
       {serverError && (
         <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-md text-sm">
@@ -89,14 +89,14 @@ export default function OrganizationSettingsPage() {
             htmlFor="org_name"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            Ten to chuc
+            Tên hệ thống nhà trọ
           </label>
           <input
             id="org_name"
             type="text"
             {...register('name')}
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-            placeholder="VD: Nha tro Binh Minh"
+            placeholder="VD: Nhà trọ Minh Tâm"
           />
           {errors.name && (
             <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
@@ -130,7 +130,7 @@ export default function OrganizationSettingsPage() {
               />
             </svg>
           ) : (
-            'Luu thay doi'
+            'Lưu thay đổi'
           )}
         </button>
       </form>

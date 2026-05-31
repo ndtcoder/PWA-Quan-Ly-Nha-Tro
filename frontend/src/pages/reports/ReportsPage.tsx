@@ -9,16 +9,16 @@ export default function ReportsPage() {
   const [activeTab, setActiveTab] = useState<TabKey>('finance');
 
   const tabs: { key: TabKey; label: string }[] = [
-    { key: 'finance', label: 'Finance' },
-    { key: 'staff', label: 'Staff' },
-    { key: 'property', label: 'Property KPIs' },
+    { key: 'finance', label: 'Tài chính' },
+    { key: 'staff', label: 'Nhân viên' },
+    { key: 'property', label: 'KPI Nhà' },
   ];
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Reports & Analytics</h1>
-        <p className="text-gray-600 mt-1">Insights and performance metrics</p>
+        <h1 className="text-2xl font-bold text-gray-900">Báo cáo & Phân tích</h1>
+        <p className="text-gray-600 mt-1">Thông tin chi tiết và chỉ số hiệu suất</p>
       </div>
 
       {/* Tab buttons */}

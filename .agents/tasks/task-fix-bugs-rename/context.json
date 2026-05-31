@@ -1,0 +1,29 @@
+{
+  "project_type": "Full-stack PWA - FastAPI backend + React/TypeScript frontend with Supabase BaaS",
+  "language": "Python (backend), TypeScript (frontend)",
+  "build_system": "pip + npm, Vite for frontend builds",
+  "test_framework": "No test framework configured (no test scripts in package.json, no pytest config)",
+  "build_command": "cd frontend && npm run build",
+  "test_command": "cd frontend && npx tsc --noEmit",
+  "verification_instructions": "1. Run TypeScript type-check: cd frontend && npx tsc --noEmit. 2. Run frontend build: cd frontend && npm run build. 3. Verify Python syntax: cd backend && python -m py_compile app/main.py",
+  "snapshot_or_generated_files": null,
+  "setup_instructions": "1. cd frontend && npm install. 2. cd backend && pip install -r requirements.txt",
+  "environment_constraints": "OPEN_INTERNET - full network access. Node 22, Python 3.11 available. No Supabase instance for runtime testing.",
+  "contribution_requirements": "No CONTRIBUTING.md found. Follow existing code patterns.",
+  "key_patterns": "Frontend uses @tanstack/react-query with useQuery for data fetching (see PropertyListPage.tsx pattern). Backend uses FastAPI routers + service layer pattern. Supabase client via get_supabase(). Migration SQL files in backend/migrations/. The invitations table (003_invitations.sql) has columns: id, token, email, role, organization_id, property_id, expires_at, accepted_at, created_at - NO invited_by or status column.",
+  "relevant_files": [
+    "frontend/public/manifest.json",
+    "frontend/index.html",
+    "frontend/public/offline.html",
+    "frontend/src/pages/DashboardPage.tsx",
+    "frontend/src/pages/properties/PropertyListPage.tsx",
+    "frontend/src/api/properties.ts",
+    "frontend/src/api/contracts.ts",
+    "backend/app/services/auth_service.py",
+    "backend/app/routers/staff.py",
+    "backend/app/services/renter_service.py",
+    "backend/app/services/contract_service.py",
+    "backend/migrations/003_invitations.sql"
+  ],
+  "directory_structure": "frontend/src/pages/ (page components), frontend/src/api/ (API client functions), frontend/src/types/ (TypeScript interfaces), frontend/src/stores/ (Zustand stores), backend/app/routers/ (FastAPI route handlers), backend/app/services/ (business logic), backend/migrations/ (SQL schema)"
+}

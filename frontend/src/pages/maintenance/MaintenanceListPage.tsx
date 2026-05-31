@@ -64,11 +64,11 @@ function MaintenanceListPage() {
       closed: 'bg-purple-100 text-purple-800',
     };
     const labels: Record<string, string> = {
-      open: 'Open',
-      assigned: 'Assigned',
-      in_progress: 'In Progress',
-      resolved: 'Resolved',
-      closed: 'Closed',
+      open: 'Mở',
+      assigned: 'Đã phân công',
+      in_progress: 'Đang thực hiện',
+      resolved: 'Đã giải quyết',
+      closed: 'Đóng',
     };
     return (
       <span
@@ -95,12 +95,12 @@ function MaintenanceListPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Maintenance</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Bảo trì</h1>
         <Link
           to="/maintenance/new"
           className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
         >
-          + New Request
+          + Yêu cầu mới
         </Link>
       </div>
 
@@ -118,51 +118,51 @@ function MaintenanceListPage() {
       <div className="bg-white rounded-lg shadow p-4 mb-6 flex flex-wrap gap-4 items-end">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Status
+            Trạng thái
           </label>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             className="border border-gray-300 rounded-md px-3 py-2 text-sm"
           >
-            <option value="">All</option>
-            <option value="open">Open</option>
-            <option value="assigned">Assigned</option>
-            <option value="in_progress">In Progress</option>
-            <option value="resolved">Resolved</option>
+            <option value="">Tất cả</option>
+            <option value="open">Mở</option>
+            <option value="assigned">Đã phân công</option>
+            <option value="in_progress">Đang thực hiện</option>
+            <option value="resolved">Đã giải quyết</option>
           </select>
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Category
+            Danh mục
           </label>
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
             className="border border-gray-300 rounded-md px-3 py-2 text-sm"
           >
-            <option value="">All</option>
-            <option value="electrical">Electrical</option>
-            <option value="plumbing">Plumbing</option>
-            <option value="furniture">Furniture</option>
-            <option value="structure">Structure</option>
-            <option value="other">Other</option>
+            <option value="">Tất cả</option>
+            <option value="electrical">Điện</option>
+            <option value="plumbing">Nước</option>
+            <option value="furniture">Nội thất</option>
+            <option value="structure">Kết cấu</option>
+            <option value="other">Khác</option>
           </select>
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Priority
+            Mức ưu tiên
           </label>
           <select
             value={priorityFilter}
             onChange={(e) => setPriorityFilter(e.target.value)}
             className="border border-gray-300 rounded-md px-3 py-2 text-sm"
           >
-            <option value="">All</option>
-            <option value="low">Low</option>
-            <option value="normal">Normal</option>
-            <option value="high">High</option>
-            <option value="urgent">Urgent</option>
+            <option value="">Tất cả</option>
+            <option value="low">Thấp</option>
+            <option value="normal">Bình thường</option>
+            <option value="high">Cao</option>
+            <option value="urgent">Khẩn cấp</option>
           </select>
         </div>
       </div>
@@ -170,10 +170,10 @@ function MaintenanceListPage() {
       {/* Table */}
       <div className="bg-white rounded-lg shadow overflow-hidden">
         {loading ? (
-          <div className="p-8 text-center text-gray-500">Loading...</div>
+          <div className="p-8 text-center text-gray-500">Đang tải...</div>
         ) : requests.length === 0 ? (
           <div className="p-8 text-center text-gray-500">
-            No maintenance requests found.
+            Chưa có yêu cầu bảo trì nào.
           </div>
         ) : (
           <div className="overflow-x-auto">

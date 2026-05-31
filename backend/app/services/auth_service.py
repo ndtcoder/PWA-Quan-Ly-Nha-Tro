@@ -155,7 +155,6 @@ def invite_user(data: InviteUserRequest, current_user: dict) -> dict:
         "role": data.role,
         "token": token,
         "organization_id": current_user["organization_id"],
-        "invited_by": current_user["user_id"],
         "property_id": str(data.property_id) if data.property_id else None,
         "expires_at": expires_at,
     }
@@ -301,10 +300,10 @@ def google_auth(data: GoogleAuthRequest) -> dict:
         supabase.table("profiles")
         .select("*")
         .eq("id", user_id)
-        .maybeSingle()
+        .maybe_single()
         .execute()
     )
-    profile = profile_response.data
+    profile = profile_response.data if profile_response else None
 
     if profile:
         # Existing user - return profile

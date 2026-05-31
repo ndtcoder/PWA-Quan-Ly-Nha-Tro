@@ -4,10 +4,9 @@ supabase
 python-dotenv
 pydantic-settings
 slowapi
-python-jose[cryptography]
 python-slugify
 jinja2
-weasyprint
+fpdf2
 python-multipart
 qrcode[pil]
 Pillow

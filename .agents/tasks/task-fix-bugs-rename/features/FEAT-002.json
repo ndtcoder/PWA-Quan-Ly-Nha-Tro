@@ -1,0 +1,25 @@
+{
+  "id": "FEAT-002",
+  "type": "fix",
+  "description": "Address review findings: add dashboard error state, move get_public_url inside try/except in renter_service.py, and wire up pending tasks card.",
+  "status": "completed",
+  "steps": [
+    "1. In DashboardPage.tsx, destructure isError from both useQuery hooks and display an error message when queries fail.",
+    "2. In renter_service.py, move the get_public_url call inside the existing try/except block to match the contract_service.py pattern.",
+    "3. In DashboardPage.tsx, add a useQuery for tasks (using getTasks with status 'pending') and wire it to the fourth card."
+  ],
+  "acceptance_criteria": [
+    "DashboardPage.tsx shows error message 'Khong the tai du lieu' when queries fail",
+    "renter_service.py has get_public_url inside the try/except block",
+    "Pending tasks card shows live data from tasks API",
+    "Frontend builds successfully (tsc --noEmit passes)",
+    "Backend Python file has no syntax errors"
+  ],
+  "verification": [
+    "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/frontend && npx tsc --noEmit",
+    "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/frontend && npm run build",
+    "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/backend && python3 -c \"import ast; ast.parse(open('app/services/renter_service.py').read()); print('OK')\""
+  ],
+  "blocked_reason": null,
+  "findings": "All three review issues addressed. Tasks API already existed at frontend/src/api/tasks.ts with getTasks function accepting status param. TypeScript type-check, build, and Python syntax validation all pass."
+}

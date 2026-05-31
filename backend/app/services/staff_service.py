@@ -61,6 +61,7 @@ def list_staff(
             "phone": profile.get("phone"),
             "is_active": profile.get("is_active", True),
             "assigned_properties": assigned_properties,
+            "notes": profile.get("notes"),
             "created_at": profile.get("created_at"),
         })
 

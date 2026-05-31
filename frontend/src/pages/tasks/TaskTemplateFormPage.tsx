@@ -7,6 +7,14 @@ import type { TaskTemplateCreate } from '../../types/task';
 
 type RecurrenceType = 'once' | 'daily' | 'weekly' | 'monthly' | 'quarterly';
 
+const recurrenceLabels: Record<string, string> = {
+  once: 'Một lần',
+  daily: 'Hàng ngày',
+  weekly: 'Hàng tuần',
+  monthly: 'Hàng tháng',
+  quarterly: 'Hàng quý',
+};
+
 export default function TaskTemplateFormPage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -23,7 +31,6 @@ export default function TaskTemplateFormPage() {
     recurrence_start_date: new Date().toISOString().split('T')[0],
   });
 
-  // Load template data for edit mode
   const { data: template } = useQuery({
     queryKey: ['task-template', id],
     queryFn: () => getTaskTemplate(id!),
@@ -73,7 +80,6 @@ export default function TaskTemplateFormPage() {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
-  // Calculate preview of next occurrences (simple client-side approximation)
   const getNextOccurrencesPreview = (): string[] => {
     if (form.recurrence_type === 'once') {
       return form.recurrence_start_date ? [form.recurrence_start_date] : [];
@@ -89,7 +95,7 @@ export default function TaskTemplateFormPage() {
 
     while (dates.length < 5 && iterations < 400) {
       let shouldInclude = false;
-      const dayOfWeek = (current.getDay() + 6) % 7; // Convert to Monday=0
+      const dayOfWeek = (current.getDay() + 6) % 7;
 
       if (form.recurrence_type === 'daily') {
         shouldInclude = true;
@@ -120,12 +126,12 @@ export default function TaskTemplateFormPage() {
   return (
     <div className="max-w-2xl mx-auto">
       <h1 className="text-2xl font-bold text-gray-900 mb-6">
-        {isEdit ? 'Edit Task Template' : 'Create Task Template'}
+        {isEdit ? 'Sửa mẫu công việc' : 'Tạo mẫu công việc'}
       </h1>
 
       <form onSubmit={handleSubmit} className="space-y-6 bg-white shadow rounded-lg p-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Tiêu đề</label>
           <input
             type="text"
             required
@@ -136,7 +142,7 @@ export default function TaskTemplateFormPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Mô tả</label>
           <textarea
             value={form.description || ''}
             onChange={(e) => updateField('description', e.target.value)}
@@ -147,70 +153,70 @@ export default function TaskTemplateFormPage() {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Task Type</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Loại công việc</label>
             <select
               value={form.task_type}
               onChange={(e) => updateField('task_type', e.target.value)}
               className="w-full border border-gray-300 rounded-lg px-3 py-2"
             >
-              <option value="maintenance">Maintenance</option>
-              <option value="cleaning">Cleaning</option>
-              <option value="inspection">Inspection</option>
+              <option value="maintenance">Bảo trì</option>
+              <option value="cleaning">Vệ sinh</option>
+              <option value="inspection">Kiểm tra</option>
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Mức ưu tiên</label>
             <select
               value={form.priority || 'normal'}
               onChange={(e) => updateField('priority', e.target.value)}
               className="w-full border border-gray-300 rounded-lg px-3 py-2"
             >
-              <option value="low">Low</option>
-              <option value="normal">Normal</option>
-              <option value="high">High</option>
-              <option value="urgent">Urgent</option>
+              <option value="low">Thấp</option>
+              <option value="normal">Bình thường</option>
+              <option value="high">Cao</option>
+              <option value="urgent">Khẩn cấp</option>
             </select>
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Property ID</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Mã nhà (Property ID)</label>
           <input
             type="text"
             required
             value={form.property_id}
             onChange={(e) => updateField('property_id', e.target.value)}
-            placeholder="Property UUID"
+            placeholder="UUID nhà cho thuê"
             className="w-full border border-gray-300 rounded-lg px-3 py-2"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Unit ID (optional)</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Mã phòng (tùy chọn)</label>
           <input
             type="text"
             value={form.unit_id || ''}
             onChange={(e) => updateField('unit_id', e.target.value || undefined)}
-            placeholder="Unit UUID (optional)"
+            placeholder="UUID phòng (tùy chọn)"
             className="w-full border border-gray-300 rounded-lg px-3 py-2"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Assigned To (Staff ID)</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Người phụ trách (Staff ID)</label>
           <input
             type="text"
             required
             value={form.assigned_to}
             onChange={(e) => updateField('assigned_to', e.target.value)}
-            placeholder="Staff UUID"
+            placeholder="UUID nhân viên"
             className="w-full border border-gray-300 rounded-lg px-3 py-2"
           />
         </div>
 
-        {/* Recurrence Type Radio Group */}
+        {/* Loại tần suất */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Recurrence Type</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Tần suất lặp lại</label>
           <div className="flex flex-wrap gap-3">
             {(['once', 'daily', 'weekly', 'monthly', 'quarterly'] as RecurrenceType[]).map((type) => (
               <label key={type} className="flex items-center gap-1.5 cursor-pointer">
@@ -222,13 +228,12 @@ export default function TaskTemplateFormPage() {
                   onChange={(e) => updateField('recurrence_type', e.target.value)}
                   className="text-blue-600"
                 />
-                <span className="text-sm capitalize">{type}</span>
+                <span className="text-sm">{recurrenceLabels[type]}</span>
               </label>
             ))}
           </div>
         </div>
 
-        {/* Dynamic recurrence fields */}
         <RecurrenceFormFields
           recurrenceType={form.recurrence_type}
           dayOfWeek={form.recurrence_day_of_week}
@@ -241,7 +246,7 @@ export default function TaskTemplateFormPage() {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Ngày bắt đầu</label>
             <input
               type="date"
               required
@@ -251,7 +256,7 @@ export default function TaskTemplateFormPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">End Date (optional)</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Ngày kết thúc (tùy chọn)</label>
             <input
               type="date"
               value={form.recurrence_end_date || ''}
@@ -261,16 +266,16 @@ export default function TaskTemplateFormPage() {
           </div>
         </div>
 
-        {/* Preview next occurrences */}
+        {/* Xem trước lần thực hiện tiếp theo */}
         {previewDates.length > 0 && (
           <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
             <h4 className="text-sm font-medium text-gray-700 mb-2">
-              Next {previewDates.length} occurrence{previewDates.length > 1 ? 's' : ''}:
+              {previewDates.length} lần thực hiện tiếp theo:
             </h4>
             <ul className="space-y-1">
               {previewDates.map((d, i) => (
                 <li key={i} className="text-sm text-gray-600">
-                  {new Date(d + 'T00:00:00').toLocaleDateString(undefined, {
+                  {new Date(d + 'T00:00:00').toLocaleDateString('vi-VN', {
                     weekday: 'short',
                     year: 'numeric',
                     month: 'short',
@@ -288,7 +293,7 @@ export default function TaskTemplateFormPage() {
             onClick={() => navigate('/tasks/templates')}
             className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
           >
-            Cancel
+            Hủy
           </button>
           <button
             type="submit"
@@ -296,10 +301,10 @@ export default function TaskTemplateFormPage() {
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
           >
             {createMutation.isPending || updateMutation.isPending
-              ? 'Saving...'
+              ? 'Đang lưu...'
               : isEdit
-              ? 'Update Template'
-              : 'Create Template'}
+              ? 'Cập nhật'
+              : 'Tạo mới'}
           </button>
         </div>
       </form>

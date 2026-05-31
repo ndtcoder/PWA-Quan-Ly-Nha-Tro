@@ -79,12 +79,12 @@ export default function NotificationDropdown({ onClose }: Props) {
     >
       {/* Header */}
       <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-gray-900">Notifications</h3>
+        <h3 className="text-sm font-semibold text-gray-900">Thông báo</h3>
         <button
           onClick={() => markAllReadMutation.mutate()}
           className="text-xs text-blue-600 hover:text-blue-800"
         >
-          Mark all as read
+          Đánh dấu tất cả đã đọc
         </button>
       </div>
 
@@ -92,7 +92,7 @@ export default function NotificationDropdown({ onClose }: Props) {
       <div className="max-h-96 overflow-y-auto">
         {recentNotifications.length === 0 ? (
           <div className="px-4 py-8 text-center text-gray-500 text-sm">
-            No notifications yet
+            Chưa có thông báo
           </div>
         ) : (
           recentNotifications.map((notification) => (
@@ -141,7 +141,7 @@ export default function NotificationDropdown({ onClose }: Props) {
           }}
           className="w-full text-center text-sm text-blue-600 hover:text-blue-800 py-1"
         >
-          View all notifications
+          Xem tất cả thông báo
         </button>
       </div>
     </div>

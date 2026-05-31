@@ -17,6 +17,7 @@ class RenterCreate(BaseModel):
     workplace: Optional[str] = None
     emergency_contact_name: Optional[str] = None
     emergency_contact_phone: Optional[str] = None
+    notes: Optional[str] = None
 
 
 class RenterUpdate(BaseModel):
@@ -33,6 +34,7 @@ class RenterUpdate(BaseModel):
     workplace: Optional[str] = None
     emergency_contact_name: Optional[str] = None
     emergency_contact_phone: Optional[str] = None
+    notes: Optional[str] = None
 
 
 class RenterResponse(BaseModel):
@@ -59,4 +61,5 @@ class RenterDetailResponse(RenterResponse):
     emergency_contact_phone: Optional[str] = None
     id_photo_front_url: Optional[str] = None
     id_photo_back_url: Optional[str] = None
+    notes: Optional[str] = None
     contracts_history: list = []

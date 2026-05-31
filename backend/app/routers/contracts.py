@@ -1,6 +1,6 @@
 from typing import Optional
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, UploadFile, File, HTTPException
 
 from app.dependencies import get_current_user, require_roles
 from app.models.contract import (
@@ -115,4 +115,24 @@ async def export_pdf(
     return contract_service.export_pdf(
         contract_id=contract_id,
         org_id=current_user["organization_id"],
+    )
+
+
+@router.post("/{contract_id}/upload-scan")
+async def upload_scan(
+    contract_id: str,
+    file: UploadFile = File(...),
+    current_user: dict = Depends(require_roles(["owner", "manager"])),
+):
+    """Upload a scanned PDF of the contract."""
+    if file.content_type != "application/pdf":
+        raise HTTPException(
+            status_code=400,
+            detail="Chỉ chấp nhận file PDF. Vui lòng tải lên file có định dạng PDF.",
+        )
+    file_bytes = await file.read()
+    return contract_service.upload_scan_pdf(
+        contract_id=contract_id,
+        org_id=current_user["organization_id"],
+        file_bytes=file_bytes,
     )

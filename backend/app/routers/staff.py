@@ -1,3 +1,5 @@
+import uuid
+from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 from fastapi import APIRouter, Depends, Query
@@ -29,28 +31,21 @@ async def invite_staff(
     current_user: dict = Depends(require_roles(["owner", "manager"])),
 ):
     """Invite a new staff member via email."""
-    # Reuse the auth invite flow concept
     from app.database import get_supabase
     supabase = get_supabase()
 
     # Create an invitation record
     invitation_data = {
+        "id": str(uuid.uuid4()),
+        "token": str(uuid.uuid4()),
         "email": data.email,
         "role": data.role,
         "organization_id": current_user["organization_id"],
-        "invited_by": current_user["user_id"],
-        "status": "pending",
+        "property_id": str(data.property_id) if data.property_id else None,
+        "expires_at": (datetime.now(timezone.utc) + timedelta(hours=48)).isoformat(),
     }
 
-    response = supabase.table("invitations").insert(invitation_data).execute()
-
-    # If property_id is provided, we store it for later assignment
-    if data.property_id and response.data:
-        invitation_id = response.data[0]["id"]
-        supabase.table("invitation_properties").insert({
-            "invitation_id": invitation_id,
-            "property_id": data.property_id,
-        }).execute()
+    supabase.table("invitations").insert(invitation_data).execute()
 
     return {"message": f"Invitation sent to {data.email}"}
 

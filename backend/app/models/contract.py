@@ -42,6 +42,7 @@ class ContractResponse(BaseModel):
     deposit_amount: float
     created_at: Optional[str] = None
     pdf_url: Optional[str] = None
+    scan_pdf_url: Optional[str] = None
 
 
 class ContractDetailResponse(ContractResponse):

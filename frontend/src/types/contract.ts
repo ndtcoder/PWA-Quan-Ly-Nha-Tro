@@ -13,6 +13,7 @@ export interface Contract {
   deposit_amount: number;
   created_at: string;
   pdf_url?: string;
+  scan_pdf_url?: string;
 }
 
 export interface ContractDetail extends Contract {

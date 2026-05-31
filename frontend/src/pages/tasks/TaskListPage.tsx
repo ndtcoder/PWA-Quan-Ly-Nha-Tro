@@ -7,6 +7,20 @@ import type { Task } from '../../types/task';
 type ViewMode = 'kanban' | 'list';
 type TaskStatus = 'pending' | 'in_progress' | 'done' | 'cancelled';
 
+const statusLabels: Record<string, string> = {
+  pending: 'Chờ xử lý',
+  in_progress: 'Đang thực hiện',
+  done: 'Hoàn thành',
+  cancelled: 'Đã hủy',
+};
+
+const priorityLabels: Record<string, string> = {
+  urgent: 'Khẩn cấp',
+  high: 'Cao',
+  normal: 'Bình thường',
+  low: 'Thấp',
+};
+
 export default function TaskListPage() {
   const [viewMode, setViewMode] = useState<ViewMode>('kanban');
   const [statusFilter, setStatusFilter] = useState<string>('');
@@ -37,7 +51,7 @@ export default function TaskListPage() {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Tasks</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Công việc</h1>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setViewMode('kanban')}
@@ -57,12 +71,12 @@ export default function TaskListPage() {
                 : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
             }`}
           >
-            List
+            Danh sách
           </button>
         </div>
       </div>
 
-      {/* Filters for list view */}
+      {/* Bộ lọc cho dạng danh sách */}
       {viewMode === 'list' && (
         <div className="mb-4 flex gap-3">
           <select
@@ -70,34 +84,34 @@ export default function TaskListPage() {
             onChange={(e) => setStatusFilter(e.target.value)}
             className="border border-gray-300 rounded-lg px-3 py-2 text-sm"
           >
-            <option value="">All statuses</option>
-            <option value="pending">Pending</option>
-            <option value="in_progress">In Progress</option>
-            <option value="done">Done</option>
-            <option value="cancelled">Cancelled</option>
+            <option value="">Tất cả trạng thái</option>
+            <option value="pending">Chờ xử lý</option>
+            <option value="in_progress">Đang thực hiện</option>
+            <option value="done">Hoàn thành</option>
+            <option value="cancelled">Đã hủy</option>
           </select>
         </div>
       )}
 
       {isLoading ? (
-        <div className="text-center py-8 text-gray-500">Loading...</div>
+        <div className="text-center py-8 text-gray-500">Đang tải...</div>
       ) : viewMode === 'kanban' ? (
         <KanbanBoard tasks={tasks} onStatusChange={handleStatusChange} />
       ) : (
         <div className="space-y-3">
           {tasks.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">No tasks found.</div>
+            <div className="text-center py-8 text-gray-500">Chưa có công việc nào.</div>
           ) : (
             <div className="bg-white shadow rounded-lg overflow-hidden">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Property</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Assigned To</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Priority</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Due Date</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tiêu đề</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nhà</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Người phụ trách</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mức ưu tiên</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hạn chót</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -113,7 +127,7 @@ export default function TaskListPage() {
                         <StatusBadge status={task.status} />
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {task.due_date ? new Date(task.due_date).toLocaleDateString() : '-'}
+                        {task.due_date ? new Date(task.due_date).toLocaleDateString('vi-VN') : '-'}
                       </td>
                     </tr>
                   ))}
@@ -136,7 +150,7 @@ function PriorityBadge({ priority }: { priority: string }) {
   };
   return (
     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colors[priority] || colors.normal}`}>
-      {priority}
+      {priorityLabels[priority] || priority}
     </span>
   );
 }
@@ -150,7 +164,7 @@ function StatusBadge({ status }: { status: string }) {
   };
   return (
     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colors[status] || colors.pending}`}>
-      {status.replace('_', ' ')}
+      {statusLabels[status] || status}
     </span>
   );
 }
