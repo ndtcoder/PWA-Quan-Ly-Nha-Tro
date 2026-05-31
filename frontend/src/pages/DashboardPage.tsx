@@ -36,7 +36,7 @@ export default function DashboardPage() {
         <h1 className="text-2xl font-bold text-gray-900 mb-6">
           Tổng quan{user?.full_name ? ` - ${user.full_name}` : ''}
         </h1>
-        <p className="text-red-600">Khong the tai du lieu</p>
+        <p className="text-red-600">Không thể tải dữ liệu</p>
       </div>
     );
   }

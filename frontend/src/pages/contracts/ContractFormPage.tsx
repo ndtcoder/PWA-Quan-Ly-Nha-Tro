@@ -26,6 +26,7 @@ export default function ContractFormPage() {
     terms: '',
   });
   const [scanFile, setScanFile] = useState<File | null>(null);
+  const [activateError, setActivateError] = useState<string | null>(null);
 
   const { data: properties = [] } = useQuery({
     queryKey: ['properties'],
@@ -71,17 +72,23 @@ export default function ContractFormPage() {
   };
 
   const handleActivate = async () => {
-    const data: ContractCreate = {
-      unit_id: selectedUnitId,
-      renter_id: selectedRenterId,
-      ...contractDetails,
-    };
-    const contract = await createContract(data);
-    if (scanFile) {
-      await uploadContractScan(contract.id, scanFile);
+    setActivateError(null);
+    try {
+      const data: ContractCreate = {
+        unit_id: selectedUnitId,
+        renter_id: selectedRenterId,
+        ...contractDetails,
+      };
+      const contract = await createContract(data);
+      if (scanFile) {
+        await uploadContractScan(contract.id, scanFile);
+      }
+      await activateContract(contract.id);
+      navigate(`/contracts/${contract.id}`);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Không thể kích hoạt hợp đồng. Vui lòng thử lại.';
+      setActivateError(message);
     }
-    await activateContract(contract.id);
-    navigate(`/contracts/${contract.id}`);
   };
 
   const handleCreateRenter = () => {
@@ -400,6 +407,12 @@ export default function ContractFormPage() {
               <p className="mt-1 text-sm text-green-600">Đã chọn: {scanFile.name}</p>
             )}
           </div>
+
+          {activateError && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-sm text-red-700">{activateError}</p>
+            </div>
+          )}
           <div className="mt-6 flex justify-between">
             <button onClick={() => setStep(3)} className="text-gray-600 px-4 py-2 rounded-lg hover:bg-gray-100">
               Quay lại
