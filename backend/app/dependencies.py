@@ -21,55 +21,72 @@ async def get_current_user(
     """
     import logging
     import base64
+    import hmac
+    import hashlib
+    import json
     logger = logging.getLogger("app")
     
     token = credentials.credentials
     
-    # Supabase JWTs can use HS256 or HS384 depending on the project config.
-    # Read the actual algorithm from the token header.
-    allowed_algorithms = ["HS256", "HS384", "HS512"]
+    # Supabase JWT secrets are base64-encoded HMAC keys.
+    # python-jose with cryptography backend gets confused when passing
+    # the raw base64 string for HS384/HS512 (tries to parse as PEM).
+    # Solution: decode the JWT manually using hmac for verification,
+    # then parse the payload.
     
     try:
-        header = jwt.get_unverified_header(token)
-        token_alg = header.get("alg", "HS256")
-        logger.debug(f"JWT token algorithm: {token_alg}")
-    except Exception:
-        token_alg = None
-
-    payload = None
-    last_error = None
-    
-    # Try with the raw secret string
-    for alg_list in [[token_alg] if token_alg else allowed_algorithms, allowed_algorithms]:
+        parts = token.split(".")
+        if len(parts) != 3:
+            raise ValueError("Invalid JWT format")
+        
+        header_b64, payload_b64, signature_b64 = parts
+        
+        # Decode header to get algorithm
+        # Add padding if needed
+        header_padded = header_b64 + "=" * (4 - len(header_b64) % 4)
+        header_json = base64.urlsafe_b64decode(header_padded)
+        header_data = json.loads(header_json)
+        token_alg = header_data.get("alg", "HS256")
+        
+        # Determine hash function from algorithm
+        hash_funcs = {
+            "HS256": hashlib.sha256,
+            "HS384": hashlib.sha384,
+            "HS512": hashlib.sha512,
+        }
+        
+        if token_alg not in hash_funcs:
+            raise ValueError(f"Unsupported algorithm: {token_alg}")
+        
+        # Get the secret as bytes (base64 decode the Supabase secret)
         try:
-            payload = jwt.decode(
-                token,
-                settings.JWT_SECRET,
-                algorithms=alg_list,
-                options={"verify_aud": False},
-            )
-            break
-        except JWTError as e:
-            last_error = e
-    
-    # If raw secret failed, try base64-decoded secret
-    if payload is None:
-        try:
-            decoded_secret = base64.b64decode(settings.JWT_SECRET)
-            alg_list = [token_alg] if token_alg else allowed_algorithms
-            payload = jwt.decode(
-                token,
-                decoded_secret,
-                algorithms=alg_list,
-                options={"verify_aud": False},
-            )
-        except Exception as e:
-            logger.error(f"JWT decode failed (alg={token_alg}): {type(e).__name__}: {e}")
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid or expired token",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
+            secret_bytes = base64.b64decode(settings.JWT_SECRET)
+        except Exception:
+            secret_bytes = settings.JWT_SECRET.encode("utf-8")
+        
+        # Verify signature
+        signing_input = f"{header_b64}.{payload_b64}".encode("utf-8")
+        expected_sig = hmac.new(secret_bytes, signing_input, hash_funcs[token_alg]).digest()
+        
+        # Decode actual signature
+        sig_padded = signature_b64 + "=" * (4 - len(signature_b64) % 4)
+        actual_sig = base64.urlsafe_b64decode(sig_padded)
+        
+        if not hmac.compare_digest(expected_sig, actual_sig):
+            raise ValueError("Invalid signature")
+        
+        # Decode payload
+        payload_padded = payload_b64 + "=" * (4 - len(payload_b64) % 4)
+        payload_json = base64.urlsafe_b64decode(payload_padded)
+        payload = json.loads(payload_json)
+        
+    except Exception as e:
+        logger.error(f"JWT decode failed: {type(e).__name__}: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
 
     user_id = payload.get("sub")
     email = payload.get("email")
