@@ -2,7 +2,7 @@
   "id": "FEAT-001",
   "type": "feat",
   "description": "Add contract scan PDF upload feature (backend + frontend) and notes field for renters/staff (backend + frontend). Create migration file for both features.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "1. Create backend/migrations/004_new_features.sql with: ALTER TABLE contracts ADD COLUMN IF NOT EXISTS scan_pdf_url TEXT; ALTER TABLE renter_profiles ADD COLUMN IF NOT EXISTS notes TEXT; ALTER TABLE profiles ADD COLUMN IF NOT EXISTS notes TEXT;",
     "2. Update backend/app/models/contract.py: Add scan_pdf_url: Optional[str] = None to ContractResponse class and ContractDetailResponse will inherit it.",
@@ -53,5 +53,5 @@
     "Run: python -m py_compile /projects/sandbox/PWA-Quan-Ly-Nha-Tro/backend/app/services/staff_service.py"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "Python 3 available via python3, not python. All verification passed: py_compile for all modified backend files, npx tsc --noEmit for frontend. Used pyenv python3 for compilation."
 }
