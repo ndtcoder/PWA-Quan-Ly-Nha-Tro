@@ -11,6 +11,7 @@ class StaffResponse(BaseModel):
     phone: Optional[str] = None
     is_active: bool = True
     assigned_properties: list[str] = []
+    notes: Optional[str] = None
     created_at: Optional[str] = None
 
 

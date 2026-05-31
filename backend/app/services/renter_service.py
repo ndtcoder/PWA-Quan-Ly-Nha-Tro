@@ -104,6 +104,7 @@ def create_renter(data: RenterCreate, org_id: str) -> dict:
         "workplace": data.workplace,
         "emergency_contact_name": data.emergency_contact_name,
         "emergency_contact_phone": data.emergency_contact_phone,
+        "notes": data.notes,
         "organization_id": org_id,
     }
 
@@ -209,6 +210,7 @@ def get_renter_detail(renter_id: str, org_id: str) -> dict:
         "emergency_contact_phone": renter.get("emergency_contact_phone"),
         "id_photo_front_url": renter.get("id_photo_front_url"),
         "id_photo_back_url": renter.get("id_photo_back_url"),
+        "notes": renter.get("notes"),
         "current_unit_number": active_contract["unit_number"] if active_contract else None,
         "current_property_name": active_contract["property_name"] if active_contract else None,
         "active_contract_id": active_contract["id"] if active_contract else None,

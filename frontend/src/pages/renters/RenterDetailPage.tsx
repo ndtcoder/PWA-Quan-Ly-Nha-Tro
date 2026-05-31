@@ -246,7 +246,13 @@ export default function RenterDetailPage() {
             </div>
           )}
           {activeTab === 'notes' && (
-            <p className="text-gray-500">Tính năng ghi chú sẽ sớm ra mắt.</p>
+            <div>
+              {renter.notes ? (
+                <p className="text-gray-700 whitespace-pre-wrap">{renter.notes}</p>
+              ) : (
+                <p className="text-gray-500">Chưa có ghi chú.</p>
+              )}
+            </div>
           )}
         </div>
       </div>

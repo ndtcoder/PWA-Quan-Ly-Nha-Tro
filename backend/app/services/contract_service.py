@@ -546,6 +546,57 @@ def get_expiring_soon(org_id: str) -> list:
     return result
 
 
+def upload_scan_pdf(contract_id: str, org_id: str, file_bytes: bytes) -> dict:
+    """Upload a scanned PDF of the contract to Supabase Storage."""
+    supabase = get_supabase()
+
+    # Verify contract exists
+    existing = (
+        supabase.table("contracts")
+        .select("id")
+        .eq("id", contract_id)
+        .eq("organization_id", org_id)
+        .single()
+        .execute()
+    )
+
+    if not existing.data:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Contract not found",
+        )
+
+    # Upload to Supabase Storage
+    storage_path = f"{org_id}/scans/{contract_id}_scan.pdf"
+    try:
+        bucket = supabase.storage.from_("contracts")
+
+        try:
+            bucket.remove([storage_path])
+        except Exception:
+            pass
+
+        bucket.upload(
+            path=storage_path,
+            file=file_bytes,
+            file_options={"content-type": "application/pdf"},
+        )
+
+        scan_pdf_url = bucket.get_public_url(storage_path)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=f"Storage upload failed: {str(e)}. The 'contracts' bucket may not exist in Supabase Storage.",
+        )
+
+    # Update contract with scan_pdf_url
+    supabase.table("contracts").update(
+        {"scan_pdf_url": scan_pdf_url}
+    ).eq("id", contract_id).execute()
+
+    return {"scan_pdf_url": scan_pdf_url}
+
+
 def _enrich_contract(contract: dict, supabase) -> dict:
     """Add unit_number, property_name, renter_name to a contract."""
     unit_number = None
@@ -598,6 +649,7 @@ def _enrich_contract(contract: dict, supabase) -> dict:
         "deposit_amount": float(contract.get("deposit_amount", 0)),
         "created_at": contract.get("created_at"),
         "pdf_url": contract.get("pdf_url"),
+        "scan_pdf_url": contract.get("scan_pdf_url"),
     }
 
 

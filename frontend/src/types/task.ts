@@ -92,6 +92,7 @@ export interface StaffMember {
   phone?: string;
   is_active: boolean;
   assigned_properties: string[];
+  notes?: string;
   created_at: string;
 }
 

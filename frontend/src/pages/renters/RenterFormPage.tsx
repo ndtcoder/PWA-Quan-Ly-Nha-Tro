@@ -23,6 +23,7 @@ export default function RenterFormPage() {
     workplace: '',
     emergency_contact_name: '',
     emergency_contact_phone: '',
+    notes: '',
   });
 
   const { data: renter } = useQuery({
@@ -47,6 +48,7 @@ export default function RenterFormPage() {
         workplace: renter.workplace || '',
         emergency_contact_name: renter.emergency_contact_name || '',
         emergency_contact_phone: renter.emergency_contact_phone || '',
+        notes: renter.notes || '',
       });
     }
   }, [renter]);
@@ -241,6 +243,17 @@ export default function RenterFormPage() {
               />
             </div>
           </div>
+        </div>
+
+        {/* Ghi chú */}
+        <div>
+          <h2 className="text-lg font-semibold mb-4">Ghi chú</h2>
+          <textarea
+            value={form.notes}
+            onChange={(e) => updateField('notes', e.target.value)}
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 h-24"
+            placeholder="Ghi chú về người thuê..."
+          />
         </div>
 
         {/* Nút gửi */}

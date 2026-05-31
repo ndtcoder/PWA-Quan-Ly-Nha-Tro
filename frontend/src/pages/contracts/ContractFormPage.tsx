@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { getProperties, getUnits } from '../../api/properties';
 import { getRenters, createRenter } from '../../api/renters';
-import { createContract, activateContract } from '../../api/contracts';
+import { createContract, activateContract, uploadContractScan } from '../../api/contracts';
 import type { ContractCreate } from '../../types/contract';
 import type { RenterCreate } from '../../types/renter';
 
@@ -25,6 +25,7 @@ export default function ContractFormPage() {
     max_occupants: 2,
     terms: '',
   });
+  const [scanFile, setScanFile] = useState<File | null>(null);
 
   const { data: properties = [] } = useQuery({
     queryKey: ['properties'],
@@ -52,7 +53,10 @@ export default function ContractFormPage() {
 
   const createContractMutation = useMutation({
     mutationFn: (data: ContractCreate) => createContract(data),
-    onSuccess: (contract) => {
+    onSuccess: async (contract) => {
+      if (scanFile) {
+        await uploadContractScan(contract.id, scanFile);
+      }
       navigate(`/contracts/${contract.id}`);
     },
   });
@@ -73,6 +77,9 @@ export default function ContractFormPage() {
       ...contractDetails,
     };
     const contract = await createContract(data);
+    if (scanFile) {
+      await uploadContractScan(contract.id, scanFile);
+    }
     await activateContract(contract.id);
     navigate(`/contracts/${contract.id}`);
   };
@@ -376,6 +383,22 @@ export default function ContractFormPage() {
                 <p>Số người tối đa: {contractDetails.max_occupants}</p>
               </div>
             </div>
+          </div>
+
+          {/* Upload scan PDF */}
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Tải lên bản scan hợp đồng (PDF)
+            </label>
+            <input
+              type="file"
+              accept=".pdf"
+              onChange={(e) => setScanFile(e.target.files?.[0] || null)}
+              className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+            />
+            {scanFile && (
+              <p className="mt-1 text-sm text-green-600">Đã chọn: {scanFile.name}</p>
+            )}
           </div>
           <div className="mt-6 flex justify-between">
             <button onClick={() => setStep(3)} className="text-gray-600 px-4 py-2 rounded-lg hover:bg-gray-100">
