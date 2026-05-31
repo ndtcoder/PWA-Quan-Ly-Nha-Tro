@@ -38,20 +38,20 @@ export default function InvoiceDetailPage() {
   });
 
   if (isLoading) {
-    return <div className="text-center py-8 text-gray-500">Loading...</div>;
+    return <div className="text-center py-8 text-gray-500">Đang tải...</div>;
   }
 
   if (!invoice) {
-    return <div className="text-center py-8 text-gray-500">Invoice not found.</div>;
+    return <div className="text-center py-8 text-gray-500">Không tìm thấy hóa đơn.</div>;
   }
 
   return (
     <div>
-      {/* Header */}
+      {/* Tiêu đề */}
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-4">
           <button onClick={() => navigate('/invoices')} className="text-gray-500 hover:text-gray-700">
-            &larr; Back
+            &larr; Quay lại
           </button>
           <h1 className="text-2xl font-bold text-gray-900">{invoice.invoice_number}</h1>
           <InvoiceStatusBadge status={invoice.status} />
@@ -63,7 +63,7 @@ export default function InvoiceDetailPage() {
               disabled={sendMutation.isPending}
               className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
             >
-              Send to Renter
+              Gửi cho người thuê
             </button>
           )}
           {invoice.status !== 'paid' && invoice.status !== 'cancelled' && (
@@ -74,59 +74,59 @@ export default function InvoiceDetailPage() {
               }}
               className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
             >
-              Mark as Paid
+              Đánh dấu đã thanh toán
             </button>
           )}
         </div>
       </div>
 
-      {/* Summary Info */}
+      {/* Thông tin tóm tắt */}
       <div className="bg-white p-6 rounded-lg shadow mb-6">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div>
-            <p className="text-sm text-gray-500">Billing Period</p>
+            <p className="text-sm text-gray-500">Kỳ thanh toán</p>
             <p className="font-medium">{invoice.billing_period_start} - {invoice.billing_period_end}</p>
           </div>
           <div>
-            <p className="text-sm text-gray-500">Due Date</p>
+            <p className="text-sm text-gray-500">Hạn thanh toán</p>
             <p className="font-medium">{invoice.due_date}</p>
           </div>
           <div>
-            <p className="text-sm text-gray-500">Renter</p>
+            <p className="text-sm text-gray-500">Người thuê</p>
             <p className="font-medium">{invoice.renter_name || '-'}</p>
           </div>
           <div>
-            <p className="text-sm text-gray-500">Unit</p>
+            <p className="text-sm text-gray-500">Phòng</p>
             <p className="font-medium">{invoice.unit_number || '-'}</p>
           </div>
         </div>
       </div>
 
-      {/* Items Table */}
+      {/* Bảng chi tiết */}
       <div className="mb-6">
-        <h2 className="text-lg font-semibold mb-3">Invoice Items</h2>
+        <h2 className="text-lg font-semibold mb-3">Chi tiết hóa đơn</h2>
         <InvoiceItemsTable items={invoice.items} />
       </div>
 
-      {/* Total */}
+      {/* Tổng cộng */}
       <div className="bg-white p-6 rounded-lg shadow mb-6">
         <div className="flex justify-end">
           <div className="text-right">
-            <p className="text-sm text-gray-500">Subtotal: {invoice.subtotal.toLocaleString()} VND</p>
+            <p className="text-sm text-gray-500">Tạm tính: {invoice.subtotal.toLocaleString()} VND</p>
             <p className="text-2xl font-bold text-blue-600 mt-1">
-              Total: {invoice.total.toLocaleString()} VND
+              Tổng cộng: {invoice.total.toLocaleString()} VND
             </p>
             {invoice.paid_amount > 0 && (
               <p className="text-sm text-green-600 mt-1">
-                Paid: {invoice.paid_amount.toLocaleString()} VND
-                {invoice.paid_at && ` on ${invoice.paid_at.split('T')[0]}`}
+                Đã thanh toán: {invoice.paid_amount.toLocaleString()} VND
+                {invoice.paid_at && ` vào ${invoice.paid_at.split('T')[0]}`}
               </p>
             )}
           </div>
         </div>
       </div>
 
-      {/* QR Payment Card - shown when not paid */}
+      {/* Mã QR thanh toán */}
       {invoice.status !== 'paid' && invoice.status !== 'cancelled' && (
         <QRPaymentCard
           invoiceId={invoice.id}
@@ -136,39 +136,39 @@ export default function InvoiceDetailPage() {
         />
       )}
 
-      {/* Notes */}
+      {/* Ghi chú */}
       {invoice.notes && (
         <div className="bg-white p-6 rounded-lg shadow mt-6">
-          <h3 className="text-sm font-medium text-gray-500 mb-2">Notes</h3>
+          <h3 className="text-sm font-medium text-gray-500 mb-2">Ghi chú</h3>
           <p className="text-gray-700">{invoice.notes}</p>
         </div>
       )}
 
-      {/* Mark Paid Modal */}
+      {/* Modal xác nhận thanh toán */}
       {showPayModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-xl w-96">
-            <h3 className="text-lg font-semibold mb-4">Mark Invoice as Paid</h3>
+            <h3 className="text-lg font-semibold mb-4">Xác nhận thanh toán</h3>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Payment Method
+                  Phương thức thanh toán
                 </label>
                 <select
                   value={paymentMethod}
                   onChange={(e) => setPaymentMethod(e.target.value)}
                   className="w-full border border-gray-300 rounded-lg px-3 py-2"
                 >
-                  <option value="bank_transfer">Bank Transfer</option>
-                  <option value="cash">Cash</option>
+                  <option value="bank_transfer">Chuyển khoản</option>
+                  <option value="cash">Tiền mặt</option>
                   <option value="momo">MoMo</option>
                   <option value="zalopay">ZaloPay</option>
-                  <option value="other">Other</option>
+                  <option value="other">Khác</option>
                 </select>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Paid Amount (VND)
+                  Số tiền thanh toán (VND)
                 </label>
                 <input
                   type="number"
@@ -183,14 +183,14 @@ export default function InvoiceDetailPage() {
                 onClick={() => setShowPayModal(false)}
                 className="text-gray-600 px-4 py-2 rounded-lg hover:bg-gray-100"
               >
-                Cancel
+                Hủy
               </button>
               <button
                 onClick={() => markPaidMutation.mutate()}
                 disabled={markPaidMutation.isPending}
                 className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:opacity-50"
               >
-                Confirm Payment
+                Xác nhận
               </button>
             </div>
           </div>

@@ -7,10 +7,10 @@ import EmptyState from '../../components/ui/EmptyState';
 import { useAuthStore } from '../../stores/authStore';
 
 const propertyTypes = [
-  { value: '', label: 'All Types' },
-  { value: 'house', label: 'House' },
-  { value: 'apartment_building', label: 'Apartment Building' },
-  { value: 'villa', label: 'Villa' },
+  { value: '', label: 'Tất cả loại' },
+  { value: 'house', label: 'Nhà' },
+  { value: 'apartment_building', label: 'Chung cư' },
+  { value: 'villa', label: 'Biệt thự' },
 ];
 
 export default function PropertyListPage() {
@@ -36,22 +36,22 @@ export default function PropertyListPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Properties</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Nhà cho thuê</h1>
         {user?.role === 'owner' && (
           <button
             onClick={() => navigate('/properties/new')}
             className="inline-flex items-center rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700"
           >
-            + Add Property
+            + Thêm nhà
           </button>
         )}
       </div>
 
-      {/* Filter bar */}
+      {/* Thanh lọc */}
       <div className="flex flex-wrap items-center gap-3 mb-6">
         <input
           type="text"
-          placeholder="Filter by city..."
+          placeholder="Lọc theo thành phố..."
           value={city}
           onChange={(e) => setCity(e.target.value)}
           className="rounded-md border-gray-300 text-sm shadow-sm focus:border-primary-500 focus:ring-primary-500"
@@ -71,11 +71,11 @@ export default function PropertyListPage() {
           onClick={handleReset}
           className="text-sm text-gray-600 hover:text-gray-900 underline"
         >
-          Reset
+          Đặt lại
         </button>
       </div>
 
-      {/* Content */}
+      {/* Nội dung */}
       {isLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {Array.from({ length: 6 }).map((_, i) => (
@@ -87,15 +87,15 @@ export default function PropertyListPage() {
         </div>
       ) : !properties || properties.length === 0 ? (
         <EmptyState
-          title="No properties found"
-          message="Get started by adding your first property."
+          title="Chưa có nhà cho thuê"
+          message="Bắt đầu bằng cách thêm nhà cho thuê đầu tiên."
           action={
             user?.role === 'owner' ? (
               <button
                 onClick={() => navigate('/properties/new')}
                 className="inline-flex items-center rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700"
               >
-                + Add Property
+                + Thêm nhà
               </button>
             ) : undefined
           }

@@ -43,19 +43,19 @@ export default function FinanceReportPage() {
       {/* Filter bar */}
       <div className="flex flex-wrap gap-4 items-center bg-white p-4 rounded-lg shadow-sm">
         <div>
-          <label className="block text-xs font-medium text-gray-500 mb-1">Period</label>
+          <label className="block text-xs font-medium text-gray-500 mb-1">Kỳ</label>
           <select
             value={period}
             onChange={(e) => setPeriod(e.target.value)}
             className="rounded-md border-gray-300 shadow-sm text-sm focus:ring-blue-500 focus:border-blue-500"
           >
-            <option value="monthly">Monthly</option>
-            <option value="quarterly">Quarterly</option>
-            <option value="yearly">Yearly</option>
+            <option value="monthly">Hàng tháng</option>
+            <option value="quarterly">Hàng quý</option>
+            <option value="yearly">Hàng năm</option>
           </select>
         </div>
         <div>
-          <label className="block text-xs font-medium text-gray-500 mb-1">Year</label>
+          <label className="block text-xs font-medium text-gray-500 mb-1">Năm</label>
           <select
             value={year}
             onChange={(e) => setYear(Number(e.target.value))}
@@ -67,25 +67,25 @@ export default function FinanceReportPage() {
           </select>
         </div>
         <div>
-          <label className="block text-xs font-medium text-gray-500 mb-1">Property</label>
+          <label className="block text-xs font-medium text-gray-500 mb-1">Nhà</label>
           <input
             type="text"
             value={propertyId}
             onChange={(e) => setPropertyId(e.target.value)}
-            placeholder="All properties"
+            placeholder="Tất cả nhà"
             className="rounded-md border-gray-300 shadow-sm text-sm focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
       </div>
 
       {loading ? (
-        <div className="text-center py-8 text-gray-500">Loading...</div>
+        <div className="text-center py-8 text-gray-500">Đang tải...</div>
       ) : (
         <>
           {/* Revenue Chart */}
           {revenueReport && (
             <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Revenue Overview</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Tổng quan doanh thu</h3>
               <RevenueChart data={revenueReport.data} forecast={revenueReport.forecast} />
             </div>
           )}
@@ -94,25 +94,25 @@ export default function FinanceReportPage() {
           {revenueReport && (
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="bg-white p-4 rounded-lg shadow-sm">
-                <p className="text-sm text-gray-500">Total Revenue</p>
+                <p className="text-sm text-gray-500">Tổng doanh thu</p>
                 <p className="text-xl font-bold text-gray-900">
                   {formatVND(revenueReport.summary.total_revenue)}
                 </p>
               </div>
               <div className="bg-white p-4 rounded-lg shadow-sm">
-                <p className="text-sm text-gray-500">Total Collected</p>
+                <p className="text-sm text-gray-500">Đã thu</p>
                 <p className="text-xl font-bold text-green-600">
                   {formatVND(revenueReport.summary.total_collected)}
                 </p>
               </div>
               <div className="bg-white p-4 rounded-lg shadow-sm">
-                <p className="text-sm text-gray-500">Collection Rate</p>
+                <p className="text-sm text-gray-500">Tỷ lệ thu</p>
                 <p className="text-xl font-bold text-blue-600">
                   {revenueReport.summary.collection_rate}%
                 </p>
               </div>
               <div className="bg-white p-4 rounded-lg shadow-sm">
-                <p className="text-sm text-gray-500">Outstanding</p>
+                <p className="text-sm text-gray-500">Còn nợ</p>
                 <p className="text-xl font-bold text-red-600">
                   {formatVND(
                     revenueReport.summary.total_revenue - revenueReport.summary.total_collected
@@ -126,7 +126,7 @@ export default function FinanceReportPage() {
           {overdueReport && overdueReport.total_overdue_amount > 0 && (
             <div className="bg-white p-6 rounded-lg shadow-sm">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                Overdue Invoices ({formatVND(overdueReport.total_overdue_amount)})
+                Hóa đơn quá hạn ({formatVND(overdueReport.total_overdue_amount)})
               </h3>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">

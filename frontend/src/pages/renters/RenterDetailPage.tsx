@@ -33,11 +33,11 @@ export default function RenterDetailPage() {
   });
 
   if (isLoading) {
-    return <div className="text-center py-8 text-gray-500">Loading...</div>;
+    return <div className="text-center py-8 text-gray-500">Đang tải...</div>;
   }
 
   if (!renter) {
-    return <div className="text-center py-8 text-gray-500">Renter not found.</div>;
+    return <div className="text-center py-8 text-gray-500">Không tìm thấy người thuê.</div>;
   }
 
   const handleFrontUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,11 +52,11 @@ export default function RenterDetailPage() {
 
   return (
     <div>
-      {/* Header */}
+      {/* Tiêu đề */}
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-4">
           <button onClick={() => navigate('/renters')} className="text-gray-500 hover:text-gray-700">
-            &larr; Back
+            &larr; Quay lại
           </button>
           <h1 className="text-2xl font-bold text-gray-900">{renter.full_name}</h1>
         </div>
@@ -65,28 +65,26 @@ export default function RenterDetailPage() {
             to={`/renters/${id}/edit`}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
           >
-            Edit
+            Sửa
           </Link>
           <button
             onClick={() => inviteMutation.mutate()}
             className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
           >
-            Send Invite
+            Gửi lời mời
           </button>
         </div>
       </div>
 
-      {/* Avatar + Personal Info */}
+      {/* Avatar + Thông tin cá nhân */}
       <div className="bg-white p-6 rounded-lg shadow mb-6">
         <div className="flex gap-6">
-          {/* Avatar placeholder */}
           <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center text-3xl text-gray-400">
             {renter.full_name.charAt(0).toUpperCase()}
           </div>
-          {/* 2-column info */}
           <div className="grid grid-cols-2 gap-4 flex-1">
             <div>
-              <span className="text-sm text-gray-500">Phone</span>
+              <span className="text-sm text-gray-500">Số điện thoại</span>
               <p className="font-medium">{renter.phone || '-'}</p>
             </div>
             <div>
@@ -94,31 +92,31 @@ export default function RenterDetailPage() {
               <p className="font-medium">{renter.email || '-'}</p>
             </div>
             <div>
-              <span className="text-sm text-gray-500">ID Number</span>
+              <span className="text-sm text-gray-500">Số CMND/CCCD</span>
               <p className="font-medium">{renter.id_number || '-'}</p>
             </div>
             <div>
-              <span className="text-sm text-gray-500">Date of Birth</span>
+              <span className="text-sm text-gray-500">Ngày sinh</span>
               <p className="font-medium">{renter.date_of_birth || '-'}</p>
             </div>
             <div>
-              <span className="text-sm text-gray-500">Gender</span>
+              <span className="text-sm text-gray-500">Giới tính</span>
               <p className="font-medium">{renter.gender || '-'}</p>
             </div>
             <div>
-              <span className="text-sm text-gray-500">Hometown</span>
+              <span className="text-sm text-gray-500">Quê quán</span>
               <p className="font-medium">{renter.hometown || '-'}</p>
             </div>
             <div>
-              <span className="text-sm text-gray-500">Occupation</span>
+              <span className="text-sm text-gray-500">Nghề nghiệp</span>
               <p className="font-medium">{renter.occupation || '-'}</p>
             </div>
             <div>
-              <span className="text-sm text-gray-500">Workplace</span>
+              <span className="text-sm text-gray-500">Nơi làm việc</span>
               <p className="font-medium">{renter.workplace || '-'}</p>
             </div>
             <div>
-              <span className="text-sm text-gray-500">Emergency Contact</span>
+              <span className="text-sm text-gray-500">Liên hệ khẩn cấp</span>
               <p className="font-medium">
                 {renter.emergency_contact_name
                   ? `${renter.emergency_contact_name} (${renter.emergency_contact_phone || '-'})`
@@ -126,7 +124,7 @@ export default function RenterDetailPage() {
               </p>
             </div>
             <div>
-              <span className="text-sm text-gray-500">Current Unit</span>
+              <span className="text-sm text-gray-500">Phòng hiện tại</span>
               <p className="font-medium">
                 {renter.current_unit_number
                   ? `${renter.current_unit_number} - ${renter.current_property_name}`
@@ -137,17 +135,17 @@ export default function RenterDetailPage() {
         </div>
       </div>
 
-      {/* ID Photos */}
+      {/* Ảnh CMND */}
       <div className="bg-white p-6 rounded-lg shadow mb-6">
-        <h2 className="text-lg font-semibold mb-4">ID Documents</h2>
+        <h2 className="text-lg font-semibold mb-4">Giấy tờ tùy thân</h2>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <p className="text-sm text-gray-500 mb-2">Front Side</p>
+            <p className="text-sm text-gray-500 mb-2">Mặt trước</p>
             {renter.id_photo_front_url ? (
-              <img src={renter.id_photo_front_url} alt="ID Front" className="w-full h-48 object-cover rounded-lg border" />
+              <img src={renter.id_photo_front_url} alt="CMND mặt trước" className="w-full h-48 object-cover rounded-lg border" />
             ) : (
               <div className="w-full h-48 bg-gray-100 rounded-lg border flex items-center justify-center text-gray-400">
-                No image
+                Chưa có ảnh
               </div>
             )}
             <input type="file" ref={frontInputRef} onChange={handleFrontUpload} className="hidden" accept="image/*" />
@@ -155,16 +153,16 @@ export default function RenterDetailPage() {
               onClick={() => frontInputRef.current?.click()}
               className="mt-2 text-sm text-blue-600 hover:text-blue-800"
             >
-              Upload Front
+              Tải lên mặt trước
             </button>
           </div>
           <div>
-            <p className="text-sm text-gray-500 mb-2">Back Side</p>
+            <p className="text-sm text-gray-500 mb-2">Mặt sau</p>
             {renter.id_photo_back_url ? (
-              <img src={renter.id_photo_back_url} alt="ID Back" className="w-full h-48 object-cover rounded-lg border" />
+              <img src={renter.id_photo_back_url} alt="CMND mặt sau" className="w-full h-48 object-cover rounded-lg border" />
             ) : (
               <div className="w-full h-48 bg-gray-100 rounded-lg border flex items-center justify-center text-gray-400">
-                No image
+                Chưa có ảnh
               </div>
             )}
             <input type="file" ref={backInputRef} onChange={handleBackUpload} className="hidden" accept="image/*" />
@@ -172,13 +170,13 @@ export default function RenterDetailPage() {
               onClick={() => backInputRef.current?.click()}
               className="mt-2 text-sm text-blue-600 hover:text-blue-800"
             >
-              Upload Back
+              Tải lên mặt sau
             </button>
           </div>
         </div>
       </div>
 
-      {/* Tabs */}
+      {/* Tab */}
       <div className="bg-white rounded-lg shadow">
         <div className="border-b">
           <div className="flex">
@@ -190,7 +188,7 @@ export default function RenterDetailPage() {
                   : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
-              Contracts
+              Hợp đồng
             </button>
             <button
               onClick={() => setActiveTab('notes')}
@@ -200,7 +198,7 @@ export default function RenterDetailPage() {
                   : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
-              Notes
+              Ghi chú
             </button>
           </div>
         </div>
@@ -208,16 +206,16 @@ export default function RenterDetailPage() {
           {activeTab === 'contracts' && (
             <div>
               {renter.contracts_history.length === 0 ? (
-                <p className="text-gray-500">No contract history.</p>
+                <p className="text-gray-500">Chưa có lịch sử hợp đồng.</p>
               ) : (
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead>
                     <tr>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Contract #</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Unit</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Period</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Rent</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Số HĐ</th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Phòng</th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Thời gian</th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Tiền thuê</th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Trạng thái</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
@@ -232,7 +230,7 @@ export default function RenterDetailPage() {
                           {contract.unit_number} - {contract.property_name}
                         </td>
                         <td className="px-4 py-2 text-sm text-gray-500">
-                          {contract.start_date} to {contract.end_date}
+                          {contract.start_date} - {contract.end_date}
                         </td>
                         <td className="px-4 py-2 text-sm text-gray-500">
                           {contract.monthly_rent.toLocaleString()} VND
@@ -248,7 +246,7 @@ export default function RenterDetailPage() {
             </div>
           )}
           {activeTab === 'notes' && (
-            <p className="text-gray-500">Notes feature coming soon.</p>
+            <p className="text-gray-500">Tính năng ghi chú sẽ sớm ra mắt.</p>
           )}
         </div>
       </div>

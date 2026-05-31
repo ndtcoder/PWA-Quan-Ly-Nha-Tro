@@ -87,9 +87,9 @@ export default function ContractFormPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">New Contract</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">Hợp đồng mới</h1>
 
-      {/* Progress Indicator */}
+      {/* Chỉ số tiến trình */}
       <div className="flex items-center mb-8">
         {[1, 2, 3, 4].map((s) => (
           <div key={s} className="flex items-center">
@@ -107,13 +107,13 @@ export default function ContractFormPage() {
         ))}
       </div>
 
-      {/* Step 1: Select Property and Unit */}
+      {/* Bước 1: Chọn nhà và phòng */}
       {step === 1 && (
         <div className="bg-white p-6 rounded-lg shadow">
-          <h2 className="text-lg font-semibold mb-4">Step 1: Select Unit</h2>
+          <h2 className="text-lg font-semibold mb-4">Bước 1: Chọn phòng</h2>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Property</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Nhà cho thuê</label>
               <select
                 value={selectedPropertyId}
                 onChange={(e) => {
@@ -122,24 +122,24 @@ export default function ContractFormPage() {
                 }}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2"
               >
-                <option value="">Select property...</option>
+                <option value="">Chọn nhà...</option>
                 {properties.map((p) => (
                   <option key={p.id} value={p.id}>{p.name}</option>
                 ))}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Vacant Unit</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Phòng trống</label>
               <select
                 value={selectedUnitId}
                 onChange={(e) => setSelectedUnitId(e.target.value)}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2"
                 disabled={!selectedPropertyId}
               >
-                <option value="">Select unit...</option>
+                <option value="">Chọn phòng...</option>
                 {units.map((u) => (
                   <option key={u.id} value={u.id}>
-                    {u.unit_number} (Floor {u.floor || '-'}, {u.area_sqm || '-'} sqm)
+                    {u.unit_number} (Tầng {u.floor || '-'}, {u.area_sqm || '-'} m²)
                   </option>
                 ))}
               </select>
@@ -151,21 +151,21 @@ export default function ContractFormPage() {
               disabled={!selectedUnitId}
               className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
             >
-              Next
+              Tiếp theo
             </button>
           </div>
         </div>
       )}
 
-      {/* Step 2: Select or Create Renter */}
+      {/* Bước 2: Chọn hoặc tạo người thuê */}
       {step === 2 && (
         <div className="bg-white p-6 rounded-lg shadow">
-          <h2 className="text-lg font-semibold mb-4">Step 2: Select Renter</h2>
+          <h2 className="text-lg font-semibold mb-4">Bước 2: Chọn người thuê</h2>
           {!createNewRenter ? (
             <div className="space-y-4">
               <input
                 type="text"
-                placeholder="Search by name, phone, or ID..."
+                placeholder="Tìm theo tên, SĐT hoặc CMND..."
                 value={renterSearch}
                 onChange={(e) => setRenterSearch(e.target.value)}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2"
@@ -180,7 +180,7 @@ export default function ContractFormPage() {
                     }`}
                   >
                     <p className="font-medium">{r.full_name}</p>
-                    <p className="text-sm text-gray-500">{r.phone || 'No phone'} | {r.id_number || 'No ID'}</p>
+                    <p className="text-sm text-gray-500">{r.phone || 'Chưa có SĐT'} | {r.id_number || 'Chưa có CMND'}</p>
                   </div>
                 ))}
               </div>
@@ -188,14 +188,14 @@ export default function ContractFormPage() {
                 onClick={() => setCreateNewRenter(true)}
                 className="text-blue-600 hover:text-blue-800 text-sm"
               >
-                + Create New Renter
+                + Tạo người thuê mới
               </button>
             </div>
           ) : (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Họ tên *</label>
                   <input
                     type="text"
                     value={newRenter.full_name}
@@ -204,7 +204,7 @@ export default function ContractFormPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Số điện thoại</label>
                   <input
                     type="text"
                     value={newRenter.phone || ''}
@@ -222,7 +222,7 @@ export default function ContractFormPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">ID Number</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Số CMND/CCCD</label>
                   <input
                     type="text"
                     value={newRenter.id_number || ''}
@@ -237,39 +237,39 @@ export default function ContractFormPage() {
                   disabled={!newRenter.full_name}
                   className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:opacity-50"
                 >
-                  Create Renter
+                  Tạo người thuê
                 </button>
                 <button
                   onClick={() => setCreateNewRenter(false)}
                   className="text-gray-600 px-4 py-2 rounded-lg hover:bg-gray-100"
                 >
-                  Cancel
+                  Hủy
                 </button>
               </div>
             </div>
           )}
           <div className="mt-6 flex justify-between">
             <button onClick={() => setStep(1)} className="text-gray-600 px-4 py-2 rounded-lg hover:bg-gray-100">
-              Previous
+              Quay lại
             </button>
             <button
               onClick={() => setStep(3)}
               disabled={!selectedRenterId}
               className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
             >
-              Next
+              Tiếp theo
             </button>
           </div>
         </div>
       )}
 
-      {/* Step 3: Contract Details */}
+      {/* Bước 3: Chi tiết hợp đồng */}
       {step === 3 && (
         <div className="bg-white p-6 rounded-lg shadow">
-          <h2 className="text-lg font-semibold mb-4">Step 3: Contract Details</h2>
+          <h2 className="text-lg font-semibold mb-4">Bước 3: Chi tiết hợp đồng</h2>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Ngày bắt đầu</label>
               <input
                 type="date"
                 value={contractDetails.start_date}
@@ -278,7 +278,7 @@ export default function ContractFormPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Ngày kết thúc</label>
               <input
                 type="date"
                 value={contractDetails.end_date}
@@ -287,7 +287,7 @@ export default function ContractFormPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Monthly Rent (VND)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Tiền thuê hàng tháng (VND)</label>
               <input
                 type="number"
                 value={contractDetails.monthly_rent}
@@ -296,7 +296,7 @@ export default function ContractFormPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Deposit Amount (VND)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Tiền cọc (VND)</label>
               <input
                 type="number"
                 value={contractDetails.deposit_amount}
@@ -305,7 +305,7 @@ export default function ContractFormPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Payment Due Day</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Ngày thanh toán</label>
               <input
                 type="number"
                 min={1}
@@ -316,7 +316,7 @@ export default function ContractFormPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Max Occupants</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Số người tối đa</label>
               <input
                 type="number"
                 min={1}
@@ -326,73 +326,73 @@ export default function ContractFormPage() {
               />
             </div>
             <div className="col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Terms & Conditions</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Điều khoản & Điều kiện</label>
               <textarea
                 value={contractDetails.terms}
                 onChange={(e) => setContractDetails({ ...contractDetails, terms: e.target.value })}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 h-32"
-                placeholder="Additional terms and conditions..."
+                placeholder="Các điều khoản bổ sung..."
               />
             </div>
           </div>
           <div className="mt-6 flex justify-between">
             <button onClick={() => setStep(2)} className="text-gray-600 px-4 py-2 rounded-lg hover:bg-gray-100">
-              Previous
+              Quay lại
             </button>
             <button
               onClick={() => setStep(4)}
               disabled={!contractDetails.start_date || !contractDetails.end_date || !contractDetails.monthly_rent}
               className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
             >
-              Next
+              Tiếp theo
             </button>
           </div>
         </div>
       )}
 
-      {/* Step 4: Preview & Actions */}
+      {/* Bước 4: Xem trước & Hành động */}
       {step === 4 && (
         <div className="bg-white p-6 rounded-lg shadow">
-          <h2 className="text-lg font-semibold mb-4">Step 4: Preview</h2>
+          <h2 className="text-lg font-semibold mb-4">Bước 4: Xem trước</h2>
           <div className="grid grid-cols-2 gap-6 mb-6">
             <div>
-              <h3 className="font-medium text-gray-700 mb-2">Unit Information</h3>
-              <p className="text-sm">Property: {selectedProperty?.name}</p>
-              <p className="text-sm">Unit: {selectedUnit?.unit_number}</p>
+              <h3 className="font-medium text-gray-700 mb-2">Thông tin phòng</h3>
+              <p className="text-sm">Nhà: {selectedProperty?.name}</p>
+              <p className="text-sm">Phòng: {selectedUnit?.unit_number}</p>
             </div>
             <div>
-              <h3 className="font-medium text-gray-700 mb-2">Renter Information</h3>
-              <p className="text-sm">Name: {selectedRenter?.full_name}</p>
-              <p className="text-sm">Phone: {selectedRenter?.phone || '-'}</p>
+              <h3 className="font-medium text-gray-700 mb-2">Thông tin người thuê</h3>
+              <p className="text-sm">Tên: {selectedRenter?.full_name}</p>
+              <p className="text-sm">SĐT: {selectedRenter?.phone || '-'}</p>
             </div>
             <div className="col-span-2">
-              <h3 className="font-medium text-gray-700 mb-2">Contract Details</h3>
+              <h3 className="font-medium text-gray-700 mb-2">Chi tiết hợp đồng</h3>
               <div className="grid grid-cols-3 gap-2 text-sm">
-                <p>Start: {contractDetails.start_date}</p>
-                <p>End: {contractDetails.end_date}</p>
-                <p>Rent: {contractDetails.monthly_rent.toLocaleString()} VND</p>
-                <p>Deposit: {contractDetails.deposit_amount.toLocaleString()} VND</p>
-                <p>Due Day: {contractDetails.payment_due_day}</p>
-                <p>Max Occupants: {contractDetails.max_occupants}</p>
+                <p>Bắt đầu: {contractDetails.start_date}</p>
+                <p>Kết thúc: {contractDetails.end_date}</p>
+                <p>Tiền thuê: {contractDetails.monthly_rent.toLocaleString()} VND</p>
+                <p>Tiền cọc: {contractDetails.deposit_amount.toLocaleString()} VND</p>
+                <p>Ngày TT: {contractDetails.payment_due_day}</p>
+                <p>Số người tối đa: {contractDetails.max_occupants}</p>
               </div>
             </div>
           </div>
           <div className="mt-6 flex justify-between">
             <button onClick={() => setStep(3)} className="text-gray-600 px-4 py-2 rounded-lg hover:bg-gray-100">
-              Previous
+              Quay lại
             </button>
             <div className="flex gap-2">
               <button
                 onClick={handleSaveDraft}
                 className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700"
               >
-                Save Draft
+                Lưu nháp
               </button>
               <button
                 onClick={handleActivate}
                 className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
               >
-                Activate
+                Kích hoạt
               </button>
             </div>
           </div>

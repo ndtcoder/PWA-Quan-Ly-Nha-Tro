@@ -18,12 +18,12 @@ const TYPE_ICONS: Record<string, string> = {
 };
 
 const TYPE_LABELS: Record<string, string> = {
-  invoice_sent: 'Invoice',
-  payment_reminder: 'Reminder',
-  payment_overdue: 'Overdue',
-  contract_expiring: 'Contract',
-  maintenance_update: 'Maintenance',
-  task_assigned: 'Task',
+  invoice_sent: 'Hóa đơn',
+  payment_reminder: 'Nhắc nhở',
+  payment_overdue: 'Quá hạn',
+  contract_expiring: 'Hợp đồng',
+  maintenance_update: 'Bảo trì',
+  task_assigned: 'Công việc',
 };
 
 interface GroupedNotifications {
@@ -33,22 +33,22 @@ interface GroupedNotifications {
 
 function groupByDay(notifications: Notification[]): GroupedNotifications[] {
   const groups: Record<string, Notification[]> = {
-    Today: [],
-    Yesterday: [],
-    'This Week': [],
-    Older: [],
+    'Hôm nay': [],
+    'Hôm qua': [],
+    'Tuần này': [],
+    'Cũ hơn': [],
   };
 
   for (const n of notifications) {
     const date = new Date(n.created_at);
     if (isToday(date)) {
-      groups['Today'].push(n);
+      groups['Hôm nay'].push(n);
     } else if (isYesterday(date)) {
-      groups['Yesterday'].push(n);
+      groups['Hôm qua'].push(n);
     } else if (isThisWeek(date)) {
-      groups['This Week'].push(n);
+      groups['Tuần này'].push(n);
     } else {
-      groups['Older'].push(n);
+      groups['Cũ hơn'].push(n);
     }
   }
 
@@ -107,14 +107,14 @@ export default function NotificationPage() {
     <div className="max-w-3xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Notifications</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Thông báo</h1>
         <div className="flex items-center gap-3">
           <select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
             className="text-sm border border-gray-300 rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <option value="all">All Types</option>
+            <option value="all">Tất cả loại</option>
             {notificationTypes.map((type) => (
               <option key={type} value={type}>
                 {TYPE_LABELS[type] || type}
@@ -125,7 +125,7 @@ export default function NotificationPage() {
             onClick={() => markAllReadMutation.mutate()}
             className="text-sm bg-blue-600 text-white px-3 py-1.5 rounded-md hover:bg-blue-700"
           >
-            Mark all read
+            Đánh dấu tất cả đã đọc
           </button>
         </div>
       </div>
@@ -146,8 +146,8 @@ export default function NotificationPage() {
               d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
             />
           </svg>
-          <p className="text-lg font-medium">No notifications</p>
-          <p className="text-sm">You are all caught up!</p>
+          <p className="text-lg font-medium">Không có thông báo</p>
+          <p className="text-sm">Bạn đã xem hết tất cả!</p>
         </div>
       ) : (
         grouped.map((group) => (
@@ -188,7 +188,7 @@ export default function NotificationPage() {
                       onClick={() => markReadMutation.mutate([notification.id])}
                       className="text-xs text-blue-600 hover:text-blue-800 whitespace-nowrap"
                     >
-                      Mark read
+                      Đánh dấu đã đọc
                     </button>
                   )}
                 </div>

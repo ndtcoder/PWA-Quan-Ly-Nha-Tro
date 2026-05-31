@@ -19,7 +19,7 @@ export default function NotificationBell() {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="relative p-2 rounded-md text-gray-600 hover:bg-gray-100 focus:outline-none"
-        aria-label="Notifications"
+        aria-label="Thông báo"
       >
         <svg
           className="h-6 w-6"

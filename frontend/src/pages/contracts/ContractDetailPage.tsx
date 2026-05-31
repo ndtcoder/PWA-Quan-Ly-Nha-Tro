@@ -41,20 +41,20 @@ export default function ContractDetailPage() {
   });
 
   if (isLoading) {
-    return <div className="text-center py-8 text-gray-500">Loading...</div>;
+    return <div className="text-center py-8 text-gray-500">Đang tải...</div>;
   }
 
   if (!contract) {
-    return <div className="text-center py-8 text-gray-500">Contract not found.</div>;
+    return <div className="text-center py-8 text-gray-500">Không tìm thấy hợp đồng.</div>;
   }
 
   return (
     <div>
-      {/* Header */}
+      {/* Tiêu đề */}
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-4">
           <button onClick={() => navigate('/contracts')} className="text-gray-500 hover:text-gray-700">
-            &larr; Back
+            &larr; Quay lại
           </button>
           <h1 className="text-2xl font-bold text-gray-900">{contract.contract_number}</h1>
           <ContractStatusBadge status={contract.status} />
@@ -65,7 +65,7 @@ export default function ContractDetailPage() {
               onClick={() => activateMutation.mutate()}
               className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
             >
-              Activate
+              Kích hoạt
             </button>
           )}
           {contract.status === 'active' && (
@@ -73,14 +73,14 @@ export default function ContractDetailPage() {
               onClick={() => setShowTerminateModal(true)}
               className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700"
             >
-              Terminate
+              Chấm dứt
             </button>
           )}
           <button
             onClick={() => exportPdfMutation.mutate()}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
           >
-            Export PDF
+            Xuất PDF
           </button>
           {contract.pdf_url && (
             <a
@@ -89,18 +89,18 @@ export default function ContractDetailPage() {
               rel="noopener noreferrer"
               className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700"
             >
-              Download PDF
+              Tải PDF
             </a>
           )}
         </div>
       </div>
 
-      {/* Timeline Progress */}
+      {/* Tiến trình */}
       <div className="bg-white p-4 rounded-lg shadow mb-6">
         <div className="flex items-center justify-between">
           <div className="text-center">
             <div className="w-4 h-4 rounded-full bg-green-500 mx-auto mb-1"></div>
-            <p className="text-xs text-gray-500">Created</p>
+            <p className="text-xs text-gray-500">Tạo lúc</p>
             <p className="text-xs">{contract.created_at?.split('T')[0]}</p>
           </div>
           <div className="flex-1 h-1 bg-gray-200 mx-2">
@@ -111,81 +111,81 @@ export default function ContractDetailPage() {
           </div>
           <div className="text-center">
             <div className={`w-4 h-4 rounded-full mx-auto mb-1 ${contract.signed_at ? 'bg-green-500' : 'bg-gray-300'}`}></div>
-            <p className="text-xs text-gray-500">Signed</p>
+            <p className="text-xs text-gray-500">Ký lúc</p>
             <p className="text-xs">{contract.signed_at?.split('T')[0] || '-'}</p>
           </div>
           <div className="flex-1 h-1 bg-gray-200 mx-2"></div>
           <div className="text-center">
             <div className="w-4 h-4 rounded-full bg-gray-300 mx-auto mb-1"></div>
-            <p className="text-xs text-gray-500">Expiry</p>
+            <p className="text-xs text-gray-500">Hết hạn</p>
             <p className="text-xs">{contract.end_date}</p>
           </div>
         </div>
       </div>
 
-      {/* 2-column layout */}
+      {/* Bố cục 2 cột */}
       <div className="grid grid-cols-2 gap-6">
-        {/* Contract Info */}
+        {/* Thông tin hợp đồng */}
         <div className="bg-white p-6 rounded-lg shadow">
-          <h2 className="text-lg font-semibold mb-4">Contract Information</h2>
+          <h2 className="text-lg font-semibold mb-4">Thông tin hợp đồng</h2>
           <div className="space-y-3">
             <div className="flex justify-between">
-              <span className="text-gray-500">Unit:</span>
+              <span className="text-gray-500">Phòng:</span>
               <span className="font-medium">{contract.unit_number}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-500">Property:</span>
+              <span className="text-gray-500">Nhà:</span>
               <span className="font-medium">{contract.property_name}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-500">Start Date:</span>
+              <span className="text-gray-500">Ngày bắt đầu:</span>
               <span className="font-medium">{contract.start_date}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-500">End Date:</span>
+              <span className="text-gray-500">Ngày kết thúc:</span>
               <span className="font-medium">{contract.end_date}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-500">Monthly Rent:</span>
+              <span className="text-gray-500">Tiền thuê hàng tháng:</span>
               <span className="font-medium">{contract.monthly_rent.toLocaleString()} VND</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-500">Deposit:</span>
+              <span className="text-gray-500">Tiền cọc:</span>
               <span className="font-medium">{contract.deposit_amount.toLocaleString()} VND</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-500">Payment Due Day:</span>
+              <span className="text-gray-500">Ngày thanh toán:</span>
               <span className="font-medium">{contract.payment_due_day}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-500">Max Occupants:</span>
+              <span className="text-gray-500">Số người tối đa:</span>
               <span className="font-medium">{contract.max_occupants}</span>
             </div>
             {contract.terms && (
               <div>
-                <span className="text-gray-500">Terms:</span>
+                <span className="text-gray-500">Điều khoản:</span>
                 <p className="mt-1 text-sm bg-gray-50 p-2 rounded">{contract.terms}</p>
               </div>
             )}
           </div>
         </div>
 
-        {/* Renter Info */}
+        {/* Thông tin người thuê */}
         <div className="bg-white p-6 rounded-lg shadow">
-          <h2 className="text-lg font-semibold mb-4">Renter Information</h2>
+          <h2 className="text-lg font-semibold mb-4">Thông tin người thuê</h2>
           <div className="space-y-3">
             <div className="flex justify-between">
-              <span className="text-gray-500">Name:</span>
+              <span className="text-gray-500">Tên:</span>
               <span className="font-medium">{contract.renter_name}</span>
             </div>
             {contract.terminated_at && (
               <>
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Terminated At:</span>
+                  <span className="text-gray-500">Chấm dứt lúc:</span>
                   <span className="font-medium text-red-600">{contract.terminated_at.split('T')[0]}</span>
                 </div>
                 <div>
-                  <span className="text-gray-500">Reason:</span>
+                  <span className="text-gray-500">Lý do:</span>
                   <p className="mt-1 text-sm bg-red-50 p-2 rounded text-red-700">{contract.termination_reason}</p>
                 </div>
               </>
@@ -194,15 +194,15 @@ export default function ContractDetailPage() {
         </div>
       </div>
 
-      {/* Terminate Modal */}
+      {/* Modal chấm dứt */}
       {showTerminateModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-xl w-96">
-            <h3 className="text-lg font-semibold mb-4">Terminate Contract</h3>
+            <h3 className="text-lg font-semibold mb-4">Chấm dứt hợp đồng</h3>
             <textarea
               value={terminationReason}
               onChange={(e) => setTerminationReason(e.target.value)}
-              placeholder="Reason for termination..."
+              placeholder="Lý do chấm dứt..."
               className="w-full border border-gray-300 rounded-lg px-3 py-2 h-24 mb-4"
             />
             <div className="flex justify-end gap-2">
@@ -210,14 +210,14 @@ export default function ContractDetailPage() {
                 onClick={() => setShowTerminateModal(false)}
                 className="text-gray-600 px-4 py-2 rounded-lg hover:bg-gray-100"
               >
-                Cancel
+                Hủy
               </button>
               <button
                 onClick={() => terminateMutation.mutate(terminationReason)}
                 disabled={!terminationReason}
                 className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 disabled:opacity-50"
               >
-                Terminate
+                Chấm dứt
               </button>
             </div>
           </div>

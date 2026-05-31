@@ -31,15 +31,15 @@ function MaintenanceFormPage() {
 
   const handleLocationNext = () => {
     if (scope === 'property' && !locationDetail.trim()) {
-      setError('Specific location is required for common area requests');
+      setError('Vị trí cụ thể là bắt buộc cho yêu cầu khu vực chung');
       return;
     }
     if (!propertyId) {
-      setError('Please select a property');
+      setError('Vui lòng chọn nhà');
       return;
     }
     if (scope === 'unit' && !unitId) {
-      setError('Please select a unit');
+      setError('Vui lòng chọn phòng');
       return;
     }
     setError('');
@@ -48,7 +48,7 @@ function MaintenanceFormPage() {
 
   const handleSubmit = async () => {
     if (!title.trim()) {
-      setError('Title is required');
+      setError('Tiêu đề là bắt buộc');
       return;
     }
     if (!scope) return;
@@ -77,7 +77,7 @@ function MaintenanceFormPage() {
       navigate('/maintenance');
     } catch (err: unknown) {
       const message =
-        err instanceof Error ? err.message : 'Failed to create request';
+        err instanceof Error ? err.message : 'Tạo yêu cầu thất bại';
       setError(message);
     } finally {
       setSubmitting(false);
@@ -96,24 +96,24 @@ function MaintenanceFormPage() {
   };
 
   const categoryOptions: { value: Category; label: string; icon: string }[] = [
-    { value: 'electrical', label: 'Electrical', icon: '⚡' },
-    { value: 'plumbing', label: 'Plumbing', icon: '🔧' },
-    { value: 'furniture', label: 'Furniture', icon: '🪑' },
-    { value: 'structure', label: 'Structure', icon: '🏗️' },
-    { value: 'other', label: 'Other', icon: '📋' },
+    { value: 'electrical', label: 'Điện', icon: '⚡' },
+    { value: 'plumbing', label: 'Nước', icon: '🔧' },
+    { value: 'furniture', label: 'Nội thất', icon: '🪑' },
+    { value: 'structure', label: 'Kết cấu', icon: '🏗️' },
+    { value: 'other', label: 'Khác', icon: '📋' },
   ];
 
   const priorityOptions = [
-    { value: 'low', label: 'Low', color: 'border-gray-300 bg-gray-50' },
-    { value: 'normal', label: 'Normal', color: 'border-blue-300 bg-blue-50' },
-    { value: 'high', label: 'High', color: 'border-orange-300 bg-orange-50' },
-    { value: 'urgent', label: 'Urgent', color: 'border-red-300 bg-red-50' },
+    { value: 'low', label: 'Thấp', color: 'border-gray-300 bg-gray-50' },
+    { value: 'normal', label: 'Bình thường', color: 'border-blue-300 bg-blue-50' },
+    { value: 'high', label: 'Cao', color: 'border-orange-300 bg-orange-50' },
+    { value: 'urgent', label: 'Khẩn cấp', color: 'border-red-300 bg-red-50' },
   ];
 
   return (
     <div className="max-w-2xl mx-auto">
       <h1 className="text-2xl font-bold text-gray-900 mb-6">
-        New Maintenance Request
+        Yêu cầu bảo trì mới
       </h1>
 
       {/* Step indicator */}
@@ -150,7 +150,7 @@ function MaintenanceFormPage() {
       {step === 1 && (
         <div className="space-y-4">
           <p className="text-gray-600 mb-4">
-            What type of area needs maintenance?
+            Khu vực nào cần bảo trì?
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {(userRole !== 'renter') && (
@@ -160,10 +160,10 @@ function MaintenanceFormPage() {
               >
                 <div className="text-3xl mb-3">🏢</div>
                 <h3 className="text-lg font-semibold text-gray-900">
-                  Common Area
+                  Khu vực chung
                 </h3>
                 <p className="text-sm text-gray-500 mt-1">
-                  Hallways, parking, lobby, elevators, etc.
+                  Hành lang, bãi đỗ xe, sảnh, thang máy, v.v.
                 </p>
               </button>
             )}
@@ -173,10 +173,10 @@ function MaintenanceFormPage() {
             >
               <div className="text-3xl mb-3">🚪</div>
               <h3 className="text-lg font-semibold text-gray-900">
-                Specific Room
+                Phòng cụ thể
               </h3>
               <p className="text-sm text-gray-500 mt-1">
-                Issue inside a specific rental unit
+                Sự cố bên trong một phòng cho thuê cụ thể
               </p>
             </button>
           </div>
@@ -188,19 +188,19 @@ function MaintenanceFormPage() {
         <div className="space-y-4">
           <p className="text-gray-600 mb-4">
             {scope === 'property'
-              ? 'Select property and describe the location'
-              : 'Select property and unit'}
+              ? 'Chọn nhà và mô tả vị trí'
+              : 'Chọn nhà và phòng'}
           </p>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Property
+              Nhà cho thuê
             </label>
             <input
               type="text"
               value={propertyId}
               onChange={(e) => setPropertyId(e.target.value)}
-              placeholder="Enter property ID"
+              placeholder="Nhập mã nhà"
               className="w-full border border-gray-300 rounded-md px-3 py-2"
             />
           </div>
@@ -208,13 +208,13 @@ function MaintenanceFormPage() {
           {scope === 'property' && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Specific Location <span className="text-red-500">*</span>
+                Vị trí cụ thể <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 value={locationDetail}
                 onChange={(e) => setLocationDetail(e.target.value)}
-                placeholder="e.g., 2nd floor hallway, parking lot B"
+                placeholder="VD: Hành lang tầng 2, bãi đỗ xe B"
                 className="w-full border border-gray-300 rounded-md px-3 py-2"
               />
             </div>
@@ -223,13 +223,13 @@ function MaintenanceFormPage() {
           {scope === 'unit' && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Unit
+                Phòng
               </label>
               <input
                 type="text"
                 value={unitId}
                 onChange={(e) => setUnitId(e.target.value)}
-                placeholder="Enter unit ID"
+                placeholder="Nhập mã phòng"
                 className="w-full border border-gray-300 rounded-md px-3 py-2"
               />
             </div>
@@ -240,13 +240,13 @@ function MaintenanceFormPage() {
               onClick={() => setStep(1)}
               className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
             >
-              Back
+              Quay lại
             </button>
             <button
               onClick={handleLocationNext}
               className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
             >
-              Next
+              Tiếp theo
             </button>
           </div>
         </div>
@@ -257,25 +257,25 @@ function MaintenanceFormPage() {
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Title <span className="text-red-500">*</span>
+              Tiêu đề <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Brief description of the issue"
+              placeholder="Mô tả ngắn gọn sự cố"
               className="w-full border border-gray-300 rounded-md px-3 py-2"
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Description
+              Mô tả chi tiết
             </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Detailed description of the issue..."
+              placeholder="Mô tả chi tiết sự cố..."
               rows={4}
               className="w-full border border-gray-300 rounded-md px-3 py-2"
             />
@@ -283,7 +283,7 @@ function MaintenanceFormPage() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Category
+              Danh mục
             </label>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
               {categoryOptions.map((opt) => (
@@ -305,7 +305,7 @@ function MaintenanceFormPage() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Priority
+              Mức ưu tiên
             </label>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
               {priorityOptions.map((opt) => (
@@ -326,7 +326,7 @@ function MaintenanceFormPage() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Photos (max 5)
+              Ảnh (tối đa 5)
             </label>
             <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
               <input
@@ -343,8 +343,8 @@ function MaintenanceFormPage() {
                 className="cursor-pointer text-blue-600 hover:text-blue-700"
               >
                 {photos.length >= 5
-                  ? 'Maximum photos reached'
-                  : 'Click to upload or drag and drop'}
+                  ? 'Đã đạt số ảnh tối đa'
+                  : 'Nhấn để tải lên hoặc kéo thả'}
               </label>
               <p className="text-xs text-gray-500 mt-1">
                 {photos.length}/5 photos
@@ -376,14 +376,14 @@ function MaintenanceFormPage() {
               onClick={() => setStep(2)}
               className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
             >
-              Back
+              Quay lại
             </button>
             <button
               onClick={handleSubmit}
               disabled={submitting}
               className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
             >
-              {submitting ? 'Submitting...' : 'Submit'}
+              {submitting ? 'Đang gửi...' : 'Gửi yêu cầu'}
             </button>
           </div>
         </div>

@@ -57,7 +57,7 @@ function MeterUploadPage() {
       setResult(data);
     } catch (err: unknown) {
       const message =
-        err instanceof Error ? err.message : 'Upload failed. Please try again.';
+        err instanceof Error ? err.message : 'Tải lên thất bại. Vui lòng thử lại.';
       setError(message);
     } finally {
       setLoading(false);
@@ -75,7 +75,7 @@ function MeterUploadPage() {
     return (
       <div>
         <h1 className="text-2xl font-bold text-gray-900 mb-6">
-          Meter Reading Result
+          Kết quả đọc đồng hồ
         </h1>
         <OCRResultCard
           reading={result}
@@ -89,29 +89,29 @@ function MeterUploadPage() {
   return (
     <div>
       <h1 className="text-2xl font-bold text-gray-900 mb-6">
-        Upload Meter Reading
+        Tải ảnh đồng hồ
       </h1>
 
       <div className="max-w-2xl mx-auto space-y-6">
-        {/* Unit and Month selection */}
+        {/* Chọn phòng và tháng */}
         <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold mb-4">Unit Information</h2>
+          <h2 className="text-lg font-semibold mb-4">Thông tin phòng</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Unit ID
+                Mã phòng
               </label>
               <input
                 type="text"
                 value={unitId}
                 onChange={(e) => setUnitId(e.target.value)}
                 className="w-full border border-gray-300 rounded-md px-3 py-2"
-                placeholder="Enter unit ID"
+                placeholder="Nhập mã phòng"
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Billing Month
+                Tháng thanh toán
               </label>
               <input
                 type="month"
@@ -123,10 +123,10 @@ function MeterUploadPage() {
           </div>
         </div>
 
-        {/* Step 1: Select meter type */}
+        {/* Bước 1: Chọn loại đồng hồ */}
         <div className="bg-white rounded-lg shadow p-6">
           <h2 className="text-lg font-semibold mb-4">
-            Step 1: Select Meter Type
+            Bước 1: Chọn loại đồng hồ
           </h2>
           <div className="grid grid-cols-2 gap-4">
             <button
@@ -141,7 +141,7 @@ function MeterUploadPage() {
               }`}
             >
               <span className="text-4xl">&#9889;</span>
-              <span className="font-medium text-gray-900">Electricity</span>
+              <span className="font-medium text-gray-900">Điện</span>
             </button>
             <button
               onClick={() => {
@@ -155,20 +155,20 @@ function MeterUploadPage() {
               }`}
             >
               <span className="text-4xl">&#128167;</span>
-              <span className="font-medium text-gray-900">Water</span>
+              <span className="font-medium text-gray-900">Nước</span>
             </button>
           </div>
         </div>
 
-        {/* Step 2: Previous reading */}
+        {/* Bước 2: Chỉ số cũ */}
         {step >= 2 && (
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-lg font-semibold mb-4">
-              Step 2: Previous Reading
+              Bước 2: Chỉ số cũ
             </h2>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Previous meter reading (optional)
+                Chỉ số đồng hồ trước đó (tùy chọn)
               </label>
               <input
                 type="number"
@@ -176,28 +176,28 @@ function MeterUploadPage() {
                 onChange={(e) => setPreviousReading(e.target.value)}
                 onFocus={() => setStep(3)}
                 className="w-full border border-gray-300 rounded-md px-3 py-2"
-                placeholder="e.g., 12345"
+                placeholder="VD: 12345"
               />
               <p className="text-xs text-gray-500 mt-1">
-                Enter the last recorded meter value to calculate consumption.
+                Nhập chỉ số ghi nhận lần trước để tính tiêu thụ.
               </p>
               {step === 2 && (
                 <button
                   onClick={() => setStep(3)}
                   className="mt-3 text-blue-600 text-sm hover:underline"
                 >
-                  Skip / Next
+                  Bỏ qua / Tiếp theo
                 </button>
               )}
             </div>
           </div>
         )}
 
-        {/* Step 3: Upload image */}
+        {/* Bước 3: Tải ảnh */}
         {step >= 3 && (
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-lg font-semibold mb-4">
-              Step 3: Upload Meter Photo
+              Bước 3: Tải ảnh đồng hồ
             </h2>
 
             {!preview ? (
@@ -209,20 +209,20 @@ function MeterUploadPage() {
                 <div className="space-y-4">
                   <div className="text-4xl text-gray-400">&#128247;</div>
                   <p className="text-gray-600">
-                    Drag and drop a meter photo here, or
+                    Kéo thả ảnh đồng hồ vào đây, hoặc
                   </p>
                   <div className="flex flex-col sm:flex-row gap-3 justify-center">
                     <button
                       onClick={() => fileInputRef.current?.click()}
                       className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
                     >
-                      Choose File
+                      Chọn tệp
                     </button>
                     <button
                       onClick={() => cameraInputRef.current?.click()}
                       className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
                     >
-                      Take Photo
+                      Chụp ảnh
                     </button>
                   </div>
                 </div>
@@ -247,14 +247,14 @@ function MeterUploadPage() {
                 <div className="relative">
                   <img
                     src={preview}
-                    alt="Meter preview"
+                    alt="Xem trước đồng hồ"
                     className="w-full max-h-64 object-contain rounded-lg border"
                   />
                   <button
                     onClick={handleRetake}
                     className="absolute top-2 right-2 bg-red-500 text-white px-3 py-1 rounded-md text-sm hover:bg-red-600"
                   >
-                    Remove
+                    Xóa
                   </button>
                 </div>
                 <p className="text-sm text-gray-600">
@@ -265,7 +265,7 @@ function MeterUploadPage() {
           </div>
         )}
 
-        {/* Submit button */}
+        {/* Nút gửi */}
         {preview && meterType && unitId && (
           <div className="flex justify-center">
             <button
@@ -294,10 +294,10 @@ function MeterUploadPage() {
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                     />
                   </svg>
-                  Reading meter with AI...
+                  Đang đọc bằng AI...
                 </>
               ) : (
-                'Submit for AI Reading'
+                'Gửi để AI đọc chỉ số'
               )}
             </button>
           </div>

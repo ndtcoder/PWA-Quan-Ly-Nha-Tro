@@ -78,20 +78,20 @@ export default function RenterFormPage() {
     <div>
       <div className="flex items-center gap-4 mb-6">
         <button onClick={() => navigate('/renters')} className="text-gray-500 hover:text-gray-700">
-          &larr; Back
+          &larr; Quay lại
         </button>
         <h1 className="text-2xl font-bold text-gray-900">
-          {isEdit ? 'Edit Renter' : 'New Renter'}
+          {isEdit ? 'Sửa người thuê' : 'Thêm người thuê'}
         </h1>
       </div>
 
       <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow space-y-6">
-        {/* Personal Info */}
+        {/* Thông tin cá nhân */}
         <div>
-          <h2 className="text-lg font-semibold mb-4">Personal Information</h2>
+          <h2 className="text-lg font-semibold mb-4">Thông tin cá nhân</h2>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Họ tên *</label>
               <input
                 type="text"
                 required
@@ -101,20 +101,20 @@ export default function RenterFormPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Giới tính</label>
               <select
                 value={form.gender}
                 onChange={(e) => updateField('gender', e.target.value)}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2"
               >
-                <option value="">Select...</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
+                <option value="">Chọn...</option>
+                <option value="male">Nam</option>
+                <option value="female">Nữ</option>
+                <option value="other">Khác</option>
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Ngày sinh</label>
               <input
                 type="date"
                 value={form.date_of_birth}
@@ -123,7 +123,7 @@ export default function RenterFormPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Hometown</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Quê quán</label>
               <input
                 type="text"
                 value={form.hometown}
@@ -134,12 +134,12 @@ export default function RenterFormPage() {
           </div>
         </div>
 
-        {/* ID Info */}
+        {/* Thông tin CMND */}
         <div>
-          <h2 className="text-lg font-semibold mb-4">ID Information</h2>
+          <h2 className="text-lg font-semibold mb-4">Thông tin CMND/CCCD</h2>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">ID Number (CMND/CCCD)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Số CMND/CCCD</label>
               <input
                 type="text"
                 value={form.id_number}
@@ -148,7 +148,7 @@ export default function RenterFormPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">ID Issued Date</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Ngày cấp</label>
               <input
                 type="date"
                 value={form.id_issued_date}
@@ -157,7 +157,7 @@ export default function RenterFormPage() {
               />
             </div>
             <div className="col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">ID Issued Place</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Nơi cấp</label>
               <input
                 type="text"
                 value={form.id_issued_place}
@@ -168,12 +168,12 @@ export default function RenterFormPage() {
           </div>
         </div>
 
-        {/* Contact */}
+        {/* Liên hệ */}
         <div>
-          <h2 className="text-lg font-semibold mb-4">Contact Information</h2>
+          <h2 className="text-lg font-semibold mb-4">Thông tin liên hệ</h2>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Số điện thoại</label>
               <input
                 type="tel"
                 value={form.phone}
@@ -193,12 +193,12 @@ export default function RenterFormPage() {
           </div>
         </div>
 
-        {/* Emergency Contact */}
+        {/* Liên hệ khẩn cấp */}
         <div>
-          <h2 className="text-lg font-semibold mb-4">Emergency Contact</h2>
+          <h2 className="text-lg font-semibold mb-4">Liên hệ khẩn cấp</h2>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Contact Name</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Tên người liên hệ</label>
               <input
                 type="text"
                 value={form.emergency_contact_name}
@@ -207,7 +207,7 @@ export default function RenterFormPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Contact Phone</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">SĐT người liên hệ</label>
               <input
                 type="tel"
                 value={form.emergency_contact_phone}
@@ -218,12 +218,12 @@ export default function RenterFormPage() {
           </div>
         </div>
 
-        {/* Work Info */}
+        {/* Thông tin công việc */}
         <div>
-          <h2 className="text-lg font-semibold mb-4">Work Information</h2>
+          <h2 className="text-lg font-semibold mb-4">Thông tin công việc</h2>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Occupation</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Nghề nghiệp</label>
               <input
                 type="text"
                 value={form.occupation}
@@ -232,7 +232,7 @@ export default function RenterFormPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Workplace</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Nơi làm việc</label>
               <input
                 type="text"
                 value={form.workplace}
@@ -243,20 +243,20 @@ export default function RenterFormPage() {
           </div>
         </div>
 
-        {/* Submit */}
+        {/* Nút gửi */}
         <div className="flex justify-end gap-2 pt-4 border-t">
           <button
             type="button"
             onClick={() => navigate('/renters')}
             className="text-gray-600 px-4 py-2 rounded-lg hover:bg-gray-100"
           >
-            Cancel
+            Hủy
           </button>
           <button
             type="submit"
             className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
           >
-            {isEdit ? 'Update' : 'Create'}
+            {isEdit ? 'Cập nhật' : 'Tạo mới'}
           </button>
         </div>
       </form>

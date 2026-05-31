@@ -81,7 +81,7 @@ export default function MyTasksPage() {
                   </p>
                   {task.due_date && (
                     <p className="text-xs text-gray-400 mt-0.5">
-                      Due: {new Date(task.due_date).toLocaleDateString()}
+                      Hạn: {new Date(task.due_date).toLocaleDateString('vi-VN')}
                     </p>
                   )}
                 </div>
@@ -91,7 +91,7 @@ export default function MyTasksPage() {
                       onClick={() => handleStart(task.id)}
                       className="text-xs px-3 py-1 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200"
                     >
-                      Start
+                      Bắt đầu
                     </button>
                   )}
                   {(task.status === 'pending' || task.status === 'in_progress') && (
@@ -99,7 +99,7 @@ export default function MyTasksPage() {
                       onClick={() => setShowNotesFor(showNotesFor === task.id ? null : task.id)}
                       className="text-xs px-3 py-1 bg-green-100 text-green-700 rounded-lg hover:bg-green-200"
                     >
-                      Complete
+                      Hoàn thành
                     </button>
                   )}
                 </div>
@@ -107,7 +107,7 @@ export default function MyTasksPage() {
               {showNotesFor === task.id && (
                 <div className="mt-3 border-t pt-3">
                   <textarea
-                    placeholder="Completion notes (optional)..."
+                    placeholder="Ghi chú hoàn thành (tùy chọn)..."
                     value={completionNotes[task.id] || ''}
                     onChange={(e) =>
                       setCompletionNotes((prev) => ({ ...prev, [task.id]: e.target.value }))
@@ -120,7 +120,7 @@ export default function MyTasksPage() {
                     disabled={updateMutation.isPending}
                     className="mt-2 text-xs px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
                   >
-                    Confirm Complete
+                    Xác nhận hoàn thành
                   </button>
                 </div>
               )}
@@ -132,21 +132,21 @@ export default function MyTasksPage() {
   };
 
   if (isLoading) {
-    return <div className="text-center py-8 text-gray-500">Loading...</div>;
+    return <div className="text-center py-8 text-gray-500">Đang tải...</div>;
   }
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">My Tasks</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">Công việc của tôi</h1>
 
       {tasks.length === 0 ? (
-        <div className="text-center py-8 text-gray-500">No tasks assigned to you.</div>
+        <div className="text-center py-8 text-gray-500">Chưa có công việc nào được giao cho bạn.</div>
       ) : (
         <>
-          {renderTaskSection('Today', todayTasks)}
-          {renderTaskSection('This Week', thisWeekTasks)}
-          {renderTaskSection('Upcoming', upcomingTasks)}
-          {renderTaskSection('Completed', completedTasks)}
+          {renderTaskSection('Hôm nay', todayTasks)}
+          {renderTaskSection('Tuần này', thisWeekTasks)}
+          {renderTaskSection('Sắp tới', upcomingTasks)}
+          {renderTaskSection('Đã hoàn thành', completedTasks)}
         </>
       )}
     </div>
