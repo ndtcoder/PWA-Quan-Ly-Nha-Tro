@@ -1,0 +1,24 @@
+{
+  "id": "FEAT-001",
+  "type": "chore",
+  "description": "Rename app from 'Luu Tru Thong Minh' to 'My Home' across all files",
+  "status": "completed",
+  "steps": [
+    "Update frontend/public/manifest.json: change 'name' to 'My Home', change 'short_name' to 'MyHome'",
+    "Update frontend/index.html: change <title> from 'Luu Tru Thong Minh' to 'My Home'",
+    "Update frontend/public/offline.html: change <title> from 'Ngoai tuyen - Luu Tru Thong Minh' to 'Ngoai tuyen - My Home'",
+    "Update README.md: change title from 'Luu Tru Thong Minh - He thong Quan ly Nha cho thue' to 'My Home - He thong Quan ly Nha cho thue'"
+  ],
+  "acceptance_criteria": [
+    "No remaining references to 'Luu Tru Thong Minh' or 'LTTM' in frontend/public/manifest.json, frontend/index.html, frontend/public/offline.html, or README.md",
+    "manifest.json has name='My Home' and short_name='MyHome'",
+    "index.html title is 'My Home'",
+    "offline.html title contains 'My Home'"
+  ],
+  "verification": [
+    "grep -r 'Luu Tru Thong Minh' frontend/ README.md should return no results (using Vietnamese characters)",
+    "grep 'My Home' frontend/public/manifest.json frontend/index.html frontend/public/offline.html README.md should show all four files"
+  ],
+  "blocked_reason": null,
+  "findings": "Stale references in frontend/dist/ (gitignored build output) remain but source files are all updated. No build/test needed for text-only changes."
+}

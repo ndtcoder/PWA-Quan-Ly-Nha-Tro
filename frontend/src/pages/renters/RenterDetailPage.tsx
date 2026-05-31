@@ -1,35 +1,19 @@
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getRenter, uploadIdFront, uploadIdBack, inviteRenter } from '../../api/renters';
-import { useState, useRef } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { getRenter } from '../../api/renters';
+import { useState } from 'react';
 import ContractStatusBadge from '../../components/contract/ContractStatusBadge';
 
 export default function RenterDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<'contracts' | 'notes'>('contracts');
-  const frontInputRef = useRef<HTMLInputElement>(null);
-  const backInputRef = useRef<HTMLInputElement>(null);
+  const [brokenImages, setBrokenImages] = useState<Set<number>>(new Set());
 
   const { data: renter, isLoading } = useQuery({
     queryKey: ['renter', id],
     queryFn: () => getRenter(id!),
     enabled: !!id,
-  });
-
-  const uploadFrontMutation = useMutation({
-    mutationFn: (file: File) => uploadIdFront(id!, file),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['renter', id] }),
-  });
-
-  const uploadBackMutation = useMutation({
-    mutationFn: (file: File) => uploadIdBack(id!, file),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['renter', id] }),
-  });
-
-  const inviteMutation = useMutation({
-    mutationFn: () => inviteRenter(id!),
   });
 
   if (isLoading) {
@@ -40,19 +24,13 @@ export default function RenterDetailPage() {
     return <div className="text-center py-8 text-gray-500">Không tìm thấy người thuê.</div>;
   }
 
-  const handleFrontUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) uploadFrontMutation.mutate(file);
-  };
-
-  const handleBackUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) uploadBackMutation.mutate(file);
+  const handleImageError = (index: number) => {
+    setBrokenImages((prev) => new Set(prev).add(index));
   };
 
   return (
     <div>
-      {/* Tiêu đề */}
+      {/* Tieu de */}
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-4">
           <button onClick={() => navigate('/renters')} className="text-gray-500 hover:text-gray-700">
@@ -67,16 +45,10 @@ export default function RenterDetailPage() {
           >
             Sửa
           </Link>
-          <button
-            onClick={() => inviteMutation.mutate()}
-            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
-          >
-            Gửi lời mời
-          </button>
         </div>
       </div>
 
-      {/* Avatar + Thông tin cá nhân */}
+      {/* Avatar + Thong tin ca nhan */}
       <div className="bg-white p-6 rounded-lg shadow mb-6">
         <div className="flex gap-6">
           <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center text-3xl text-gray-400">
@@ -135,45 +107,39 @@ export default function RenterDetailPage() {
         </div>
       </div>
 
-      {/* Ảnh CMND */}
+      {/* Anh CCCD */}
       <div className="bg-white p-6 rounded-lg shadow mb-6">
-        <h2 className="text-lg font-semibold mb-4">Giấy tờ tùy thân</h2>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <p className="text-sm text-gray-500 mb-2">Mặt trước</p>
-            {renter.id_photo_front_url ? (
-              <img src={renter.id_photo_front_url} alt="CMND mặt trước" className="w-full h-48 object-cover rounded-lg border" />
-            ) : (
-              <div className="w-full h-48 bg-gray-100 rounded-lg border flex items-center justify-center text-gray-400">
-                Chưa có ảnh
+        <h2 className="text-lg font-semibold mb-4">Ảnh CCCD</h2>
+        {renter.id_photo_links && renter.id_photo_links.length > 0 ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {renter.id_photo_links.map((link, index) => (
+              <div key={index} className="flex flex-col items-center gap-2">
+                {brokenImages.has(index) ? (
+                  <div className="w-full h-[100px] bg-gray-100 rounded-lg border flex items-center justify-center text-gray-400 text-sm">
+                    Ảnh không khả dụng
+                  </div>
+                ) : (
+                  <img
+                    src={link}
+                    alt={`CCCD ${index + 1}`}
+                    className="w-full h-[100px] object-cover rounded-lg border"
+                    onError={() => handleImageError(index)}
+                  />
+                )}
+                <a
+                  href={link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-blue-600 hover:text-blue-800"
+                >
+                  Xem ảnh
+                </a>
               </div>
-            )}
-            <input type="file" ref={frontInputRef} onChange={handleFrontUpload} className="hidden" accept="image/*" />
-            <button
-              onClick={() => frontInputRef.current?.click()}
-              className="mt-2 text-sm text-blue-600 hover:text-blue-800"
-            >
-              Tải lên mặt trước
-            </button>
+            ))}
           </div>
-          <div>
-            <p className="text-sm text-gray-500 mb-2">Mặt sau</p>
-            {renter.id_photo_back_url ? (
-              <img src={renter.id_photo_back_url} alt="CMND mặt sau" className="w-full h-48 object-cover rounded-lg border" />
-            ) : (
-              <div className="w-full h-48 bg-gray-100 rounded-lg border flex items-center justify-center text-gray-400">
-                Chưa có ảnh
-              </div>
-            )}
-            <input type="file" ref={backInputRef} onChange={handleBackUpload} className="hidden" accept="image/*" />
-            <button
-              onClick={() => backInputRef.current?.click()}
-              className="mt-2 text-sm text-blue-600 hover:text-blue-800"
-            >
-              Tải lên mặt sau
-            </button>
-          </div>
-        </div>
+        ) : (
+          <p className="text-gray-500">Chưa có ảnh CCCD</p>
+        )}
       </div>
 
       {/* Tab */}

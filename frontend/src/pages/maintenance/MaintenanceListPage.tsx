@@ -44,13 +44,19 @@ function MaintenanceListPage() {
       normal: 'bg-blue-100 text-blue-800',
       low: 'bg-gray-100 text-gray-800',
     };
+    const labels: Record<string, string> = {
+      urgent: 'Khẩn cấp',
+      high: 'Cao',
+      normal: 'Bình thường',
+      low: 'Thấp',
+    };
     return (
       <span
         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
           styles[priority] || styles.normal
         }`}
       >
-        {priority.charAt(0).toUpperCase() + priority.slice(1)}
+        {labels[priority] || priority}
       </span>
     );
   };
@@ -90,6 +96,17 @@ function MaintenanceListPage() {
       other: '📋',
     };
     return icons[category] || '📋';
+  };
+
+  const getCategoryLabel = (category: string) => {
+    const labels: Record<string, string> = {
+      electrical: 'Điện',
+      plumbing: 'Nước',
+      furniture: 'Nội thất',
+      structure: 'Kết cấu',
+      other: 'Khác',
+    };
+    return labels[category] || category;
   };
 
   return (
@@ -181,25 +198,25 @@ function MaintenanceListPage() {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Title
+                    Tiêu đề
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    {activeScope === 'property' ? 'Property' : 'Unit'}
+                    {activeScope === 'property' ? 'Nhà' : 'Phòng'}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Category
+                    Danh mục
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Priority
+                    Mức ưu tiên
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Assignee
+                    Người phụ trách
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Status
+                    Trạng thái
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Date
+                    Ngày tạo
                   </th>
                 </tr>
               </thead>
@@ -221,7 +238,7 @@ function MaintenanceListPage() {
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-900">
                       <span className="mr-1">{getCategoryIcon(request.category)}</span>
-                      {request.category}
+                      {getCategoryLabel(request.category)}
                     </td>
                     <td className="px-4 py-3 text-sm">
                       {getPriorityBadge(request.priority)}

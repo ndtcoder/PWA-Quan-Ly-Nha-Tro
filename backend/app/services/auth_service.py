@@ -160,9 +160,6 @@ def invite_user(data: InviteUserRequest, current_user: dict) -> dict:
     }
     supabase.table("invitations").insert(invitation_data).execute()
 
-    # Mock email sending
-    print(f"[MOCK EMAIL] Invitation sent to {data.email} with token: {token}")
-
     return {
         "message": "Invitation sent successfully",
         "email": data.email,
@@ -319,7 +316,64 @@ def google_auth(data: GoogleAuthRequest) -> dict:
             "needs_org_setup": False,
         }
 
-    # New user - create organization and profile
+    # New user - check if there is a pending invitation for this email
+    invitation = None
+    if email:
+        inv_response = (
+            supabase.table("invitations")
+            .select("*")
+            .eq("email", email)
+            .is_("accepted_at", "null")
+            .limit(1)
+            .execute()
+        )
+        if inv_response.data:
+            invitation = inv_response.data[0]
+
+    if invitation:
+        # Use invitation's organization and role
+        inv_org_id = invitation["organization_id"]
+        inv_role = invitation["role"]
+
+        # Create profile with the invitation's role and org
+        profile_data = {
+            "id": user_id,
+            "full_name": invitation.get("full_name") or full_name,
+            "role": inv_role,
+            "organization_id": inv_org_id,
+            "phone": invitation.get("phone"),
+            "address": invitation.get("address"),
+        }
+        supabase.table("profiles").insert(profile_data).execute()
+
+        # Mark invitation as accepted
+        supabase.table("invitations").update(
+            {"accepted_at": datetime.now(timezone.utc).isoformat()}
+        ).eq("id", invitation["id"]).execute()
+
+        # If invitation has property_id, create staff_assignment
+        if invitation.get("property_id"):
+            assignment_data = {
+                "id": str(uuid.uuid4()),
+                "profile_id": user_id,
+                "property_id": invitation["property_id"],
+                "role": inv_role,
+            }
+            supabase.table("staff_assignments").insert(assignment_data).execute()
+
+        return {
+            "access_token": data.access_token,
+            "user": {
+                "id": user_id,
+                "email": email,
+                "role": inv_role,
+                "organization_id": inv_org_id,
+                "full_name": invitation.get("full_name") or full_name,
+            },
+            "needs_org_setup": False,
+        }
+
+    # No invitation found - create new organization and profile
     org_name = full_name if full_name else email.split("@")[0]
     base_slug = slugify(org_name)
     if not base_slug:

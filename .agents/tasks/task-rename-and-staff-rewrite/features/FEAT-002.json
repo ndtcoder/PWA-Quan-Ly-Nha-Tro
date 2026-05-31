@@ -1,0 +1,29 @@
+{
+  "id": "FEAT-002",
+  "type": "feat",
+  "description": "Replace 'Invite Staff' flow with direct 'Add Staff' creation flow - backend models, router, service, and auth auto-detection",
+  "status": "completed",
+  "steps": [
+    "Update backend/app/models/staff.py: Add StaffCreate model with fields (email: str required, full_name: str required, phone: Optional[str], role: Literal required, property_id: Optional[str], address: Optional[str], notes: Optional[str]). Update StaffResponse to include: id, email, full_name, phone, role, property_name (Optional[str]), status (Literal['active','pending']), address, notes, created_at. Add StaffUpdate model with all fields optional. Keep StaffRoleUpdate for backwards compat. Remove StaffInvite.",
+    "Rewrite backend/app/services/staff_service.py: (1) Update list_staff to return BOTH active staff from profiles table (role in manager/accountant/maintenance/cleaner) AND pending staff from invitations table (accepted_at IS NULL, same org). Active staff get status='active', pending get status='pending'. Include property_name from joined properties table. (2) Add create_staff function that inserts into invitations table with the staff data (email, full_name, phone, role, property_id, address, notes, organization_id). No expiration needed. (3) Add update_staff function that can update both profiles (if active) and invitations (if pending). (4) Update deactivate_staff to handle both profiles and invitations (delete invitation if pending, deactivate profile if active).",
+    "Rewrite backend/app/routers/staff.py: (1) Replace POST /invite with POST '' (create staff) using StaffCreate model. (2) Keep GET '' but update to use new list_staff that returns both active+pending. (3) Add PATCH /{staff_id} endpoint using StaffUpdate model. (4) Keep DELETE /{staff_id} but update to handle both active profiles and pending invitations.",
+    "Update backend/app/services/auth_service.py google_auth function: After the profile existence check, if the user is NEW (no existing profile), before creating a new org, check if there is a pending invitation in the invitations table for that email. If found: use the invitation's organization_id and role to create the profile (skip creating new org). Mark the invitation as accepted (set accepted_at to now). If the invitation has a property_id, create a staff_assignment record."
+  ],
+  "acceptance_criteria": [
+    "POST /api/v1/staff accepts StaffCreate payload and creates an invitation record",
+    "GET /api/v1/staff returns both active staff (from profiles) with status='active' and pending staff (from invitations where accepted_at IS NULL) with status='pending'",
+    "PATCH /api/v1/staff/{id} can update staff info",
+    "DELETE /api/v1/staff/{id} removes pending invitations or deactivates active staff",
+    "google_auth auto-detects pending invitations for new users and assigns role/org from invitation",
+    "No mock email print statements remain",
+    "Python files compile without syntax errors"
+  ],
+  "verification": [
+    "python -m py_compile backend/app/routers/staff.py",
+    "python -m py_compile backend/app/models/staff.py",
+    "python -m py_compile backend/app/services/staff_service.py",
+    "python -m py_compile backend/app/services/auth_service.py"
+  ],
+  "blocked_reason": null,
+  "findings": "All 4 Python files compile successfully with py_compile. Used pyenv global 3.11.15 to set Python version. No other files reference StaffInvite so removal is safe. The /staff/invite endpoint is removed; POST /staff now creates staff directly via invitations table."
+}

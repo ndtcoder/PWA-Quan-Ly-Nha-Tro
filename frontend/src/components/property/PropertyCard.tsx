@@ -2,9 +2,9 @@ import { useNavigate } from 'react-router-dom';
 import type { Property } from '../../types/property';
 
 const typeLabels: Record<string, string> = {
-  house: 'House',
-  apartment_building: 'Apartment',
-  villa: 'Villa',
+  house: 'Nhà trọ',
+  apartment_building: 'Chung cư',
+  villa: 'Biệt thự',
 };
 
 const typeBadgeColors: Record<string, string> = {
@@ -47,7 +47,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
       <div className="mt-4">
         <div className="flex items-center justify-between text-sm">
           <span className="text-gray-600">
-            {property.occupied_units}/{property.total_units} rooms occupied
+            {property.occupied_units}/{property.total_units} phòng đang thuê
           </span>
           <span className="font-medium text-gray-900">{occupancyPercent}%</span>
         </div>

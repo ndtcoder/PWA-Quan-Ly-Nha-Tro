@@ -15,7 +15,7 @@ export default function ContractFormPage() {
   const [selectedRenterId, setSelectedRenterId] = useState('');
   const [createNewRenter, setCreateNewRenter] = useState(false);
   const [renterSearch, setRenterSearch] = useState('');
-  const [newRenter, setNewRenter] = useState<RenterCreate>({ full_name: '' });
+  const [newRenter, setNewRenter] = useState<RenterCreate>({ full_name: '', email: '' });
   const [contractDetails, setContractDetails] = useState({
     start_date: '',
     end_date: '',

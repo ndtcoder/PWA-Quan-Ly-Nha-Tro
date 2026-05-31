@@ -1,3 +1,4 @@
+import uuid
 from typing import Optional
 
 from fastapi import HTTPException, status
@@ -87,8 +88,24 @@ def list_renters(
 
 
 def create_renter(data: RenterCreate, org_id: str) -> dict:
-    """Create a new renter profile."""
+    """Create a new renter profile and invitation record."""
     supabase = get_supabase()
+
+    # Check for duplicate pending invitation with same email in this org
+    existing = (
+        supabase.table("invitations")
+        .select("id")
+        .eq("organization_id", org_id)
+        .eq("email", data.email)
+        .is_("accepted_at", "null")
+        .maybe_single()
+        .execute()
+    )
+    if existing and existing.data:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Email already has a pending renter registration in this organization",
+        )
 
     renter_data = {
         "full_name": data.full_name,
@@ -105,11 +122,28 @@ def create_renter(data: RenterCreate, org_id: str) -> dict:
         "emergency_contact_name": data.emergency_contact_name,
         "emergency_contact_phone": data.emergency_contact_phone,
         "notes": data.notes,
+        "id_photo_links": data.id_photo_links,
         "organization_id": org_id,
     }
 
     response = supabase.table("renter_profiles").insert(renter_data).execute()
     renter = response.data[0]
+
+    # Create invitation record for the renter
+    try:
+        invitation_data = {
+            "id": str(uuid.uuid4()),
+            "token": str(uuid.uuid4()),
+            "email": data.email,
+            "role": "renter",
+            "organization_id": org_id,
+            "full_name": data.full_name,
+            "phone": data.phone,
+        }
+        supabase.table("invitations").insert(invitation_data).execute()
+    except Exception as e:
+        # Log but don't fail - renter was created successfully
+        print(f"[WARNING] Failed to create invitation for renter {data.email}: {e}")
 
     return {
         "id": renter["id"],
@@ -208,8 +242,7 @@ def get_renter_detail(renter_id: str, org_id: str) -> dict:
         "workplace": renter.get("workplace"),
         "emergency_contact_name": renter.get("emergency_contact_name"),
         "emergency_contact_phone": renter.get("emergency_contact_phone"),
-        "id_photo_front_url": renter.get("id_photo_front_url"),
-        "id_photo_back_url": renter.get("id_photo_back_url"),
+        "id_photo_links": renter.get("id_photo_links", []),
         "notes": renter.get("notes"),
         "current_unit_number": active_contract["unit_number"] if active_contract else None,
         "current_property_name": active_contract["property_name"] if active_contract else None,

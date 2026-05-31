@@ -1,4 +1,6 @@
 import { useState, useRef } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { getProperties, getUnits } from '../../api/properties';
 import { uploadMeterReading } from '../../api/meters';
 import type { MeterReading } from '../../types/meter';
 import OCRResultCard from '../../components/meter/OCRResultCard';
@@ -7,6 +9,7 @@ function MeterUploadPage() {
   const [step, setStep] = useState(1);
   const [meterType, setMeterType] = useState<'electricity' | 'water' | ''>('');
   const [previousReading, setPreviousReading] = useState('');
+  const [selectedPropertyId, setSelectedPropertyId] = useState('');
   const [unitId, setUnitId] = useState('');
   const [billingMonth, setBillingMonth] = useState(
     new Date().toISOString().slice(0, 7)
@@ -19,6 +22,17 @@ function MeterUploadPage() {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
+
+  const { data: properties = [] } = useQuery({
+    queryKey: ['properties'],
+    queryFn: () => getProperties(),
+  });
+
+  const { data: units = [] } = useQuery({
+    queryKey: ['units', selectedPropertyId],
+    queryFn: () => getUnits(selectedPropertyId),
+    enabled: !!selectedPropertyId,
+  });
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -99,15 +113,37 @@ function MeterUploadPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Mã phòng
+                Chọn nhà
               </label>
-              <input
-                type="text"
+              <select
+                value={selectedPropertyId}
+                onChange={(e) => {
+                  setSelectedPropertyId(e.target.value);
+                  setUnitId('');
+                }}
+                className="w-full border border-gray-300 rounded-md px-3 py-2"
+              >
+                <option value="">-- Chọn nhà --</option>
+                {properties.map((p) => (
+                  <option key={p.id} value={p.id}>{p.name}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Chọn phòng
+              </label>
+              <select
                 value={unitId}
                 onChange={(e) => setUnitId(e.target.value)}
                 className="w-full border border-gray-300 rounded-md px-3 py-2"
-                placeholder="Nhập mã phòng"
-              />
+                disabled={!selectedPropertyId}
+              >
+                <option value="">-- Chọn phòng --</option>
+                {units.map((u) => (
+                  <option key={u.id} value={u.id}>{u.unit_number}</option>
+                ))}
+              </select>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">

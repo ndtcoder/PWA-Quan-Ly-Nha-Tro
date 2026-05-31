@@ -23,6 +23,7 @@ export default function RenterFormPage() {
     workplace: '',
     emergency_contact_name: '',
     emergency_contact_phone: '',
+    id_photo_links: [],
     notes: '',
   });
 
@@ -48,6 +49,7 @@ export default function RenterFormPage() {
         workplace: renter.workplace || '',
         emergency_contact_name: renter.emergency_contact_name || '',
         emergency_contact_phone: renter.emergency_contact_phone || '',
+        id_photo_links: renter.id_photo_links || [],
         notes: renter.notes || '',
       });
     }
@@ -76,6 +78,25 @@ export default function RenterFormPage() {
     setForm({ ...form, [field]: value });
   };
 
+  const addPhotoLink = () => {
+    const links = form.id_photo_links || [];
+    if (links.length < 5) {
+      setForm({ ...form, id_photo_links: [...links, ''] });
+    }
+  };
+
+  const removePhotoLink = (index: number) => {
+    const links = [...(form.id_photo_links || [])];
+    links.splice(index, 1);
+    setForm({ ...form, id_photo_links: links });
+  };
+
+  const updatePhotoLink = (index: number, value: string) => {
+    const links = [...(form.id_photo_links || [])];
+    links[index] = value;
+    setForm({ ...form, id_photo_links: links });
+  };
+
   return (
     <div>
       <div className="flex items-center gap-4 mb-6">
@@ -88,7 +109,7 @@ export default function RenterFormPage() {
       </div>
 
       <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow space-y-6">
-        {/* Thông tin cá nhân */}
+        {/* Thong tin ca nhan */}
         <div>
           <h2 className="text-lg font-semibold mb-4">Thông tin cá nhân</h2>
           <div className="grid grid-cols-2 gap-4">
@@ -99,6 +120,16 @@ export default function RenterFormPage() {
                 required
                 value={form.full_name}
                 onChange={(e) => updateField('full_name', e.target.value)}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+              <input
+                type="email"
+                required
+                value={form.email}
+                onChange={(e) => updateField('email', e.target.value)}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2"
               />
             </div>
@@ -136,7 +167,7 @@ export default function RenterFormPage() {
           </div>
         </div>
 
-        {/* Thông tin CMND */}
+        {/* Thong tin CMND */}
         <div>
           <h2 className="text-lg font-semibold mb-4">Thông tin CMND/CCCD</h2>
           <div className="grid grid-cols-2 gap-4">
@@ -170,7 +201,44 @@ export default function RenterFormPage() {
           </div>
         </div>
 
-        {/* Liên hệ */}
+        {/* Anh CCCD */}
+        <div>
+          <h2 className="text-lg font-semibold mb-4">Ảnh CCCD</h2>
+          <p className="text-sm text-gray-500 mb-3">Link ảnh CCCD (tối đa 5)</p>
+          <div className="space-y-2">
+            {(form.id_photo_links || []).map((link, index) => (
+              <div key={index} className="flex gap-2">
+                <input
+                  type="text"
+                  value={link}
+                  onChange={(e) => updatePhotoLink(index, e.target.value)}
+                  placeholder="Dán link ảnh CCCD..."
+                  className="flex-1 border border-gray-300 rounded-lg px-3 py-2"
+                />
+                <button
+                  type="button"
+                  onClick={() => removePhotoLink(index)}
+                  className="text-red-500 hover:text-red-700 px-2 font-bold"
+                >
+                  X
+                </button>
+              </div>
+            ))}
+          </div>
+          {(form.id_photo_links || []).length < 5 ? (
+            <button
+              type="button"
+              onClick={addPhotoLink}
+              className="mt-2 text-sm text-blue-600 hover:text-blue-800"
+            >
+              + Thêm link
+            </button>
+          ) : (
+            <p className="mt-2 text-sm text-gray-400">Đã đạt tối đa 5 link</p>
+          )}
+        </div>
+
+        {/* Lien he */}
         <div>
           <h2 className="text-lg font-semibold mb-4">Thông tin liên hệ</h2>
           <div className="grid grid-cols-2 gap-4">
@@ -183,19 +251,10 @@ export default function RenterFormPage() {
                 className="w-full border border-gray-300 rounded-lg px-3 py-2"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-              <input
-                type="email"
-                value={form.email}
-                onChange={(e) => updateField('email', e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2"
-              />
-            </div>
           </div>
         </div>
 
-        {/* Liên hệ khẩn cấp */}
+        {/* Lien he khan cap */}
         <div>
           <h2 className="text-lg font-semibold mb-4">Liên hệ khẩn cấp</h2>
           <div className="grid grid-cols-2 gap-4">
@@ -220,7 +279,7 @@ export default function RenterFormPage() {
           </div>
         </div>
 
-        {/* Thông tin công việc */}
+        {/* Thong tin cong viec */}
         <div>
           <h2 className="text-lg font-semibold mb-4">Thông tin công việc</h2>
           <div className="grid grid-cols-2 gap-4">
@@ -245,7 +304,7 @@ export default function RenterFormPage() {
           </div>
         </div>
 
-        {/* Ghi chú */}
+        {/* Ghi chu */}
         <div>
           <h2 className="text-lg font-semibold mb-4">Ghi chú</h2>
           <textarea
@@ -256,7 +315,7 @@ export default function RenterFormPage() {
           />
         </div>
 
-        {/* Nút gửi */}
+        {/* Nut gui */}
         <div className="flex justify-end gap-2 pt-4 border-t">
           <button
             type="button"

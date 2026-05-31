@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createTaskTemplate, getTaskTemplate, updateTaskTemplate } from '../../api/tasks';
+import { getProperties, getUnits } from '../../api/properties';
 import RecurrenceFormFields from '../../components/tasks/RecurrenceFormFields';
 import type { TaskTemplateCreate } from '../../types/task';
 
@@ -35,6 +36,17 @@ export default function TaskTemplateFormPage() {
     queryKey: ['task-template', id],
     queryFn: () => getTaskTemplate(id!),
     enabled: isEdit,
+  });
+
+  const { data: properties = [] } = useQuery({
+    queryKey: ['properties'],
+    queryFn: () => getProperties(),
+  });
+
+  const { data: units = [] } = useQuery({
+    queryKey: ['units', form.property_id],
+    queryFn: () => getUnits(form.property_id),
+    enabled: !!form.property_id,
   });
 
   useEffect(() => {
@@ -180,26 +192,36 @@ export default function TaskTemplateFormPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Mã nhà (Property ID)</label>
-          <input
-            type="text"
+          <label className="block text-sm font-medium text-gray-700 mb-1">Chọn nhà</label>
+          <select
             required
             value={form.property_id}
-            onChange={(e) => updateField('property_id', e.target.value)}
-            placeholder="UUID nhà cho thuê"
+            onChange={(e) => {
+              updateField('property_id', e.target.value);
+              updateField('unit_id', undefined);
+            }}
             className="w-full border border-gray-300 rounded-lg px-3 py-2"
-          />
+          >
+            <option value="">-- Chọn nhà --</option>
+            {properties.map((p) => (
+              <option key={p.id} value={p.id}>{p.name}</option>
+            ))}
+          </select>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Mã phòng (tùy chọn)</label>
-          <input
-            type="text"
+          <label className="block text-sm font-medium text-gray-700 mb-1">Chọn phòng (tùy chọn)</label>
+          <select
             value={form.unit_id || ''}
             onChange={(e) => updateField('unit_id', e.target.value || undefined)}
-            placeholder="UUID phòng (tùy chọn)"
             className="w-full border border-gray-300 rounded-lg px-3 py-2"
-          />
+            disabled={!form.property_id}
+          >
+            <option value="">-- Chọn phòng --</option>
+            {units.map((u) => (
+              <option key={u.id} value={u.id}>{u.unit_number}</option>
+            ))}
+          </select>
         </div>
 
         <div>

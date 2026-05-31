@@ -1,0 +1,29 @@
+{
+  "id": "FEAT-003",
+  "type": "feat",
+  "description": "Replace frontend 'Invite Staff' flow with direct 'Add Staff' form page and updated staff list",
+  "status": "completed",
+  "steps": [
+    "Update frontend/src/types/task.ts: Replace StaffInvite interface with StaffCreate interface (email: string, full_name: string, phone?: string, role: 'manager'|'accountant'|'maintenance'|'cleaner', property_id?: string, address?: string, notes?: string). Add StaffUpdate interface (all fields optional). Update StaffMember interface to add: status: 'active'|'pending', property_name?: string, address?: string. Remove assigned_properties and is_active fields, replace with status field.",
+    "Update frontend/src/api/staff.ts: Replace inviteStaff with createStaff(data: StaffCreate) that POSTs to /api/v1/staff. Add updateStaff(id: string, data: StaffUpdate) that PATCHes to /api/v1/staff/{id}. Keep deleteStaff as-is (already correct). Update imports to use new types.",
+    "Create frontend/src/pages/staff/StaffFormPage.tsx: A form page (following the pattern in RenterFormPage.tsx) with fields: Email (required), Ho va ten (required), Dien thoai, Vai tro (dropdown: Quan ly/Ke toan/Bao tri/Ve sinh), Nha phu trach (dropdown fetched from getProperties API), Dia chi, Ghi chu. On submit POST to createStaff. On success navigate to /staff with a success message. Page title: 'Them nhan vien moi'. Back button navigates to /staff.",
+    "Rewrite frontend/src/pages/staff/StaffListPage.tsx: Replace 'Moi nhan vien' button with 'Them nhan vien' button that navigates to /staff/new. Update table columns to: Ten, Email, Dien thoai, Vai tro, Nha phu trach, Trang thai, Ghi chu, Hanh dong. Show status badges: 'Dang hoat dong' (green) for status='active', 'Cho dang ky' (yellow) for status='pending'. Remove the invite modal entirely. Keep delete functionality.",
+    "Update frontend/src/App.tsx: Add lazy import for StaffFormPage. Add route '/staff/new' => StaffFormPage inside the AppLayout routes, placed before the '/staff' route."
+  ],
+  "acceptance_criteria": [
+    "StaffFormPage exists at frontend/src/pages/staff/StaffFormPage.tsx with all required form fields",
+    "Route /staff/new is registered in App.tsx and renders StaffFormPage",
+    "StaffListPage shows 'Them nhan vien' button instead of 'Moi nhan vien'",
+    "StaffListPage displays status column with 'Dang hoat dong' (green) and 'Cho dang ky' (yellow) badges",
+    "No references to inviteStaff or the old invite modal remain in StaffListPage",
+    "API client exports createStaff, updateStaff, deleteStaff, getStaff",
+    "TypeScript compilation passes: npx tsc --noEmit",
+    "Frontend builds successfully: npm run build"
+  ],
+  "verification": [
+    "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/frontend && npx tsc --noEmit",
+    "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/frontend && npm run build"
+  ],
+  "blocked_reason": null,
+  "findings": "All verification steps passed. TypeScript compilation (npx tsc --noEmit) passed clean. Vite production build succeeded. StaffFormPage follows the same useState pattern as RenterFormPage. The Property type already has 'id' and 'name' fields which are used in the property dropdown."
+}

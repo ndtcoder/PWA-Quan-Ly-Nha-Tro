@@ -20,6 +20,7 @@ const RenterListPage = lazy(() => import('./pages/renters/RenterListPage'));
 const RenterDetailPage = lazy(() => import('./pages/renters/RenterDetailPage'));
 const RenterFormPage = lazy(() => import('./pages/renters/RenterFormPage'));
 const StaffListPage = lazy(() => import('./pages/staff/StaffListPage'));
+const StaffFormPage = lazy(() => import('./pages/staff/StaffFormPage'));
 const TaskListPage = lazy(() => import('./pages/tasks/TaskListPage'));
 const TaskTemplateListPage = lazy(() => import('./pages/tasks/TaskTemplateListPage'));
 const TaskTemplateFormPage = lazy(() => import('./pages/tasks/TaskTemplateFormPage'));
@@ -69,6 +70,7 @@ function App() {
           <Route path="/renters/new" element={<RenterFormPage />} />
           <Route path="/renters/:id" element={<RenterDetailPage />} />
           <Route path="/renters/:id/edit" element={<RenterFormPage />} />
+          <Route path="/staff/new" element={<StaffFormPage />} />
           <Route path="/staff" element={<StaffListPage />} />
           <Route path="/tasks" element={<TaskListPage />} />
           <Route path="/tasks/templates" element={<TaskTemplateListPage />} />

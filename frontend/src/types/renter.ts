@@ -20,8 +20,7 @@ export interface RenterDetail extends Renter {
   workplace?: string;
   emergency_contact_name?: string;
   emergency_contact_phone?: string;
-  id_photo_front_url?: string;
-  id_photo_back_url?: string;
+  id_photo_links?: string[];
   notes?: string;
   contracts_history: RenterContractHistory[];
 }
@@ -40,7 +39,7 @@ export interface RenterContractHistory {
 export interface RenterCreate {
   full_name: string;
   phone?: string;
-  email?: string;
+  email: string;
   id_number?: string;
   id_issued_date?: string;
   id_issued_place?: string;
@@ -51,6 +50,7 @@ export interface RenterCreate {
   workplace?: string;
   emergency_contact_name?: string;
   emergency_contact_phone?: string;
+  id_photo_links?: string[];
   notes?: string;
 }
 
@@ -68,6 +68,7 @@ export interface RenterUpdate {
   workplace?: string;
   emergency_contact_name?: string;
   emergency_contact_phone?: string;
+  id_photo_links?: string[];
   notes?: string;
 }
 

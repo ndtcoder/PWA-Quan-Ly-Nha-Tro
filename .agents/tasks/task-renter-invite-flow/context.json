@@ -1,0 +1,28 @@
+{
+  "project_type": "Full-stack SaaS: FastAPI backend + React (Vite) frontend PWA",
+  "language": "Python (backend), TypeScript (frontend)",
+  "build_system": "pip for backend, npm/vite for frontend",
+  "test_framework": "No dedicated test framework configured; validation is manual/AST-based",
+  "build_command": "cd backend && pip install -r requirements.txt (backend); cd frontend && npm install && npm run build (frontend)",
+  "test_command": "python -c 'import ast; ast.parse(open(\"file\").read())' for Python syntax validation; npx tsc --noEmit for TypeScript",
+  "verification_instructions": "1. Validate Python syntax with AST parse. 2. Validate TypeScript with tsc --noEmit. 3. Confirm key patterns are present with grep.",
+  "snapshot_or_generated_files": null,
+  "setup_instructions": "pip install -r backend/requirements.txt; cd frontend && npm install",
+  "environment_constraints": "OPEN_INTERNET network mode. No Supabase instance available for runtime testing. Validation is syntax/type-based.",
+  "contribution_requirements": "Vietnamese UI labels. Supabase for DB/auth. FastAPI backend with Pydantic models.",
+  "key_patterns": "Staff creation pattern: create_staff() in staff_service.py inserts into invitations table with role + org_id + email. google_auth() in auth_service.py checks invitations by email on login, auto-assigns role and org. Invitations table has CHECK constraint including 'renter'. RenterCreate model uses Pydantic BaseModel. Frontend uses React Query + Axios API client.",
+  "relevant_files": [
+    "backend/app/services/renter_service.py",
+    "backend/app/services/staff_service.py",
+    "backend/app/services/auth_service.py",
+    "backend/app/models/renter.py",
+    "backend/app/models/staff.py",
+    "frontend/src/pages/renters/RenterFormPage.tsx",
+    "frontend/src/pages/renters/RenterDetailPage.tsx",
+    "frontend/src/types/renter.ts",
+    "frontend/src/api/renters.ts",
+    "PRD_RentalManagement_SaaS.md",
+    "backend/migrations/001_core_tables.sql"
+  ],
+  "directory_structure": "backend/app/services/ (business logic), backend/app/models/ (Pydantic), backend/app/routes/ (FastAPI routers), frontend/src/pages/ (React pages), frontend/src/api/ (API client), frontend/src/types/ (TS interfaces), PRD_RentalManagement_SaaS.md (product spec)"
+}

@@ -1,0 +1,33 @@
+{
+  "id": "FEAT-002",
+  "type": "docs",
+  "description": "Update PRD_RentalManagement_SaaS.md to reflect all recent app changes: app name 'My Home', fpdf2 for PDF, Supabase auth.get_user() for JWT, Google OAuth flow, renter invitation flow, staff direct creation, organization management, Vietnamese UI, dropdown selectors.",
+  "status": "completed",
+  "steps": [
+    "1. In Section 0 (Architecture table): Change app name reference to 'My Home'. Change 'PDF Export' row from 'WeasyPrint (Python)' to 'fpdf2 (Python)' with reason 'Lightweight, no system dependencies'. Change 'Auth' row description to mention 'Supabase Auth (auth.get_user() verification)' to clarify algorithm-agnostic token verification.",
+    "2. In Section 1 (10.1 Authentication): Under the Google OAuth flow description, add a note about auto-detection of pending invitations on login for both staff AND renters. Make sure the existing google_auth description mentions checking invitations table for matching email. Add mention of OrganizationSetupPage redirect for new Google users.",
+    "3. In Section 4 (Module 3 - Renter Management): Replace section 4.3 'Luong moi nguoi thue dung app' with new flow: Owner fills form with email (required) + full_name + other info -> System auto-creates invitation record with role='renter' -> When renter logs in with that email (Google OAuth), system auto-detects invitation and assigns renter role + links to organization -> Renter sees only their data. Also update 4.1 schema notes to mention id_photo_links (list of URLs, max 5) instead of id_front_url/id_back_url. Add notes field.",
+    "4. In Section 5 (Module 4 - Staff Management): Update section 5.5 acceptance criteria and API description to reflect that staff creation is now 'Add Staff' (direct creation with email required), not 'Invite staff'. Staff auto-gets role when they log in with registered email. Staff list shows both active and pending members. Notes and address fields added to staff profile.",
+    "5. Add/update Section 10.6 (Organization Management) to document: organization rename/setup flow, PATCH /api/v1/organizations endpoint, OrganizationSetupPage after first Google signup.",
+    "6. Add a 'General Implementation Notes' section (or update existing notes) documenting: All UI is in Vietnamese, Property/unit selection uses dropdown selectors (not text ID inputs), App uses Supabase auth.get_user() for token verification (algorithm-agnostic, no local JWT decode)."
+  ],
+  "acceptance_criteria": [
+    "PRD Section 0 shows 'fpdf2' instead of 'WeasyPrint' for PDF generation",
+    "PRD Section 0 mentions app name 'My Home'",
+    "PRD mentions Supabase auth.get_user() for JWT verification",
+    "PRD Section 4 describes renter auto-invitation flow (email required, invitation created automatically)",
+    "PRD Section 4 mentions id_photo_links (URLs, max 5) and notes field",
+    "PRD Section 5 describes 'Add Staff' direct creation pattern with email required",
+    "PRD Section 10.6 documents organization setup/rename flow",
+    "PRD includes general notes about Vietnamese UI and dropdown selectors"
+  ],
+  "verification": [
+    "Grep PRD for 'fpdf2' to confirm PDF engine update",
+    "Grep PRD for 'My Home' to confirm app name",
+    "Grep PRD for 'auth.get_user' to confirm JWT verification method",
+    "Grep PRD for 'id_photo_links' to confirm CCCD photo change",
+    "Grep PRD for 'auto.*invitation' or 'invitation.*auto' to confirm renter flow update"
+  ],
+  "blocked_reason": null,
+  "findings": "Documentation-only change, no build/test needed. All grep verification checks pass: fpdf2, My Home, auth.get_user, id_photo_links all confirmed present in the PRD."
+}

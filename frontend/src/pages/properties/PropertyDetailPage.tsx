@@ -8,7 +8,7 @@ import Spinner from '../../components/ui/Spinner';
 import { useAuthStore } from '../../stores/authStore';
 
 const typeLabels: Record<string, string> = {
-  house: 'Nhà',
+  house: 'Nhà trọ',
   apartment_building: 'Chung cư',
   villa: 'Biệt thự',
 };
