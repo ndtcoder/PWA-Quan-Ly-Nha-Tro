@@ -136,7 +136,7 @@ def create_staff(org_id: str, data: StaffCreate) -> dict:
         .maybe_single()
         .execute()
     )
-    if existing.data:
+    if existing and existing.data:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="Email already has a pending staff registration in this organization",
