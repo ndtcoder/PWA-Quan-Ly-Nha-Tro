@@ -53,7 +53,7 @@ async def get_current_user(
         .maybe_single()
         .execute()
     )
-    profile = profile_response.data
+    profile = profile_response.data if profile_response else None
 
     role = profile["role"] if profile else "renter"
     organization_id = profile["organization_id"] if profile else None

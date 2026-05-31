@@ -304,7 +304,7 @@ def google_auth(data: GoogleAuthRequest) -> dict:
         .maybe_single()
         .execute()
     )
-    profile = profile_response.data
+    profile = profile_response.data if profile_response else None
 
     if profile:
         # Existing user - return profile
