@@ -2,7 +2,7 @@
   "id": "FEAT-002",
   "type": "docs",
   "description": "Update PRD_RentalManagement_SaaS.md to document the contract scan upload feature, notes field for renters and staff, and the new API endpoint and migration file.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "1. In Section 3 (MODULE 2 - Contract Management, around section 3.1 Database Schema): Add scan_pdf_url TEXT field to the contracts table schema. Add description: 'URL ban scan hop dong chinh thuc (PDF upload boi owner/manager)' in Vietnamese.",
     "2. In Section 3.3 (API Endpoints): Add new endpoint POST /api/contracts/{id}/upload-scan with description: 'Upload ban scan hop dong chinh thuc (PDF), luu vao Supabase Storage' in Vietnamese.",
@@ -24,5 +24,5 @@
     "Run: grep -c '004_new_features' /projects/sandbox/PWA-Quan-Ly-Nha-Tro/PRD_RentalManagement_SaaS.md"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "Documentation-only change. All grep verification checks pass: scan_pdf_url (2 occurrences), upload-scan (2 occurrences), 004_new_features (1 occurrence). Notes field added to both renter_profiles and profiles table references."
 }
