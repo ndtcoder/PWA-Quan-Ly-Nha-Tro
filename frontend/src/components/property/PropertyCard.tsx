@@ -47,7 +47,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
       <div className="mt-4">
         <div className="flex items-center justify-between text-sm">
           <span className="text-gray-600">
-            {property.occupied_units}/{property.total_units} rooms occupied
+            {property.occupied_units}/{property.total_units} phòng đang thuê
           </span>
           <span className="font-medium text-gray-900">{occupancyPercent}%</span>
         </div>

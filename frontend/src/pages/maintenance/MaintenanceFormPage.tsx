@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { getProperties, getUnits } from '../../api/properties';
 import { createMaintenanceRequest } from '../../api/maintenance';
 import type { MaintenanceCreateData } from '../../types/maintenance';
 
@@ -23,6 +25,17 @@ function MaintenanceFormPage() {
 
   // Mock: In a real app, get from auth store
   const userRole: string = 'owner';
+
+  const { data: properties = [] } = useQuery({
+    queryKey: ['properties'],
+    queryFn: () => getProperties(),
+  });
+
+  const { data: units = [] } = useQuery({
+    queryKey: ['units', propertyId],
+    queryFn: () => getUnits(propertyId),
+    enabled: !!propertyId,
+  });
 
   const handleScopeSelect = (selected: Scope) => {
     setScope(selected);
@@ -194,15 +207,21 @@ function MaintenanceFormPage() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Nhà cho thuê
+              Chọn nhà
             </label>
-            <input
-              type="text"
+            <select
               value={propertyId}
-              onChange={(e) => setPropertyId(e.target.value)}
-              placeholder="Nhập mã nhà"
+              onChange={(e) => {
+                setPropertyId(e.target.value);
+                setUnitId('');
+              }}
               className="w-full border border-gray-300 rounded-md px-3 py-2"
-            />
+            >
+              <option value="">-- Chọn nhà --</option>
+              {properties.map((p) => (
+                <option key={p.id} value={p.id}>{p.name}</option>
+              ))}
+            </select>
           </div>
 
           {scope === 'property' && (
@@ -223,15 +242,19 @@ function MaintenanceFormPage() {
           {scope === 'unit' && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Phòng
+                Chọn phòng
               </label>
-              <input
-                type="text"
+              <select
                 value={unitId}
                 onChange={(e) => setUnitId(e.target.value)}
-                placeholder="Nhập mã phòng"
                 className="w-full border border-gray-300 rounded-md px-3 py-2"
-              />
+                disabled={!propertyId}
+              >
+                <option value="">-- Chọn phòng --</option>
+                {units.map((u) => (
+                  <option key={u.id} value={u.id}>{u.unit_number}</option>
+                ))}
+              </select>
             </div>
           )}
 
