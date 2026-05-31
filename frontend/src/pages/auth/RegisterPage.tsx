@@ -9,14 +9,14 @@ import GoogleIcon from '../../components/icons/GoogleIcon';
 
 const registerSchema = z
   .object({
-    full_name: z.string().min(1, 'Full name is required'),
-    email: z.string().email('Please enter a valid email address'),
-    password: z.string().min(6, 'Password must be at least 6 characters'),
-    confirm_password: z.string().min(1, 'Please confirm your password'),
-    organization_name: z.string().min(1, 'Organization name is required'),
+    full_name: z.string().min(1, 'Vui lòng nhập họ và tên'),
+    email: z.string().email('Vui lòng nhập địa chỉ email hợp lệ'),
+    password: z.string().min(6, 'Mật khẩu phải có ít nhất 6 ký tự'),
+    confirm_password: z.string().min(1, 'Vui lòng xác nhận mật khẩu'),
+    organization_name: z.string().min(1, 'Vui lòng nhập tên hệ thống nhà trọ'),
   })
   .refine((data) => data.password === data.confirm_password, {
-    message: 'Passwords do not match',
+    message: 'Mật khẩu không khớp',
     path: ['confirm_password'],
   });
 
@@ -48,7 +48,7 @@ export default function RegisterPage() {
       });
     } catch (err: unknown) {
       const error = err as { response?: { data?: { detail?: string } } };
-      setServerError(error?.response?.data?.detail || 'Registration failed. Please try again.');
+      setServerError(error?.response?.data?.detail || 'Đăng ký thất bại. Vui lòng thử lại.');
     } finally {
       setIsLoading(false);
     }
@@ -61,7 +61,7 @@ export default function RegisterPage() {
       await signInWithGoogle();
     } catch (err: unknown) {
       const error = err as { message?: string };
-      setServerError(error?.message || 'Google sign-up failed. Please try again.');
+      setServerError(error?.message || 'Đăng ký bằng Google thất bại. Vui lòng thử lại.');
       setIsGoogleLoading(false);
     }
   };
@@ -69,7 +69,7 @@ export default function RegisterPage() {
   return (
     <div>
       <h1 className="text-2xl font-bold text-center text-gray-900 mb-6">
-        Create Account
+        Tạo tài khoản
       </h1>
 
       {serverError && (
@@ -81,14 +81,14 @@ export default function RegisterPage() {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
           <label htmlFor="full_name" className="block text-sm font-medium text-gray-700 mb-1">
-            Full Name
+            Họ và tên
           </label>
           <input
             id="full_name"
             type="text"
             {...register('full_name')}
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-            placeholder="Your full name"
+            placeholder="Nhập họ và tên"
           />
           {errors.full_name && (
             <p className="mt-1 text-sm text-red-600">{errors.full_name.message}</p>
@@ -113,14 +113,14 @@ export default function RegisterPage() {
 
         <div>
           <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-            Password
+            Mật khẩu
           </label>
           <input
             id="password"
             type="password"
             {...register('password')}
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-            placeholder="At least 6 characters"
+            placeholder="Ít nhất 6 ký tự"
           />
           {errors.password && (
             <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
@@ -129,14 +129,14 @@ export default function RegisterPage() {
 
         <div>
           <label htmlFor="confirm_password" className="block text-sm font-medium text-gray-700 mb-1">
-            Confirm Password
+            Xác nhận mật khẩu
           </label>
           <input
             id="confirm_password"
             type="password"
             {...register('confirm_password')}
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-            placeholder="Repeat your password"
+            placeholder="Nhập lại mật khẩu"
           />
           {errors.confirm_password && (
             <p className="mt-1 text-sm text-red-600">{errors.confirm_password.message}</p>
@@ -145,14 +145,14 @@ export default function RegisterPage() {
 
         <div>
           <label htmlFor="organization_name" className="block text-sm font-medium text-gray-700 mb-1">
-            Organization Name
+            Tên hệ thống nhà trọ
           </label>
           <input
             id="organization_name"
             type="text"
             {...register('organization_name')}
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-            placeholder="Your property management company"
+            placeholder="VD: Nhà trọ Minh Tâm"
           />
           {errors.organization_name && (
             <p className="mt-1 text-sm text-red-600">{errors.organization_name.message}</p>
@@ -170,7 +170,7 @@ export default function RegisterPage() {
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
             </svg>
           ) : (
-            'Create Account'
+            'Tạo tài khoản'
           )}
         </button>
       </form>
@@ -206,9 +206,9 @@ export default function RegisterPage() {
       </button>
 
       <p className="mt-4 text-center text-sm text-gray-600">
-        Already have an account?{' '}
+        Đã có tài khoản?{' '}
         <Link to="/login" className="text-primary-600 hover:text-primary-700 font-medium">
-          Sign In
+          Đăng nhập
         </Link>
       </p>
     </div>

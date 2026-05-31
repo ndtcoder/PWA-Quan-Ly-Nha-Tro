@@ -8,8 +8,8 @@ import { signInWithGoogle } from '../../api/auth';
 import GoogleIcon from '../../components/icons/GoogleIcon';
 
 const loginSchema = z.object({
-  email: z.string().email('Please enter a valid email address'),
-  password: z.string().min(1, 'Password is required'),
+  email: z.string().email('Vui lòng nhập địa chỉ email hợp lệ'),
+  password: z.string().min(1, 'Vui lòng nhập mật khẩu'),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
@@ -56,7 +56,7 @@ export default function LoginPage() {
   return (
     <div>
       <h1 className="text-2xl font-bold text-center text-gray-900 mb-6">
-        Sign In
+        Đăng nhập
       </h1>
 
       {serverError && (
@@ -70,6 +70,7 @@ export default function LoginPage() {
           <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
             Email
           </label>
+
           <input
             id="email"
             type="email"
@@ -84,14 +85,14 @@ export default function LoginPage() {
 
         <div>
           <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-            Password
+            Mật khẩu
           </label>
           <input
             id="password"
             type="password"
             {...register('password')}
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-            placeholder="Enter your password"
+            placeholder="Nhập mật khẩu"
           />
           {errors.password && (
             <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
@@ -109,7 +110,7 @@ export default function LoginPage() {
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
             </svg>
           ) : (
-            'Sign In'
+            'Đăng nhập'
           )}
         </button>
       </form>
@@ -144,12 +145,14 @@ export default function LoginPage() {
         )}
       </button>
 
-      <p className="mt-4 text-center text-sm text-gray-600">
-        Don&apos;t have an account?{' '}
+      <div className="mt-4 flex items-center justify-between text-sm">
         <Link to="/register" className="text-primary-600 hover:text-primary-700 font-medium">
-          Register
+          Chưa có tài khoản? Đăng ký
         </Link>
-      </p>
+        <a href="#" className="text-gray-500 hover:text-gray-700">
+          Quên mật khẩu?
+        </a>
+      </div>
     </div>
   );
 }

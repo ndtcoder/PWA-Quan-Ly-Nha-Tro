@@ -103,12 +103,12 @@ export default function AppLayout() {
         {/* Update available banner */}
         {updateAvailable && (
           <div className="bg-green-600 text-white px-4 py-2 flex items-center justify-between text-sm">
-            <span>Phien ban moi da san sang. Tai lai de cap nhat.</span>
+            <span>Phiên bản mới đã sẵn sàng. Tải lại để cập nhật.</span>
             <button
               onClick={handleUpdate}
               className="bg-white text-green-600 px-3 py-1 rounded text-sm font-medium hover:bg-green-50"
             >
-              Cap nhat
+              Cập nhật
             </button>
           </div>
         )}
@@ -116,13 +116,13 @@ export default function AppLayout() {
         {/* Install prompt banner */}
         {deferredPrompt && !installDismissed && (
           <div className="bg-indigo-600 text-white px-4 py-2 flex items-center justify-between text-sm">
-            <span>Cai dat ung dung de truy cap nhanh hon.</span>
+            <span>Cài đặt ứng dụng để truy cập nhanh hơn</span>
             <div className="flex items-center gap-2 ml-4">
               <button
                 onClick={handleInstall}
                 className="bg-white text-indigo-600 px-3 py-1 rounded text-sm font-medium hover:bg-indigo-50"
               >
-                Cai dat
+                Cài đặt
               </button>
               <button
                 onClick={handleDismissInstall}
@@ -140,13 +140,13 @@ export default function AppLayout() {
         {/* Push notification banner */}
         {showPushBanner && (
           <div className="bg-blue-600 text-white px-4 py-2 flex items-center justify-between text-sm">
-            <span>Enable notifications to get payment reminders and updates.</span>
+            <span>Bật thông báo để không bỏ lỡ nhắc nhở thanh toán</span>
             <div className="flex items-center gap-2 ml-4">
               <button
                 onClick={handleEnablePush}
                 className="bg-white text-blue-600 px-3 py-1 rounded text-sm font-medium hover:bg-blue-50"
               >
-                Enable
+                Bật thông báo
               </button>
               <button
                 onClick={handleDismissBanner}
@@ -186,7 +186,7 @@ export default function AppLayout() {
               }}
               className="text-sm text-gray-600 hover:text-red-600 px-2 py-1 rounded"
             >
-              Logout
+              Đăng xuất
             </button>
           </div>
         </header>

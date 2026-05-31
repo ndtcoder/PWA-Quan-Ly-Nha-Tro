@@ -52,7 +52,7 @@ export default function AuthCallbackPage() {
         }
       } catch (err: unknown) {
         const errorObj = err as { message?: string };
-        setError(errorObj?.message || 'Authentication failed. Please try again.');
+        setError(errorObj?.message || 'Xác thực thất bại. Vui lòng thử lại.');
         setTimeout(() => {
           navigate('/login', { replace: true });
         }, 3000);
@@ -69,7 +69,7 @@ export default function AuthCallbackPage() {
           <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-md text-sm">
             {error}
           </div>
-          <p className="text-sm text-gray-600">Redirecting to login...</p>
+          <p className="text-sm text-gray-600">Đang chuyển hướng đến trang đăng nhập...</p>
         </div>
       </div>
     );
@@ -98,7 +98,7 @@ export default function AuthCallbackPage() {
             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
           />
         </svg>
-        <p className="text-gray-600">Completing sign-in...</p>
+        <p className="text-gray-600">Đang hoàn tất đăng nhập...</p>
       </div>
     </div>
   );
