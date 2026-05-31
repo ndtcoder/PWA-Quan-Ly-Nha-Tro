@@ -1185,6 +1185,102 @@ GET  /auth/me                → profile + role + permissions
 3. Người nhận click link → trang đăng ký có token pre-fill
 4. Sau đăng ký → profiles liên kết với organization, role được gán
 
+**Luồng đăng nhập bằng Google OAuth:**
+
+```
+POST /api/v1/auth/google     → xác thực Google OAuth token, tạo/liên kết tài khoản
+```
+
+1. User click "Sign in with Google" trên LoginPage
+2. Supabase OAuth redirect tới Google consent screen
+3. Google redirect về `/auth/callback` với access_token
+4. Frontend (AuthCallbackPage) lấy session từ Supabase, gọi `POST /api/v1/auth/google` với `access_token`
+5. Backend xác thực token với Supabase, kiểm tra user trong DB:
+   - Nếu user mới: tạo `organizations` + `profiles` (role='owner'), trả về `needs_org_setup: true`
+   - Nếu user đã tồn tại: trả về profile + org info, `needs_org_setup: false`
+6. Frontend kiểm tra `needs_org_setup`:
+   - `true` → redirect tới `/organization-setup` để đặt tên tổ chức
+   - `false` → redirect tới `/dashboard`
+
+**Request body:**
+```json
+{
+  "access_token": "string"  // Supabase access token from OAuth callback
+}
+```
+
+**Response:**
+```json
+{
+  "access_token": "string",
+  "token_type": "bearer",
+  "user": {
+    "id": "uuid",
+    "email": "string",
+    "full_name": "string",
+    "role": "owner|manager|staff|renter"
+  },
+  "needs_org_setup": true
+}
+```
+
+### 10.6 Organization Management
+
+**API Endpoints:**
+
+```
+GET   /api/v1/organizations/me    → lấy thông tin tổ chức của user hiện tại
+PATCH /api/v1/organizations       → cập nhật tên/slug tổ chức (chỉ owner)
+```
+
+**GET /api/v1/organizations/me**
+
+Trả về organization mà user hiện tại thuộc về.
+
+**Response:**
+```json
+{
+  "id": "uuid",
+  "name": "string",
+  "slug": "string",
+  "owner_id": "uuid",
+  "created_at": "timestamp"
+}
+```
+
+**PATCH /api/v1/organizations**
+
+Cập nhật tên hoặc slug của tổ chức. Chỉ owner mới có quyền.
+
+**Request body:**
+```json
+{
+  "name": "string (optional)",
+  "slug": "string (optional)"
+}
+```
+
+**Luồng Organization Setup (sau Google signup):**
+1. User mới đăng ký qua Google OAuth, hệ thống tạo org với tên mặc định
+2. Redirect tới `/organization-setup`
+3. User nhập tên tổ chức mong muốn
+4. Frontend gọi `PATCH /api/v1/organizations` với tên mới
+5. Sau khi cập nhật thành công → redirect tới `/dashboard`
+
+**Luồng Organization Settings (đổi tên tổ chức):**
+1. Owner truy cập `/settings/organization`
+2. Trang hiển thị thông tin hiện tại (từ `GET /api/v1/organizations/me`)
+3. Owner sửa tên/slug → gọi `PATCH /api/v1/organizations`
+4. Hiển thị thông báo thành công
+
+**UI Screens:**
+
+| Route | Component | Mô tả |
+|-------|-----------|-------|
+| `/auth/callback` | `AuthCallbackPage` | Xử lý OAuth redirect từ Google, lấy session và gọi backend |
+| `/organization-setup` | `OrganizationSetupPage` | Trang onboarding sau Google signup, cho user đặt tên tổ chức |
+| `/settings/organization` | `OrganizationSettingsPage` | Trang settings cho owner đổi tên/slug tổ chức |
+
 ### 10.2 Notification System
 
 **Stack**: Resend (email) + Web Push (via `web-push` library)

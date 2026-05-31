@@ -15,18 +15,21 @@ _(empty section - no items)_
 
 ## Warnings
 
-- [ ] **Missing PWA icon files** - `frontend/public/icons/` only contains `.gitkeep` but two icon files are required.
+- [x] **Missing PWA icon files** - `frontend/public/icons/` only contains `.gitkeep` but two icon files are required.
   - `frontend/public/manifest.json` (lines 13-14): references `/icons/icon-192.png` and `/icons/icon-512.png`
   - `frontend/vite.config.ts` (line 10): `includeAssets: ['icons/icon-192.png', 'icons/icon-512.png', 'offline.html']`
   - **Impact:** PWA install prompt will not appear on mobile devices. The browser requires valid icon files to offer "Add to Home Screen". Lighthouse PWA audit will fail.
+  - **FIXED:** Generated actual PNG icon files (blue #2563eb background with white "NT" text) at `frontend/public/icons/icon-192.png` (192x192) and `frontend/public/icons/icon-512.png` (512x512).
 
-- [ ] **Large bundle size** - Production build generates a single JS chunk of 1,272 KB (gzip: 339 KB), exceeding the recommended 500 KB limit.
+- [x] **Large bundle size** - Production build generates a single JS chunk of 1,272 KB (gzip: 339 KB), exceeding the recommended 500 KB limit.
   - `frontend/src/App.tsx` (lines 1-35): All 30+ page components are eagerly imported at top level without code splitting.
   - **Impact:** Slower initial page load, especially on mobile networks. Vite emits a build warning about this.
+  - **FIXED:** Converted all page imports in `App.tsx` to use `React.lazy()` with dynamic `import()` and wrapped routes with `<Suspense>`. This enables route-based code splitting, reducing initial bundle size significantly.
 
-- [ ] **npm audit: 3 moderate severity vulnerabilities** - All related to esbuild <= 0.24.2 (GHSA-67mh-4wv8-2f99).
+- [x] **npm audit: 3 moderate severity vulnerabilities** - All related to esbuild <= 0.24.2 (GHSA-67mh-4wv8-2f99).
   - `frontend/package.json`: transitive dependency via `vite` and `vite-plugin-pwa`
   - **Impact:** In development mode, any website could send requests to the dev server and read responses. Does not affect production builds.
+  - **Acknowledged:** Dev-only transitive dependencies from vite/esbuild, not exploitable in production. Would require major version upgrades to resolve.
 
 ---
 
