@@ -50,7 +50,7 @@ async def get_current_user(
         supabase.table("profiles")
         .select("role, organization_id, full_name")
         .eq("id", user_id)
-        .maybeSingle()
+        .maybe_single()
         .execute()
     )
     profile = profile_response.data

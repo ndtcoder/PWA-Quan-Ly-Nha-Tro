@@ -301,7 +301,7 @@ def google_auth(data: GoogleAuthRequest) -> dict:
         supabase.table("profiles")
         .select("*")
         .eq("id", user_id)
-        .maybeSingle()
+        .maybe_single()
         .execute()
     )
     profile = profile_response.data
