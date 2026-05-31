@@ -277,18 +277,24 @@ def upload_id_photo(
     storage_path = f"{org_id}/{renter_id}_{side}.jpg"
     bucket = supabase.storage.from_("id-documents")
 
-    # Try to remove existing file first (ignore errors)
     try:
-        bucket.remove([storage_path])
-    except Exception:
-        pass
+        # Try to remove existing file first (ignore errors)
+        try:
+            bucket.remove([storage_path])
+        except Exception:
+            pass
 
-    # Upload new file
-    bucket.upload(
-        path=storage_path,
-        file=file_bytes,
-        file_options={"content-type": "image/jpeg"},
-    )
+        # Upload new file
+        bucket.upload(
+            path=storage_path,
+            file=file_bytes,
+            file_options={"content-type": "image/jpeg"},
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=f"Storage upload failed: {str(e)}. The 'id-documents' bucket may not exist in Supabase Storage.",
+        )
 
     # Get public URL
     public_url = bucket.get_public_url(storage_path)

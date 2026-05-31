@@ -1,0 +1,7 @@
+{
+  "task_id": "task-fix-bugs-rename",
+  "task_description": "Rename app to Luu Tru Thong Minh, fix Dashboard data display, fix invitations schema mismatch (invited_by column), fix CCCD upload error handling, and fix PDF export error handling.",
+  "status": "in_progress",
+  "feature_order": ["FEAT-001"],
+  "blocked_reason": null
+}

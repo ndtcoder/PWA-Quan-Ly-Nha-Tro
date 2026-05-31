@@ -331,26 +331,39 @@ def export_pdf(contract_id: str, org_id: str) -> dict:
     try:
         from weasyprint import HTML
         pdf_bytes = HTML(string=html_content).write_pdf()
-    except Exception:
-        # If WeasyPrint is not available, return HTML content URL
-        pdf_bytes = html_content.encode("utf-8")
+    except ImportError:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="PDF generation is not available. WeasyPrint requires system libraries (cairo, pango) that are not installed.",
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"PDF generation failed: {str(e)}",
+        )
 
     # Upload to Supabase Storage
     storage_path = f"{org_id}/{contract_id}.pdf"
-    bucket = supabase.storage.from_("contracts")
-
     try:
-        bucket.remove([storage_path])
-    except Exception:
-        pass
+        bucket = supabase.storage.from_("contracts")
 
-    bucket.upload(
-        path=storage_path,
-        file=pdf_bytes,
-        file_options={"content-type": "application/pdf"},
-    )
+        try:
+            bucket.remove([storage_path])
+        except Exception:
+            pass
 
-    pdf_url = bucket.get_public_url(storage_path)
+        bucket.upload(
+            path=storage_path,
+            file=pdf_bytes,
+            file_options={"content-type": "application/pdf"},
+        )
+
+        pdf_url = bucket.get_public_url(storage_path)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=f"Storage upload failed: {str(e)}. The 'contracts' bucket may not exist in Supabase Storage.",
+        )
 
     # Update contract with pdf_url
     supabase.table("contracts").update(
