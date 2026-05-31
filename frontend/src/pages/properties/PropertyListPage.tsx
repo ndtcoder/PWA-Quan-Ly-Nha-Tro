@@ -8,7 +8,7 @@ import { useAuthStore } from '../../stores/authStore';
 
 const propertyTypes = [
   { value: '', label: 'Tất cả loại' },
-  { value: 'house', label: 'Nhà' },
+  { value: 'house', label: 'Nhà trọ' },
   { value: 'apartment_building', label: 'Chung cư' },
   { value: 'villa', label: 'Biệt thự' },
 ];

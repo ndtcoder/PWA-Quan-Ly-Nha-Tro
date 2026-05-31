@@ -8,9 +8,9 @@ const statusColors: Record<string, string> = {
 };
 
 const statusLabels: Record<string, string> = {
-  vacant: 'Vacant',
-  occupied: 'Occupied',
-  maintenance: 'Maintenance',
+  vacant: 'Trống',
+  occupied: 'Đang thuê',
+  maintenance: 'Bảo trì',
 };
 
 interface UnitGridProps {
@@ -22,7 +22,7 @@ export default function UnitGrid({ units }: UnitGridProps) {
 
   if (units.length === 0) {
     return (
-      <p className="text-sm text-gray-500 py-4">No units found.</p>
+      <p className="text-sm text-gray-500 py-4">Không tìm thấy phòng nào.</p>
     );
   }
 

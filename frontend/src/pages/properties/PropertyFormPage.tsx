@@ -153,7 +153,7 @@ export default function PropertyFormPage() {
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
           >
             <option value="">Chọn loại...</option>
-            <option value="house">Nhà</option>
+            <option value="house">Nhà trọ</option>
             <option value="apartment_building">Chung cư</option>
             <option value="villa">Biệt thự</option>
           </select>

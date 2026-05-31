@@ -2,9 +2,9 @@ import { useNavigate } from 'react-router-dom';
 import type { Property } from '../../types/property';
 
 const typeLabels: Record<string, string> = {
-  house: 'House',
-  apartment_building: 'Apartment',
-  villa: 'Villa',
+  house: 'Nhà trọ',
+  apartment_building: 'Chung cư',
+  villa: 'Biệt thự',
 };
 
 const typeBadgeColors: Record<string, string> = {
