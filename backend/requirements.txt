@@ -6,7 +6,7 @@ pydantic-settings
 slowapi
 python-slugify
 jinja2
-weasyprint
+fpdf2
 python-multipart
 qrcode[pil]
 Pillow

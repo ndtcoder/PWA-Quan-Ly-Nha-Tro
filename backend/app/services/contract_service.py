@@ -2,7 +2,6 @@ from datetime import datetime, timedelta
 from typing import Optional
 
 from fastapi import HTTPException, status
-from jinja2 import Environment, FileSystemLoader
 
 from app.database import get_supabase
 from app.models.contract import ContractCreate, ContractUpdate
@@ -257,7 +256,10 @@ def terminate_contract(contract_id: str, reason: str, org_id: str) -> dict:
 
 
 def export_pdf(contract_id: str, org_id: str) -> dict:
-    """Generate PDF from contract template and upload to Supabase Storage."""
+    """Generate PDF from contract data and upload to Supabase Storage."""
+    import os
+    from fpdf import FPDF
+
     supabase = get_supabase()
 
     contract = (
@@ -303,43 +305,186 @@ def export_pdf(contract_id: str, org_id: str) -> dict:
             .execute()
         ).data or {}
 
-    # Render template
-    import os
-    template_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "templates")
-    env = Environment(loader=FileSystemLoader(template_dir))
-    template = env.get_template("contract_template.html")
-
-    html_content = template.render(
-        contract_number=contract.get("contract_number", ""),
-        tenant_name=renter.get("full_name", ""),
-        tenant_id_number=renter.get("id_number", ""),
-        tenant_phone=renter.get("phone", ""),
-        property_name=property_data.get("name", ""),
-        property_address=property_data.get("address", ""),
-        unit_number=unit.get("unit_number", ""),
-        monthly_rent=contract.get("monthly_rent", 0),
-        deposit_amount=contract.get("deposit_amount", 0),
-        start_date=contract.get("start_date", ""),
-        end_date=contract.get("end_date", ""),
-        max_occupants=contract.get("max_occupants", 2),
-        payment_due_day=contract.get("payment_due_day", 5),
-        terms=contract.get("terms", ""),
-        today=datetime.now().strftime("%d/%m/%Y"),
-    )
-
-    # Generate PDF with WeasyPrint
+    # Generate PDF with fpdf2
     try:
-        from weasyprint import HTML
-        pdf_bytes = HTML(string=html_content).write_pdf()
-    except ImportError:
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="PDF generation is not available. WeasyPrint requires system libraries (cairo, pango) that are not installed.",
-        )
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.set_auto_page_break(auto=True, margin=15)
+
+        # Try to find a Unicode font for Vietnamese text support
+        font_added = False
+        possible_fonts = [
+            # Windows
+            "C:/Windows/Fonts/arial.ttf",
+            "C:/Windows/Fonts/times.ttf",
+            # Linux
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+            # macOS
+            "/System/Library/Fonts/Supplemental/Arial.ttf",
+            "/Library/Fonts/Arial.ttf",
+        ]
+        font_regular = None
+        font_bold = None
+        for font_path in possible_fonts:
+            if os.path.exists(font_path):
+                font_regular = font_path
+                break
+
+        # Check for bold variant
+        bold_fonts = [
+            "C:/Windows/Fonts/arialbd.ttf",
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+            "/System/Library/Fonts/Supplemental/Arial Bold.ttf",
+            "/Library/Fonts/Arial Bold.ttf",
+        ]
+        for font_path in bold_fonts:
+            if os.path.exists(font_path):
+                font_bold = font_path
+                break
+
+        if font_regular:
+            pdf.add_font("UniFont", "", font_regular)
+            if font_bold:
+                pdf.add_font("UniFont", "B", font_bold)
+            else:
+                pdf.add_font("UniFont", "B", font_regular)
+            font_family = "UniFont"
+            font_added = True
+        else:
+            font_family = "Helvetica"
+
+        # Define labels based on font availability (Vietnamese or ASCII fallback)
+        if font_added:
+            lbl_title = "H\u1ee2P \u0110\u1ed2NG THU\u00ca PH\u00d2NG"
+            lbl_contract_no = "S\u1ed1 h\u1ee3p \u0111\u1ed3ng"
+            lbl_date = "Ng\u00e0y"
+            lbl_section_a = "A. B\u00ean cho thu\u00ea"
+            lbl_property = "Nh\u00e0 tr\u1ecd"
+            lbl_address = "\u0110\u1ecba ch\u1ec9"
+            lbl_section_b = "B. B\u00ean thu\u00ea"
+            lbl_fullname = "H\u1ecd t\u00ean"
+            lbl_phone = "\u0110i\u1ec7n tho\u1ea1i"
+            lbl_section_c = "C. N\u1ed9i dung h\u1ee3p \u0111\u1ed3ng"
+            lbl_room = "Ph\u00f2ng cho thu\u00ea"
+            lbl_rent = "Gi\u00e1 thu\u00ea"
+            lbl_month = "th\u00e1ng"
+            lbl_deposit = "Ti\u1ec1n c\u1ecdc"
+            lbl_duration = "Th\u1eddi h\u1ea1n"
+            lbl_pay_date = "Ng\u00e0y thanh to\u00e1n"
+            lbl_pay_monthly = "h\u00e0ng th\u00e1ng v\u00e0o ng\u00e0y"
+            lbl_section_d = "D. \u0110i\u1ec1u kho\u1ea3n"
+            lbl_landlord = "B\u00ean cho thu\u00ea"
+            lbl_tenant = "B\u00ean thu\u00ea"
+            lbl_sign = "(K\u00fd v\u00e0 ghi r\u00f5 h\u1ecd t\u00ean)"
+        else:
+            lbl_title = "HOP DONG THUE PHONG"
+            lbl_contract_no = "So hop dong"
+            lbl_date = "Ngay"
+            lbl_section_a = "A. Ben cho thue (Landlord)"
+            lbl_property = "Nha tro"
+            lbl_address = "Dia chi"
+            lbl_section_b = "B. Ben thue (Tenant)"
+            lbl_fullname = "Ho ten"
+            lbl_phone = "Dien thoai"
+            lbl_section_c = "C. Noi dung hop dong"
+            lbl_room = "Phong cho thue"
+            lbl_rent = "Gia thue"
+            lbl_month = "thang"
+            lbl_deposit = "Tien coc"
+            lbl_duration = "Thoi han"
+            lbl_pay_date = "Ngay thanh toan"
+            lbl_pay_monthly = "hang thang vao ngay"
+            lbl_section_d = "D. Dieu khoan"
+            lbl_landlord = "Ben cho thue"
+            lbl_tenant = "Ben thue"
+            lbl_sign = "(Ky va ghi ro ho ten)"
+
+        # Title
+        pdf.set_font(font_family, "B", 16)
+        pdf.cell(0, 12, lbl_title, align="C", new_x="LMARGIN", new_y="NEXT")
+        pdf.ln(4)
+
+        # Contract number and date
+        pdf.set_font(font_family, "", 11)
+        contract_number = contract.get("contract_number", "")
+        today = datetime.now().strftime("%d/%m/%Y")
+        pdf.cell(0, 8, lbl_contract_no + ": " + contract_number, align="C", new_x="LMARGIN", new_y="NEXT")
+        pdf.cell(0, 8, lbl_date + ": " + today, align="C", new_x="LMARGIN", new_y="NEXT")
+        pdf.ln(6)
+
+        # Section A: Landlord info
+        pdf.set_font(font_family, "B", 12)
+        pdf.cell(0, 8, lbl_section_a, new_x="LMARGIN", new_y="NEXT")
+        pdf.set_font(font_family, "", 11)
+        property_name = property_data.get("name", "")
+        property_address = property_data.get("address", "")
+        pdf.cell(0, 7, "  - " + lbl_property + ": " + property_name, new_x="LMARGIN", new_y="NEXT")
+        pdf.cell(0, 7, "  - " + lbl_address + ": " + property_address, new_x="LMARGIN", new_y="NEXT")
+        pdf.ln(4)
+
+        # Section B: Tenant info
+        pdf.set_font(font_family, "B", 12)
+        pdf.cell(0, 8, lbl_section_b, new_x="LMARGIN", new_y="NEXT")
+        pdf.set_font(font_family, "", 11)
+        tenant_name = renter.get("full_name", "")
+        tenant_id = renter.get("id_number", "")
+        tenant_phone = renter.get("phone", "")
+        pdf.cell(0, 7, "  - " + lbl_fullname + ": " + tenant_name, new_x="LMARGIN", new_y="NEXT")
+        pdf.cell(0, 7, "  - CCCD/CMND: " + tenant_id, new_x="LMARGIN", new_y="NEXT")
+        pdf.cell(0, 7, "  - " + lbl_phone + ": " + tenant_phone, new_x="LMARGIN", new_y="NEXT")
+        pdf.ln(4)
+
+        # Section C: Contract details
+        pdf.set_font(font_family, "B", 12)
+        pdf.cell(0, 8, lbl_section_c, new_x="LMARGIN", new_y="NEXT")
+        pdf.set_font(font_family, "", 11)
+
+        unit_number = unit.get("unit_number", "")
+        monthly_rent = contract.get("monthly_rent", 0)
+        deposit_amount = contract.get("deposit_amount", 0)
+        start_date = contract.get("start_date", "")
+        end_date = contract.get("end_date", "")
+        payment_due_day = contract.get("payment_due_day", 5)
+
+        rent_str = "{:,.0f}".format(monthly_rent)
+        deposit_str = "{:,.0f}".format(deposit_amount)
+
+        pdf.cell(0, 7, "  - " + lbl_room + ": " + unit_number + " - " + property_address, new_x="LMARGIN", new_y="NEXT")
+        pdf.cell(0, 7, "  - " + lbl_rent + ": " + rent_str + " VND/" + lbl_month, new_x="LMARGIN", new_y="NEXT")
+        pdf.cell(0, 7, "  - " + lbl_deposit + ": " + deposit_str + " VND", new_x="LMARGIN", new_y="NEXT")
+        pdf.cell(0, 7, "  - " + lbl_duration + ": " + start_date + " - " + end_date, new_x="LMARGIN", new_y="NEXT")
+        pdf.cell(0, 7, "  - " + lbl_pay_date + ": " + lbl_pay_monthly + " " + str(payment_due_day), new_x="LMARGIN", new_y="NEXT")
+        pdf.ln(4)
+
+        # Section D: Terms
+        terms = contract.get("terms", "")
+        if terms:
+            pdf.set_font(font_family, "B", 12)
+            pdf.cell(0, 8, lbl_section_d, new_x="LMARGIN", new_y="NEXT")
+            pdf.set_font(font_family, "", 11)
+            pdf.multi_cell(0, 7, "  " + terms)
+            pdf.ln(4)
+
+        # Signatures
+        pdf.ln(10)
+        pdf.set_font(font_family, "B", 11)
+        col_width = pdf.w / 2 - pdf.l_margin
+        x_start = pdf.l_margin
+        y_pos = pdf.get_y()
+
+        pdf.set_xy(x_start, y_pos)
+        pdf.cell(col_width, 8, lbl_landlord, align="C")
+        pdf.cell(col_width, 8, lbl_tenant, align="C", new_x="LMARGIN", new_y="NEXT")
+
+        pdf.set_font(font_family, "", 10)
+        pdf.cell(col_width, 7, lbl_sign, align="C")
+        pdf.cell(col_width, 7, lbl_sign, align="C", new_x="LMARGIN", new_y="NEXT")
+
+        pdf_bytes = pdf.output()
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=f"PDF generation failed: {str(e)}",
+            detail="PDF generation failed: " + str(e),
         )
 
     # Upload to Supabase Storage
@@ -362,7 +507,7 @@ def export_pdf(contract_id: str, org_id: str) -> dict:
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
-            detail=f"Storage upload failed: {str(e)}. The 'contracts' bucket may not exist in Supabase Storage.",
+            detail="Storage upload failed: " + str(e) + ". The 'contracts' bucket may not exist in Supabase Storage.",
         )
 
     # Update contract with pdf_url

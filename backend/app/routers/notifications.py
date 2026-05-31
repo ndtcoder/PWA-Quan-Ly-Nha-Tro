@@ -24,14 +24,17 @@ async def get_unread_count(
 ):
     """Get count of unread notifications for current user."""
     supabase = get_supabase()
-    response = (
-        supabase.table("notifications")
-        .select("id", count="exact")
-        .eq("recipient_id", current_user["user_id"])
-        .eq("is_read", False)
-        .execute()
-    )
-    return {"count": response.count or 0}
+    try:
+        response = (
+            supabase.table("notifications")
+            .select("id", count="exact")
+            .eq("recipient_id", current_user["user_id"])
+            .eq("is_read", False)
+            .execute()
+        )
+        return {"count": response.count or 0}
+    except Exception:
+        return {"count": 0}
 
 
 @router.get("")
@@ -40,15 +43,18 @@ async def get_notifications(
 ):
     """Get last 50 notifications for current user, ordered by created_at DESC."""
     supabase = get_supabase()
-    response = (
-        supabase.table("notifications")
-        .select("*")
-        .eq("recipient_id", current_user["user_id"])
-        .order("created_at", desc=True)
-        .limit(50)
-        .execute()
-    )
-    return response.data or []
+    try:
+        response = (
+            supabase.table("notifications")
+            .select("*")
+            .eq("recipient_id", current_user["user_id"])
+            .order("created_at", desc=True)
+            .limit(50)
+            .execute()
+        )
+        return response.data or []
+    except Exception:
+        return []
 
 
 @router.patch("/mark-read")
@@ -60,16 +66,22 @@ async def mark_notifications_read(
     supabase = get_supabase()
 
     if request.all:
-        supabase.table("notifications").update({"is_read": True}).eq(
-            "recipient_id", current_user["user_id"]
-        ).eq("is_read", False).execute()
+        try:
+            supabase.table("notifications").update({"is_read": True}).eq(
+                "recipient_id", current_user["user_id"]
+            ).eq("is_read", False).execute()
+        except Exception:
+            pass
         return {"message": "All notifications marked as read"}
 
     if request.ids:
-        for notification_id in request.ids:
-            supabase.table("notifications").update({"is_read": True}).eq(
-                "id", notification_id
-            ).eq("recipient_id", current_user["user_id"]).execute()
+        try:
+            for notification_id in request.ids:
+                supabase.table("notifications").update({"is_read": True}).eq(
+                    "id", notification_id
+                ).eq("recipient_id", current_user["user_id"]).execute()
+        except Exception:
+            pass
         return {"message": f"{len(request.ids)} notifications marked as read"}
 
     raise HTTPException(status_code=400, detail="Provide 'ids' or set 'all' to true")

@@ -1,0 +1,8 @@
+{
+  "task_id": "task-fix-notifications-pdf",
+  "task_description": "Fix notifications endpoint crash and replace WeasyPrint with fpdf2 for PDF generation",
+  "status": "in_progress",
+  "feature_order": ["FEAT-001"],
+  "blocked_reason": null,
+  "verification": null
+}
