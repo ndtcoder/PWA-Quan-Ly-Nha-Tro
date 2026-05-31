@@ -14,6 +14,23 @@ from app.models.auth import (
 )
 
 
+def _ensure_unique_slug(supabase, base_slug: str) -> str:
+    """Generate a unique slug, appending a number if the base is taken."""
+    slug = base_slug
+    counter = 1
+    while True:
+        existing = (
+            supabase.table("organizations")
+            .select("id")
+            .eq("slug", slug)
+            .execute()
+        )
+        if not existing.data:
+            return slug
+        slug = f"{base_slug}-{counter}"
+        counter += 1
+
+
 def register_owner(data: RegisterOwnerRequest) -> dict:
     """Register a new owner: create auth user, organization, and profile."""
     supabase = get_supabase()
@@ -30,19 +47,20 @@ def register_owner(data: RegisterOwnerRequest) -> dict:
     user_id = user.id
 
     # Create organization
-    org_slug = slugify(data.organization_name)
+    base_slug = slugify(data.organization_name)
+    if not base_slug:
+        base_slug = "org"
+    org_slug = _ensure_unique_slug(supabase, base_slug)
     org_data = {
         "id": str(uuid.uuid4()),
         "name": data.organization_name,
         "slug": org_slug,
-        "owner_id": str(user_id),
     }
     supabase.table("organizations").insert(org_data).execute()
 
-    # Create profile
+    # Create profile (no email column - email is in auth.users)
     profile_data = {
         "id": str(user_id),
-        "email": data.email,
         "full_name": data.full_name,
         "role": "owner",
         "organization_id": org_data["id"],
@@ -90,7 +108,7 @@ def login(data: LoginRequest) -> dict:
         "access_token": sign_in_response.session.access_token,
         "user": {
             "id": str(user_id),
-            "email": profile.get("email", data.email),
+            "email": data.email,
             "role": profile.get("role", "renter"),
             "organization_id": profile.get("organization_id", ""),
             "full_name": profile.get("full_name"),
@@ -111,9 +129,13 @@ def get_profile(user_id: str) -> dict:
     )
     profile = profile_response.data
 
+    # Get email from Supabase auth user (not stored in profiles table)
+    user_response = supabase.auth.admin.get_user_by_id(user_id)
+    email = user_response.user.email if user_response.user else ""
+
     return {
         "id": profile["id"],
-        "email": profile["email"],
+        "email": email,
         "role": profile["role"],
         "organization_id": profile["organization_id"],
         "full_name": profile.get("full_name"),
@@ -183,10 +205,9 @@ def accept_invite(data: AcceptInviteRequest) -> dict:
     user = auth_response.user
     user_id = user.id
 
-    # Create profile
+    # Create profile (no email column - email is in auth.users)
     profile_data = {
         "id": str(user_id),
-        "email": invitation["email"],
         "full_name": data.full_name,
         "role": invitation["role"],
         "organization_id": invitation["organization_id"],
@@ -291,7 +312,7 @@ def google_auth(data: GoogleAuthRequest) -> dict:
             "access_token": data.access_token,
             "user": {
                 "id": user_id,
-                "email": profile.get("email", email),
+                "email": email,
                 "role": profile.get("role", "owner"),
                 "organization_id": profile.get("organization_id", ""),
                 "full_name": profile.get("full_name", full_name),
@@ -301,19 +322,20 @@ def google_auth(data: GoogleAuthRequest) -> dict:
 
     # New user - create organization and profile
     org_name = full_name if full_name else email.split("@")[0]
-    org_slug = slugify(org_name)
+    base_slug = slugify(org_name)
+    if not base_slug:
+        base_slug = slugify(email.split("@")[0]) or "org"
+    org_slug = _ensure_unique_slug(supabase, base_slug)
     org_data = {
         "id": str(uuid.uuid4()),
         "name": org_name,
         "slug": org_slug,
-        "owner_id": user_id,
     }
     supabase.table("organizations").insert(org_data).execute()
 
-    # Create profile with owner role
+    # Create profile with owner role (no email column - email is in auth.users)
     profile_data = {
         "id": user_id,
-        "email": email,
         "full_name": full_name,
         "role": "owner",
         "organization_id": org_data["id"],

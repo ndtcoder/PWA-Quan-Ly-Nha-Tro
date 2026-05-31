@@ -125,15 +125,19 @@ async def validate_invite(token: str = Query(...)):
 @limiter.limit("10/minute")
 async def google_auth(request: Request, data: GoogleAuthRequest):
     """Handle Google OAuth sign-in/sign-up via Supabase."""
+    import logging
+    logger = logging.getLogger("app")
     try:
         result = auth_service.google_auth(data)
         return result
     except ValueError as e:
+        logger.error(f"Google auth ValueError: {e}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=str(e),
         )
     except Exception as e:
+        logger.error(f"Google auth error: {type(e).__name__}: {e}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e),
