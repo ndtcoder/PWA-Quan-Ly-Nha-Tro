@@ -39,7 +39,7 @@ export interface RenterContractHistory {
 export interface RenterCreate {
   full_name: string;
   phone?: string;
-  email?: string;
+  email: string;
   id_number?: string;
   id_issued_date?: string;
   id_issued_place?: string;

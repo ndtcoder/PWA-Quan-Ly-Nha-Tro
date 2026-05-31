@@ -1,3 +1,4 @@
+import uuid
 from typing import Optional
 
 from fastapi import HTTPException, status
@@ -110,6 +111,29 @@ def create_renter(data: RenterCreate, org_id: str) -> dict:
 
     response = supabase.table("renter_profiles").insert(renter_data).execute()
     renter = response.data[0]
+
+    # Check for duplicate pending invitation with same email in this org
+    existing = (
+        supabase.table("invitations")
+        .select("id")
+        .eq("organization_id", org_id)
+        .eq("email", data.email)
+        .is_("accepted_at", "null")
+        .maybe_single()
+        .execute()
+    )
+    if not (existing and existing.data):
+        # Create invitation record for the renter (like staff flow)
+        invitation_data = {
+            "id": str(uuid.uuid4()),
+            "token": str(uuid.uuid4()),
+            "email": data.email,
+            "role": "renter",
+            "organization_id": org_id,
+            "full_name": data.full_name,
+            "phone": data.phone,
+        }
+        supabase.table("invitations").insert(invitation_data).execute()
 
     return {
         "id": renter["id"],

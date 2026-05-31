@@ -1,0 +1,7 @@
+{
+  "task_id": "task-renter-invite-flow",
+  "task_description": "Make 'Add Renter' flow work like 'Add Staff' (direct creation with email, auto-linking on login via invitations table), and update the PRD document to reflect all recent app changes.",
+  "status": "in_progress",
+  "feature_order": ["FEAT-001", "FEAT-002"],
+  "blocked_reason": null
+}

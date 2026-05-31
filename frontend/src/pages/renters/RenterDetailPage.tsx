@@ -1,6 +1,6 @@
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { getRenter, inviteRenter } from '../../api/renters';
+import { useQuery } from '@tanstack/react-query';
+import { getRenter } from '../../api/renters';
 import { useState } from 'react';
 import ContractStatusBadge from '../../components/contract/ContractStatusBadge';
 
@@ -14,10 +14,6 @@ export default function RenterDetailPage() {
     queryKey: ['renter', id],
     queryFn: () => getRenter(id!),
     enabled: !!id,
-  });
-
-  const inviteMutation = useMutation({
-    mutationFn: () => inviteRenter(id!),
   });
 
   if (isLoading) {
@@ -49,12 +45,6 @@ export default function RenterDetailPage() {
           >
             Sửa
           </Link>
-          <button
-            onClick={() => inviteMutation.mutate()}
-            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
-          >
-            Gửi lời mời
-          </button>
         </div>
       </div>
 

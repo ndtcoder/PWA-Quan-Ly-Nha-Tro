@@ -1,0 +1,32 @@
+{
+  "id": "FEAT-001",
+  "type": "feat",
+  "description": "Update backend and frontend to make 'Add Renter' create an invitation record (like staff flow) with role='renter'. Make email required. Remove old invite button from detail page.",
+  "status": "in_progress",
+  "steps": [
+    "1. In backend/app/models/renter.py: Change `email: Optional[str] = None` to `email: str` in the RenterCreate model.",
+    "2. In backend/app/services/renter_service.py - create_renter(): After inserting into renter_profiles, also create an invitations record following the exact same pattern as staff_service.py create_staff(). Use: id=uuid4, token=uuid4, email=data.email, role='renter', organization_id=org_id, full_name=data.full_name, phone=data.phone, accepted_at=None. Also check for duplicate pending invitation with the same email before creating.",
+    "3. In frontend/src/types/renter.ts: Change `email?: string` to `email: string` in the RenterCreate interface (keep it optional in Renter and RenterDetail since existing renters may lack email).",
+    "4. In frontend/src/pages/renters/RenterFormPage.tsx: Make the email input field required (add `required` attribute), add asterisk (*) to email label text ('Email *'), and move the email field to appear right after the full_name field (inside the 'Thong tin ca nhan' section, second field after Ho ten).",
+    "5. In frontend/src/pages/renters/RenterDetailPage.tsx: Remove the 'Gui loi moi' (invite) button and its inviteMutation logic. Remove the import of inviteRenter from the api module.",
+    "6. In frontend/src/api/renters.ts: Remove the inviteRenter() function export since it's no longer used."
+  ],
+  "acceptance_criteria": [
+    "RenterCreate model in backend requires email as a non-optional str field",
+    "create_renter() service creates both a renter_profiles record AND an invitations record with role='renter'",
+    "create_renter() checks for duplicate pending invitation before creating",
+    "Frontend RenterFormPage.tsx has email as a required field with asterisk label, positioned after full_name",
+    "RenterDetailPage.tsx no longer has the invite button or inviteMutation",
+    "frontend/src/api/renters.ts no longer exports inviteRenter",
+    "Python files pass AST syntax validation",
+    "TypeScript compiles without errors (tsc --noEmit)"
+  ],
+  "verification": [
+    "Run: cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/backend && python -c \"import ast; ast.parse(open('app/services/renter_service.py').read()); ast.parse(open('app/models/renter.py').read()); print('Python syntax OK')\"",
+    "Run: cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/frontend && npx tsc --noEmit",
+    "Grep for 'inviteRenter' in frontend/src/pages/renters/RenterDetailPage.tsx to confirm it's removed",
+    "Grep for 'invitations' in backend/app/services/renter_service.py to confirm invitation creation is present"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

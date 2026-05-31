@@ -20,8 +20,3 @@ export async function updateRenter(id: string, data: RenterUpdate): Promise<Rent
   const response = await apiClient.patch(`/api/v1/renters/${id}`, data);
   return response.data;
 }
-
-export async function inviteRenter(id: string): Promise<{ message: string }> {
-  const response = await apiClient.post(`/api/v1/renters/${id}/invite`);
-  return response.data;
-}

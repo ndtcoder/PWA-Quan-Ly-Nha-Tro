@@ -6,7 +6,7 @@ from datetime import datetime
 class RenterCreate(BaseModel):
     full_name: str
     phone: Optional[str] = None
-    email: Optional[str] = None
+    email: str
     id_number: Optional[str] = None
     id_issued_date: Optional[str] = None
     id_issued_place: Optional[str] = None
