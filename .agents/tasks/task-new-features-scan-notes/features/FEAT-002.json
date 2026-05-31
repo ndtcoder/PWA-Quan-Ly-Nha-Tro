@@ -1,0 +1,28 @@
+{
+  "id": "FEAT-002",
+  "type": "docs",
+  "description": "Update PRD_RentalManagement_SaaS.md to document the contract scan upload feature, notes field for renters and staff, and the new API endpoint and migration file.",
+  "status": "in_progress",
+  "steps": [
+    "1. In Section 3 (MODULE 2 - Contract Management, around section 3.1 Database Schema): Add scan_pdf_url TEXT field to the contracts table schema. Add description: 'URL ban scan hop dong chinh thuc (PDF upload boi owner/manager)' in Vietnamese.",
+    "2. In Section 3.3 (API Endpoints): Add new endpoint POST /api/contracts/{id}/upload-scan with description: 'Upload ban scan hop dong chinh thuc (PDF), luu vao Supabase Storage' in Vietnamese.",
+    "3. In Section 3.2 (Luong tao hop dong): Add step about uploading scanned contract PDF after creation.",
+    "4. In Section 4 (MODULE 3 - Renter Management, section 4.1 Database Schema): Add notes TEXT field to renter_profiles table schema.",
+    "5. In Section 5 (MODULE 4 - Staff Management, section 5.1 Database Schema): Add notes TEXT field to profiles table schema reference.",
+    "6. Add reference to the new migration file 004_new_features.sql somewhere appropriate (e.g., a note after the schema sections mentioning the migration adds scan_pdf_url, notes columns)."
+  ],
+  "acceptance_criteria": [
+    "PRD Section 3 documents scan_pdf_url column in contracts schema",
+    "PRD Section 3 documents POST /api/contracts/{id}/upload-scan endpoint",
+    "PRD Section 4 documents notes field for renter_profiles",
+    "PRD Section 5 mentions notes field for staff profiles",
+    "PRD references migration file 004_new_features.sql"
+  ],
+  "verification": [
+    "Run: grep -c 'scan_pdf_url' /projects/sandbox/PWA-Quan-Ly-Nha-Tro/PRD_RentalManagement_SaaS.md",
+    "Run: grep -c 'upload-scan' /projects/sandbox/PWA-Quan-Ly-Nha-Tro/PRD_RentalManagement_SaaS.md",
+    "Run: grep -c '004_new_features' /projects/sandbox/PWA-Quan-Ly-Nha-Tro/PRD_RentalManagement_SaaS.md"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

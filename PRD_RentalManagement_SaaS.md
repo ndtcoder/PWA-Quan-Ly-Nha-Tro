@@ -207,6 +207,7 @@ CREATE TABLE contracts (
   
   -- PDF
   pdf_url TEXT,                        -- Supabase Storage URL
+  scan_pdf_url TEXT,                   -- URL bản scan hợp đồng chính thức (PDF upload bởi owner/manager)
   
   -- Timestamps
   signed_at TIMESTAMPTZ,
@@ -233,7 +234,8 @@ CREATE TABLE contract_co_renters (     -- người ở ghép thêm vào hợp đ
 3. Điền form: ngày bắt đầu, kết thúc, giá thuê, tiền cọc, điều khoản
 4. Preview hợp đồng (HTML render)
 5. Export PDF (gọi backend /api/contracts/{id}/export-pdf)
-6. Confirm → status = 'active', unit.status = 'occupied'
+6. (Tùy chọn) Upload bản scan hợp đồng chính thức đã ký (PDF) qua /api/contracts/{id}/upload-scan
+7. Confirm → status = 'active', unit.status = 'occupied'
 ```
 
 ### 3.3 API Endpoints
@@ -246,6 +248,7 @@ PATCH  /api/contracts/{id}                     → cập nhật
 POST   /api/contracts/{id}/activate            → kích hoạt (draft → active)
 POST   /api/contracts/{id}/terminate           → chấm dứt sớm
 POST   /api/contracts/{id}/export-pdf          → generate & upload PDF, trả về URL
+POST   /api/contracts/{id}/upload-scan          → Upload bản scan hợp đồng chính thức (PDF), lưu vào Supabase Storage
 GET    /api/contracts/expiring-soon            → hợp đồng hết hạn trong 30 ngày
 ```
 
@@ -261,6 +264,9 @@ GET    /api/contracts/expiring-soon            → hợp đồng hết hạn tro
   - Ngày hết hạn → tự động đổi status = 'expired', unit.status = 'vacant'
 
 ### 3.6 Acceptance Criteria
+
+> 📁 **Migration**: `backend/migrations/004_new_features.sql` — Thêm các cột `scan_pdf_url` (contracts), `notes` (renter_profiles, profiles).
+
 - [ ] Số hợp đồng tự động tăng dần, không trùng
 - [ ] Không thể tạo 2 hợp đồng active cho cùng 1 unit
 - [ ] PDF export đúng thông tin, font tiếng Việt hiển thị chuẩn
@@ -299,6 +305,9 @@ CREATE TABLE renter_profiles (
   occupation TEXT,
   workplace TEXT,
   
+  -- Ghi chú
+  notes TEXT,                            -- Ghi chú về người thuê
+  
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 ```
@@ -332,6 +341,8 @@ GET    /api/renters/{id}/invoices      → lịch sử hóa đơn
 ## 5. MODULE 4 — QUẢN LÝ NHÂN VIÊN (Staff Management)
 
 ### 5.1 Database Schema
+
+> **Lưu ý**: Bảng `profiles` (định nghĩa tại Section 1.3) cũng có trường `notes TEXT` dùng để ghi chú về nhân viên.
 
 ```sql
 CREATE TABLE staff_assignments (        -- phân công nhân viên vào property
