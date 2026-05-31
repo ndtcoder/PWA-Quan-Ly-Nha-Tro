@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { googleAuth } from '../../api/auth';
@@ -8,9 +8,15 @@ export default function AuthCallbackPage() {
   const navigate = useNavigate();
   const { setAuth } = useAuthStore();
   const [error, setError] = useState('');
+  // Prevent double execution in React StrictMode
+  const isProcessing = useRef(false);
 
   useEffect(() => {
     const handleCallback = async () => {
+      // Guard against double invocation
+      if (isProcessing.current) return;
+      isProcessing.current = true;
+
       try {
         // Supabase automatically parses the hash/params from the URL
         const { data, error: sessionError } = await supabase.auth.getSession();

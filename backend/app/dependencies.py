@@ -1,90 +1,55 @@
-from functools import wraps
+"""Authentication dependencies for FastAPI.
+
+Uses PyJWT (not python-jose) to decode Supabase JWTs.
+python-jose's cryptography backend has a known issue with HS384/HS512
+and base64-encoded secrets (tries to parse as PEM).
+"""
+import base64
+import logging
 from typing import Any
 
+import jwt as pyjwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from jose import JWTError, jwt
 
 from app.config import settings
 from app.database import get_supabase
 
+logger = logging.getLogger("app")
 security = HTTPBearer()
+
+# Pre-compute the secret bytes at module load time.
+# Supabase JWT secrets are base64-encoded.
+try:
+    _JWT_SECRET_BYTES = base64.b64decode(settings.JWT_SECRET)
+except Exception:
+    _JWT_SECRET_BYTES = settings.JWT_SECRET.encode("utf-8")
 
 
 async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
 ) -> dict[str, Any]:
-    """Decode JWT token and return the current user information.
-    
-    Reads role and organization_id from the profiles table since
-    Supabase JWT user_metadata doesn't contain these by default.
-    """
-    import logging
-    import base64
-    import hmac
-    import hashlib
-    import json
-    logger = logging.getLogger("app")
-    
+    """Decode Supabase JWT and return user info with role from profiles table."""
     token = credentials.credentials
-    
-    # Supabase JWT secrets are base64-encoded HMAC keys.
-    # python-jose with cryptography backend gets confused when passing
-    # the raw base64 string for HS384/HS512 (tries to parse as PEM).
-    # Solution: decode the JWT manually using hmac for verification,
-    # then parse the payload.
-    
+
     try:
-        parts = token.split(".")
-        if len(parts) != 3:
-            raise ValueError("Invalid JWT format")
-        
-        header_b64, payload_b64, signature_b64 = parts
-        
-        # Decode header to get algorithm
-        # Add padding if needed
-        header_padded = header_b64 + "=" * (4 - len(header_b64) % 4)
-        header_json = base64.urlsafe_b64decode(header_padded)
-        header_data = json.loads(header_json)
-        token_alg = header_data.get("alg", "HS256")
-        
-        # Determine hash function from algorithm
-        hash_funcs = {
-            "HS256": hashlib.sha256,
-            "HS384": hashlib.sha384,
-            "HS512": hashlib.sha512,
-        }
-        
-        if token_alg not in hash_funcs:
-            raise ValueError(f"Unsupported algorithm: {token_alg}")
-        
-        # Get the secret as bytes (base64 decode the Supabase secret)
-        try:
-            secret_bytes = base64.b64decode(settings.JWT_SECRET)
-        except Exception:
-            secret_bytes = settings.JWT_SECRET.encode("utf-8")
-        
-        # Verify signature
-        signing_input = f"{header_b64}.{payload_b64}".encode("utf-8")
-        expected_sig = hmac.new(secret_bytes, signing_input, hash_funcs[token_alg]).digest()
-        
-        # Decode actual signature
-        sig_padded = signature_b64 + "=" * (4 - len(signature_b64) % 4)
-        actual_sig = base64.urlsafe_b64decode(sig_padded)
-        
-        if not hmac.compare_digest(expected_sig, actual_sig):
-            raise ValueError("Invalid signature")
-        
-        # Decode payload
-        payload_padded = payload_b64 + "=" * (4 - len(payload_b64) % 4)
-        payload_json = base64.urlsafe_b64decode(payload_padded)
-        payload = json.loads(payload_json)
-        
-    except Exception as e:
+        payload = pyjwt.decode(
+            token,
+            _JWT_SECRET_BYTES,
+            algorithms=["HS256", "HS384", "HS512"],
+            options={"verify_aud": False},
+        )
+    except pyjwt.ExpiredSignatureError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token has expired",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    except pyjwt.InvalidTokenError as e:
         logger.error(f"JWT decode failed: {type(e).__name__}: {e}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expired token",
+            detail="Invalid token",
             headers={"WWW-Authenticate": "Bearer"},
         )
 

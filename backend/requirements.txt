@@ -5,6 +5,7 @@ python-dotenv
 pydantic-settings
 slowapi
 python-jose[cryptography]
+PyJWT
 python-slugify
 jinja2
 weasyprint

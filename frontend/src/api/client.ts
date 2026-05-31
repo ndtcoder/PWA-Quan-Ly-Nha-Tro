@@ -4,7 +4,7 @@ const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL || '/api',
 });
 
-// Request interceptor: add JWT token
+// Request interceptor: add JWT token from localStorage
 apiClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('access_token');
@@ -16,24 +16,15 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error),
 );
 
-// Response interceptor: handle 401
+// Response interceptor: NO automatic redirect on 401.
+// Auth state is managed by Zustand + AppLayout's guard.
+// Redirecting here causes race conditions after login
+// (NotificationBell fires before token is fully valid).
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      // Don't redirect if we're on auth-related pages or the callback
-      const currentPath = window.location.pathname;
-      const isAuthPath = currentPath.startsWith('/login') ||
-        currentPath.startsWith('/register') ||
-        currentPath.startsWith('/auth/') ||
-        currentPath.startsWith('/accept-invite') ||
-        currentPath.startsWith('/organization-setup');
-
-      if (!isAuthPath) {
-        localStorage.removeItem('access_token');
-        window.location.href = '/login';
-      }
-    }
+    // Just pass the error through. Components handle their own errors.
+    // The AppLayout component checks for token presence and redirects if missing.
     return Promise.reject(error);
   },
 );
