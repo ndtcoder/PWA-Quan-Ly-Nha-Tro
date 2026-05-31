@@ -32,21 +32,6 @@ CREATE TABLE profiles (
 );
 
 -- ============================================================
--- INVITATIONS
--- ============================================================
-CREATE TABLE invitations (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    token UUID UNIQUE DEFAULT gen_random_uuid(),
-    email TEXT NOT NULL,
-    role TEXT NOT NULL CHECK (role IN ('owner', 'manager', 'accountant', 'maintenance', 'cleaner', 'renter')),
-    organization_id UUID NOT NULL REFERENCES organizations(id),
-    property_id UUID REFERENCES properties(id),
-    expires_at TIMESTAMPTZ NOT NULL,
-    accepted_at TIMESTAMPTZ,
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- ============================================================
 -- PROPERTIES
 -- ============================================================
 CREATE TABLE properties (
@@ -65,6 +50,21 @@ CREATE TABLE properties (
     created_by UUID REFERENCES profiles(id),
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ============================================================
+-- INVITATIONS (after properties because it references properties)
+-- ============================================================
+CREATE TABLE invitations (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    token UUID UNIQUE DEFAULT gen_random_uuid(),
+    email TEXT NOT NULL,
+    role TEXT NOT NULL CHECK (role IN ('owner', 'manager', 'accountant', 'maintenance', 'cleaner', 'renter')),
+    organization_id UUID NOT NULL REFERENCES organizations(id),
+    property_id UUID REFERENCES properties(id),
+    expires_at TIMESTAMPTZ NOT NULL,
+    accepted_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- ============================================================
