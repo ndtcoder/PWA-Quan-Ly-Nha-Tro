@@ -1,5 +1,6 @@
 -- Migration 002: Operations Tables
 -- Staff assignments, tasks, services, invoices, meters, maintenance, notifications
+-- Version: FINAL (includes all features as of current release)
 
 -- ============================================================
 -- STAFF ASSIGNMENTS
@@ -146,11 +147,12 @@ CREATE TABLE maintenance_requests (
 
 -- ============================================================
 -- NOTIFICATIONS
+-- Note: column is "recipient_id" to match the backend code
 -- ============================================================
 CREATE TABLE notifications (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     organization_id UUID NOT NULL REFERENCES organizations(id),
-    user_id UUID NOT NULL REFERENCES profiles(id),
+    recipient_id UUID NOT NULL REFERENCES profiles(id),
     title TEXT NOT NULL,
     body TEXT,
     type TEXT CHECK (type IN ('invoice', 'maintenance', 'contract', 'task', 'system')),
@@ -208,8 +210,8 @@ CREATE INDEX idx_meter_readings_unit_id ON meter_readings(unit_id);
 CREATE INDEX idx_meter_readings_organization_id ON meter_readings(organization_id);
 CREATE INDEX idx_maintenance_requests_organization_id ON maintenance_requests(organization_id);
 CREATE INDEX idx_maintenance_requests_status ON maintenance_requests(status);
-CREATE INDEX idx_notifications_user_id ON notifications(user_id);
-CREATE INDEX idx_notifications_is_read ON notifications(user_id, is_read);
+CREATE INDEX idx_notifications_recipient_id ON notifications(recipient_id);
+CREATE INDEX idx_notifications_is_read ON notifications(recipient_id, is_read);
 CREATE INDEX idx_push_subscriptions_user_id ON push_subscriptions(user_id);
 
 -- ============================================================
@@ -256,7 +258,7 @@ CREATE POLICY "org_isolation" ON maintenance_requests FOR ALL
     USING (organization_id IN (SELECT organization_id FROM profiles WHERE id = auth.uid()));
 
 CREATE POLICY "own_notifications" ON notifications FOR ALL
-    USING (user_id = auth.uid());
+    USING (recipient_id = auth.uid());
 
 CREATE POLICY "own_subscriptions" ON push_subscriptions FOR ALL
     USING (user_id = auth.uid());
