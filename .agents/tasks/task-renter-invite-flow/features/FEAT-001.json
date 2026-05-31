@@ -2,7 +2,7 @@
   "id": "FEAT-001",
   "type": "feat",
   "description": "Update backend and frontend to make 'Add Renter' create an invitation record (like staff flow) with role='renter'. Make email required. Remove old invite button from detail page.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "1. In backend/app/models/renter.py: Change `email: Optional[str] = None` to `email: str` in the RenterCreate model.",
     "2. In backend/app/services/renter_service.py - create_renter(): After inserting into renter_profiles, also create an invitations record following the exact same pattern as staff_service.py create_staff(). Use: id=uuid4, token=uuid4, email=data.email, role='renter', organization_id=org_id, full_name=data.full_name, phone=data.phone, accepted_at=None. Also check for duplicate pending invitation with the same email before creating.",
@@ -28,5 +28,5 @@
     "Grep for 'invitations' in backend/app/services/renter_service.py to confirm invitation creation is present"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "Had to also fix frontend/src/pages/contracts/ContractFormPage.tsx which used RenterCreate with only full_name (missing the now-required email field). Added email: '' to the initial state. Python required python3 command (not python) in the sandbox. Post-review fixes applied: id_photo_links added to renter_data in create_renter, get_renter_detail returns id_photo_links instead of old front/back urls, duplicate check moved before renter_profiles insert with 409 Conflict, invitation insert wrapped in try/except, stale PRD endpoint removed."
 }
