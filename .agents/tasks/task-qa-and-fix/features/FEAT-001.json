@@ -1,0 +1,32 @@
+{
+  "id": "FEAT-001",
+  "type": "chore",
+  "description": "Run comprehensive QA tests on both backend and frontend, then write findings to TEST_REPORT.md. This includes: verifying all Python imports, TypeScript compilation, API contract consistency between frontend and backend, missing PWA icon files, and checking integration of Google OAuth, organization rename/setup features.",
+  "status": "completed",
+  "steps": [
+    "Verify all backend Python modules import without errors by running python3 -c 'from app.main import app' in backend/",
+    "Verify frontend TypeScript compilation by running npx tsc --noEmit in frontend/",
+    "Verify frontend production build by running npm run build in frontend/",
+    "Check PWA manifest at frontend/public/manifest.json references icons that exist in frontend/public/icons/ (currently only .gitkeep exists - icon-192.png and icon-512.png are missing)",
+    "Check that vite.config.ts references existing assets in includeAssets",
+    "Verify all frontend API calls in src/api/ match backend endpoint signatures registered in main.py",
+    "Verify Pydantic models in backend/app/models/ are consistent with TypeScript types in frontend/src/types/",
+    "Check that all page components imported in App.tsx exist and compile",
+    "Verify Google OAuth flow: LoginPage -> signInWithGoogle -> AuthCallbackPage -> googleAuth API -> backend /auth/google endpoint",
+    "Verify organization setup flow: OrganizationSetupPage uses updateOrganization API -> backend PATCH /organizations endpoint",
+    "Verify OrganizationSettingsPage uses getMyOrganization and updateOrganization APIs",
+    "Check that the backend service worker at frontend/public/sw.js is valid",
+    "Write all findings to /projects/sandbox/PWA-Quan-Ly-Nha-Tro/TEST_REPORT.md with sections: Critical Errors, Warnings, Suggestions, using markdown checklist format with file paths and line numbers"
+  ],
+  "acceptance_criteria": [
+    "TEST_REPORT.md file exists at /projects/sandbox/PWA-Quan-Ly-Nha-Tro/TEST_REPORT.md",
+    "TEST_REPORT.md contains sections: Critical Errors, Warnings, Suggestions",
+    "Each issue has file path, line number where applicable, and description",
+    "Report accurately reflects actual project state"
+  ],
+  "verification": [
+    "cat /projects/sandbox/PWA-Quan-Ly-Nha-Tro/TEST_REPORT.md to confirm report exists and is properly formatted"
+  ],
+  "blocked_reason": null,
+  "findings": "TEST_REPORT.md created successfully at project root. No critical errors found. 3 warnings documented (missing PWA icons, large bundle, npm audit vulns). 6 suggestions documented. All tests passed (backend imports, TypeScript compilation, frontend build, router registration, route mapping)."
+}

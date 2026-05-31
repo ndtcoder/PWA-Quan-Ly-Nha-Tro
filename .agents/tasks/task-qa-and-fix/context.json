@@ -1,0 +1,26 @@
+{
+  "project_type": "Rental Property Management PWA - FastAPI backend + React Vite frontend",
+  "language": "Python (backend), TypeScript (frontend)",
+  "build_system": "pip (backend), npm + Vite (frontend)",
+  "test_framework": "No tests currently exist in the project",
+  "build_command": "npm run build (frontend)",
+  "test_command": "python3 -c 'from app.main import app' (backend import check)",
+  "verification_instructions": "1. Backend: python3 -c 'from app.main import app' in backend/ directory. 2. Frontend: npm run build in frontend/ directory.",
+  "snapshot_or_generated_files": null,
+  "setup_instructions": "Backend: pip install -r requirements.txt. Frontend: npm install.",
+  "environment_constraints": "OPEN_INTERNET network. Python 3.x via pyenv (use python3 command). Node.js v22 via nvm.",
+  "contribution_requirements": "None specified.",
+  "key_patterns": "Backend: FastAPI with routers, Pydantic models, services layer, Supabase client. Frontend: React + React Router + TanStack Query + Zustand store + Tailwind CSS + Zod validation.",
+  "relevant_files": [
+    "backend/app/main.py",
+    "backend/requirements.txt",
+    "frontend/package.json",
+    "frontend/src/App.tsx",
+    "frontend/src/api/",
+    "frontend/src/pages/",
+    "frontend/src/stores/authStore.ts",
+    "frontend/public/manifest.json",
+    "PRD_RentalManagement_SaaS.md"
+  ],
+  "directory_structure": "Root: backend/ (FastAPI), frontend/ (Vite React), PRD doc. Backend: app/{routers,models,services,middleware,cron}. Frontend: src/{api,components,hooks,lib,pages,services,stores,types}."
+}
