@@ -1,0 +1,36 @@
+{
+  "id": "FEAT-002",
+  "type": "fix",
+  "description": "Fix all critical errors and warnings found in the TEST_REPORT.md. The main issues to fix are: (1) Missing PWA icon files (icon-192.png and icon-512.png) in frontend/public/icons/, (2) Any other issues found in the test report. Then update TEST_REPORT.md to mark fixed items, and update the PRD (PRD_RentalManagement_SaaS.md) to reflect the current state including Google OAuth, organization setup/rename, new endpoints, and new pages.",
+  "status": "completed",
+  "steps": [
+    "Read TEST_REPORT.md to identify all critical errors and warnings",
+    "Fix missing PWA icons: generate placeholder SVG-based PNG icons (192x192 and 512x512) at frontend/public/icons/icon-192.png and frontend/public/icons/icon-512.png",
+    "Fix any other critical errors or warnings listed in the report",
+    "Update TEST_REPORT.md to mark each fixed item with [x] and add a note about the fix",
+    "Update PRD_RentalManagement_SaaS.md Section 10.1 (Authentication) to add Google OAuth sign-in/sign-up flow with POST /api/v1/auth/google endpoint",
+    "Update PRD Section 10.1 to add the organization rename/setup flow after Google signup",
+    "Add /organization-setup onboarding page to the relevant UI sections in the PRD",
+    "Add PATCH /api/v1/organizations and GET /api/v1/organizations/me endpoints to the PRD",
+    "Add OrganizationSetupPage and OrganizationSettingsPage to the UI screens list in the PRD",
+    "Update any other PRD sections that no longer match the actual implementation",
+    "Run npm run build again in frontend/ to verify all fixes pass"
+  ],
+  "acceptance_criteria": [
+    "All critical errors from TEST_REPORT.md are fixed",
+    "All warnings from TEST_REPORT.md are fixed or acknowledged",
+    "TEST_REPORT.md is updated with [x] marks on fixed items",
+    "PRD_RentalManagement_SaaS.md Section 10.1 includes Google OAuth flow",
+    "PRD includes organization setup/rename endpoints and pages",
+    "npm run build succeeds in frontend/ after all fixes",
+    "python3 -c 'from app.main import app' succeeds in backend/ after all fixes"
+  ],
+  "verification": [
+    "Run npm run build in frontend/ directory and confirm success",
+    "Run python3 -c 'from app.main import app' in backend/ directory and confirm success",
+    "Verify frontend/public/icons/icon-192.png and icon-512.png exist",
+    "Verify PRD_RentalManagement_SaaS.md contains 'Google OAuth' or 'google' references in Section 10.1"
+  ],
+  "blocked_reason": null,
+  "findings": "All fixes applied successfully. PWA icons generated with Pillow. Code splitting reduced initial bundle from 1,272 KB single chunk to split chunks (largest initial chunk: 287 KB). npm audit acknowledged as dev-only. PRD updated with Google OAuth flow (Section 10.1) and Organization Management (Section 10.6). Both frontend build (npm run build) and backend import check pass."
+}
