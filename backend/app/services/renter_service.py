@@ -290,14 +290,14 @@ def upload_id_photo(
             file=file_bytes,
             file_options={"content-type": "image/jpeg"},
         )
+
+        # Get public URL
+        public_url = bucket.get_public_url(storage_path)
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
             detail=f"Storage upload failed: {str(e)}. The 'id-documents' bucket may not exist in Supabase Storage.",
         )
-
-    # Get public URL
-    public_url = bucket.get_public_url(storage_path)
 
     # Update renter record
     field_name = f"id_photo_{side}_url"
