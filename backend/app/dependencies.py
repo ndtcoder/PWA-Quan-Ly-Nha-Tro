@@ -1,70 +1,52 @@
 """Authentication dependencies for FastAPI.
 
-Uses PyJWT (not python-jose) to decode Supabase JWTs.
-python-jose's cryptography backend has a known issue with HS384/HS512
-and base64-encoded secrets (tries to parse as PEM).
+Uses Supabase auth.get_user() to verify JWT tokens instead of local decode.
+This ensures compatibility with any signing algorithm Supabase uses
+(HS256, HS384, EdDSA, etc.) without needing to handle secrets ourselves.
 """
-import base64
 import logging
 from typing import Any
 
-import jwt as pyjwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
-from app.config import settings
 from app.database import get_supabase
 
 logger = logging.getLogger("app")
 security = HTTPBearer()
 
-# Pre-compute the secret bytes at module load time.
-# Supabase JWT secrets are base64-encoded.
-try:
-    _JWT_SECRET_BYTES = base64.b64decode(settings.JWT_SECRET)
-except Exception:
-    _JWT_SECRET_BYTES = settings.JWT_SECRET.encode("utf-8")
-
 
 async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
 ) -> dict[str, Any]:
-    """Decode Supabase JWT and return user info with role from profiles table."""
+    """Verify JWT token via Supabase and return user info with role from profiles table.
+    
+    Instead of decoding the JWT locally (which breaks with different algorithms
+    like HS384, EdDSA, etc.), we call Supabase auth.get_user(token) which
+    handles all verification server-side.
+    """
     token = credentials.credentials
 
     try:
-        payload = pyjwt.decode(
-            token,
-            _JWT_SECRET_BYTES,
-            algorithms=["HS256", "HS384", "HS512"],
-            options={"verify_aud": False},
-        )
-    except pyjwt.ExpiredSignatureError:
+        supabase = get_supabase()
+        user_response = supabase.auth.get_user(token)
+        user = user_response.user
+
+        if not user:
+            raise ValueError("No user returned")
+
+    except Exception as e:
+        logger.error(f"Token verification failed: {type(e).__name__}: {e}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token has expired",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    except pyjwt.InvalidTokenError as e:
-        logger.error(f"JWT decode failed: {type(e).__name__}: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token",
+            detail="Invalid or expired token",
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    user_id = payload.get("sub")
-    email = payload.get("email")
-
-    if not user_id:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token payload",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+    user_id = str(user.id)
+    email = user.email or ""
 
     # Look up profile from database to get role and organization_id
-    supabase = get_supabase()
     profile_response = (
         supabase.table("profiles")
         .select("role, organization_id, full_name")
