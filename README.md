@@ -1,4 +1,4 @@
-# Lưu Trú Thông Minh - Hệ thống Quản lý Nhà cho thuê
+# My Home - Hệ thống Quản lý Nhà cho thuê
 
 Ứng dụng Progressive Web App (PWA) full-stack để quản lý nhà cho thuê tại Việt Nam. Dành cho chủ nhà trọ và quản lý để xử lý người thuê, hợp đồng, hóa đơn, đọc đồng hồ điện nước, yêu cầu bảo trì, và nhiều hơn nữa.
 

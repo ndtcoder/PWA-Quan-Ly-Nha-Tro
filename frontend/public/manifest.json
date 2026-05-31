@@ -1,6 +1,6 @@
 {
-  "name": "Lưu Trú Thông Minh",
-  "short_name": "LTTM",
+  "name": "My Home",
+  "short_name": "MyHome",
   "description": "Hệ thống quản lý nhà cho thuê thông minh",
   "start_url": "/",
   "display": "standalone",
