@@ -1,25 +1,39 @@
 from pydantic import BaseModel
 from typing import Optional, Literal
-from datetime import datetime
+
+
+class StaffCreate(BaseModel):
+    email: str
+    full_name: str
+    phone: Optional[str] = None
+    role: Literal["manager", "accountant", "maintenance", "cleaner"]
+    property_id: Optional[str] = None
+    address: Optional[str] = None
+    notes: Optional[str] = None
+
+
+class StaffUpdate(BaseModel):
+    email: Optional[str] = None
+    full_name: Optional[str] = None
+    phone: Optional[str] = None
+    role: Optional[Literal["manager", "accountant", "maintenance", "cleaner"]] = None
+    property_id: Optional[str] = None
+    address: Optional[str] = None
+    notes: Optional[str] = None
 
 
 class StaffResponse(BaseModel):
     id: str
-    full_name: str
     email: Optional[str] = None
-    role: str
+    full_name: str
     phone: Optional[str] = None
-    is_active: bool = True
-    assigned_properties: list[str] = []
+    role: str
+    property_name: Optional[str] = None
+    status: Literal["active", "pending"]
+    address: Optional[str] = None
     notes: Optional[str] = None
     created_at: Optional[str] = None
 
 
 class StaffRoleUpdate(BaseModel):
     role: Literal["manager", "accountant", "maintenance", "cleaner"]
-
-
-class StaffInvite(BaseModel):
-    email: str
-    role: Literal["manager", "accountant", "maintenance", "cleaner"]
-    property_id: Optional[str] = None
