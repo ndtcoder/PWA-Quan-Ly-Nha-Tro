@@ -1,0 +1,30 @@
+{
+  "project_type": "Full-stack PWA - Python FastAPI backend + React TypeScript frontend",
+  "language": "Python (backend), TypeScript (frontend)",
+  "build_system": "pip + requirements.txt (backend), npm + vite (frontend)",
+  "test_framework": "No test files found in codebase - use TypeScript compilation and build as verification",
+  "build_command": "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/frontend && npm run build",
+  "test_command": "cd /projects/sandbox/PWA-Quan-Ly-Nha-Tro/frontend && npx tsc --noEmit",
+  "verification_instructions": "1. Run TypeScript compilation check (npx tsc --noEmit) in frontend. 2. Run vite build to verify bundle. 3. Check Python syntax with python -m py_compile on changed files.",
+  "snapshot_or_generated_files": null,
+  "setup_instructions": "cd frontend && npm install. cd backend && pip install -r requirements.txt.",
+  "environment_constraints": "OPEN_INTERNET network - full access. No Supabase instance available for integration testing. Python 3.11 and Node 22 available.",
+  "contribution_requirements": "No CONTRIBUTING.md found. Follow existing patterns in the codebase.",
+  "key_patterns": "Backend: FastAPI routers in app/routers/, Pydantic models in app/models/, services in app/services/. Frontend: Pages in src/pages/{domain}/, API clients in src/api/, Types in src/types/, Uses TanStack Query for data fetching, react-router-dom for routing, TailwindCSS for styling. Forms use useState pattern (not react-hook-form in most pages). Staff types currently in src/types/task.ts.",
+  "relevant_files": [
+    "frontend/public/manifest.json",
+    "frontend/index.html",
+    "frontend/public/offline.html",
+    "README.md",
+    "backend/app/routers/staff.py",
+    "backend/app/models/staff.py",
+    "backend/app/services/staff_service.py",
+    "backend/app/services/auth_service.py",
+    "frontend/src/pages/staff/StaffListPage.tsx",
+    "frontend/src/api/staff.ts",
+    "frontend/src/types/task.ts",
+    "frontend/src/App.tsx",
+    "frontend/src/pages/renters/RenterFormPage.tsx"
+  ],
+  "directory_structure": "Root has backend/ and frontend/. Backend: app/routers/ (API endpoints), app/models/ (Pydantic), app/services/ (business logic), app/middleware/, app/cron/. Frontend: src/pages/ (route pages), src/api/ (axios clients), src/types/ (TS types), src/components/ (shared UI), src/stores/ (Zustand)."
+}
