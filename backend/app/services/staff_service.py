@@ -126,6 +126,22 @@ def create_staff(org_id: str, data: StaffCreate) -> dict:
     """
     supabase = get_supabase()
 
+    # Check for duplicate pending invitation with the same email in this org
+    existing = (
+        supabase.table("invitations")
+        .select("id")
+        .eq("organization_id", org_id)
+        .eq("email", data.email)
+        .is_("accepted_at", "null")
+        .maybe_single()
+        .execute()
+    )
+    if existing.data:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Email already has a pending staff registration in this organization",
+        )
+
     invitation_id = str(uuid.uuid4())
     token = str(uuid.uuid4())
 
