@@ -19,8 +19,13 @@ async def get_current_user(
     Reads role and organization_id from the profiles table since
     Supabase JWT user_metadata doesn't contain these by default.
     """
+    import logging
+    import base64
+    logger = logging.getLogger("app")
+    
     token = credentials.credentials
     try:
+        # Try decoding with the raw secret first
         payload = jwt.decode(
             token,
             settings.JWT_SECRET,
@@ -28,11 +33,22 @@ async def get_current_user(
             options={"verify_aud": False},
         )
     except JWTError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expired token",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+        try:
+            # Supabase JWT secrets are often base64-encoded, try decoded version
+            decoded_secret = base64.b64decode(settings.JWT_SECRET)
+            payload = jwt.decode(
+                token,
+                decoded_secret,
+                algorithms=["HS256"],
+                options={"verify_aud": False},
+            )
+        except Exception as e:
+            logger.error(f"JWT decode failed: {type(e).__name__}: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid or expired token",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
 
     user_id = payload.get("sub")
     email = payload.get("email")

@@ -21,8 +21,18 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('access_token');
-      window.location.href = '/login';
+      // Don't redirect if we're on auth-related pages or the callback
+      const currentPath = window.location.pathname;
+      const isAuthPath = currentPath.startsWith('/login') ||
+        currentPath.startsWith('/register') ||
+        currentPath.startsWith('/auth/') ||
+        currentPath.startsWith('/accept-invite') ||
+        currentPath.startsWith('/organization-setup');
+
+      if (!isAuthPath) {
+        localStorage.removeItem('access_token');
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   },
