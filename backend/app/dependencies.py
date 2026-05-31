@@ -6,6 +6,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt
 
 from app.config import settings
+from app.database import get_supabase
 
 security = HTTPBearer()
 
@@ -13,7 +14,11 @@ security = HTTPBearer()
 async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
 ) -> dict[str, Any]:
-    """Decode JWT token and return the current user information."""
+    """Decode JWT token and return the current user information.
+    
+    Reads role and organization_id from the profiles table since
+    Supabase JWT user_metadata doesn't contain these by default.
+    """
     token = credentials.credentials
     try:
         payload = jwt.decode(
@@ -31,8 +36,6 @@ async def get_current_user(
 
     user_id = payload.get("sub")
     email = payload.get("email")
-    role = payload.get("user_metadata", {}).get("role", "renter")
-    organization_id = payload.get("user_metadata", {}).get("organization_id")
 
     if not user_id:
         raise HTTPException(
@@ -40,6 +43,20 @@ async def get_current_user(
             detail="Invalid token payload",
             headers={"WWW-Authenticate": "Bearer"},
         )
+
+    # Look up profile from database to get role and organization_id
+    supabase = get_supabase()
+    profile_response = (
+        supabase.table("profiles")
+        .select("role, organization_id, full_name")
+        .eq("id", user_id)
+        .maybeSingle()
+        .execute()
+    )
+    profile = profile_response.data
+
+    role = profile["role"] if profile else "renter"
+    organization_id = profile["organization_id"] if profile else None
 
     return {
         "user_id": user_id,
