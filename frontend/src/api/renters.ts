@@ -25,21 +25,3 @@ export async function inviteRenter(id: string): Promise<{ message: string }> {
   const response = await apiClient.post(`/api/v1/renters/${id}/invite`);
   return response.data;
 }
-
-export async function uploadIdFront(id: string, file: File): Promise<{ url: string }> {
-  const formData = new FormData();
-  formData.append('file', file);
-  const response = await apiClient.post(`/api/v1/renters/${id}/id-front`, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
-  return response.data;
-}
-
-export async function uploadIdBack(id: string, file: File): Promise<{ url: string }> {
-  const formData = new FormData();
-  formData.append('file', file);
-  const response = await apiClient.post(`/api/v1/renters/${id}/id-back`, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
-  return response.data;
-}

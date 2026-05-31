@@ -116,6 +116,7 @@ CREATE TABLE renter_profiles (
     id_issued_place TEXT,
     id_front_url TEXT,
     id_back_url TEXT,
+    id_photo_links JSONB DEFAULT '[]',
     phone TEXT,
     email TEXT,
     emergency_contact_name TEXT,

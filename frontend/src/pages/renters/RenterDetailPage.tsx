@@ -1,16 +1,14 @@
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getRenter, uploadIdFront, uploadIdBack, inviteRenter } from '../../api/renters';
-import { useState, useRef } from 'react';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { getRenter, inviteRenter } from '../../api/renters';
+import { useState } from 'react';
 import ContractStatusBadge from '../../components/contract/ContractStatusBadge';
 
 export default function RenterDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<'contracts' | 'notes'>('contracts');
-  const frontInputRef = useRef<HTMLInputElement>(null);
-  const backInputRef = useRef<HTMLInputElement>(null);
+  const [brokenImages, setBrokenImages] = useState<Set<number>>(new Set());
 
   const { data: renter, isLoading } = useQuery({
     queryKey: ['renter', id],
@@ -18,45 +16,29 @@ export default function RenterDetailPage() {
     enabled: !!id,
   });
 
-  const uploadFrontMutation = useMutation({
-    mutationFn: (file: File) => uploadIdFront(id!, file),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['renter', id] }),
-  });
-
-  const uploadBackMutation = useMutation({
-    mutationFn: (file: File) => uploadIdBack(id!, file),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['renter', id] }),
-  });
-
   const inviteMutation = useMutation({
     mutationFn: () => inviteRenter(id!),
   });
 
   if (isLoading) {
-    return <div className="text-center py-8 text-gray-500">Đang tải...</div>;
+    return <div className="text-center py-8 text-gray-500">{'\u0110ang t\u1EA3i...'}</div>;
   }
 
   if (!renter) {
-    return <div className="text-center py-8 text-gray-500">Không tìm thấy người thuê.</div>;
+    return <div className="text-center py-8 text-gray-500">Kh\u00F4ng t\u00ECm th\u1EA5y ng\u01B0\u1EDDi thu\u00EA.</div>;
   }
 
-  const handleFrontUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) uploadFrontMutation.mutate(file);
-  };
-
-  const handleBackUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) uploadBackMutation.mutate(file);
+  const handleImageError = (index: number) => {
+    setBrokenImages((prev) => new Set(prev).add(index));
   };
 
   return (
     <div>
-      {/* Tiêu đề */}
+      {/* Tieu de */}
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-4">
           <button onClick={() => navigate('/renters')} className="text-gray-500 hover:text-gray-700">
-            &larr; Quay lại
+            &larr; Quay l&#7841;i
           </button>
           <h1 className="text-2xl font-bold text-gray-900">{renter.full_name}</h1>
         </div>
@@ -65,18 +47,18 @@ export default function RenterDetailPage() {
             to={`/renters/${id}/edit`}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
           >
-            Sửa
+            S\u1EEDa
           </Link>
           <button
             onClick={() => inviteMutation.mutate()}
             className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
           >
-            Gửi lời mời
+            G\u1EEDi l\u1EDDi m\u1EDDi
           </button>
         </div>
       </div>
 
-      {/* Avatar + Thông tin cá nhân */}
+      {/* Avatar + Thong tin ca nhan */}
       <div className="bg-white p-6 rounded-lg shadow mb-6">
         <div className="flex gap-6">
           <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center text-3xl text-gray-400">
@@ -84,7 +66,7 @@ export default function RenterDetailPage() {
           </div>
           <div className="grid grid-cols-2 gap-4 flex-1">
             <div>
-              <span className="text-sm text-gray-500">Số điện thoại</span>
+              <span className="text-sm text-gray-500">S\u1ED1 \u0111i\u1EC7n tho\u1EA1i</span>
               <p className="font-medium">{renter.phone || '-'}</p>
             </div>
             <div>
@@ -92,31 +74,31 @@ export default function RenterDetailPage() {
               <p className="font-medium">{renter.email || '-'}</p>
             </div>
             <div>
-              <span className="text-sm text-gray-500">Số CMND/CCCD</span>
+              <span className="text-sm text-gray-500">S\u1ED1 CMND/CCCD</span>
               <p className="font-medium">{renter.id_number || '-'}</p>
             </div>
             <div>
-              <span className="text-sm text-gray-500">Ngày sinh</span>
+              <span className="text-sm text-gray-500">Ng\u00E0y sinh</span>
               <p className="font-medium">{renter.date_of_birth || '-'}</p>
             </div>
             <div>
-              <span className="text-sm text-gray-500">Giới tính</span>
+              <span className="text-sm text-gray-500">Gi\u1EDBi t\u00EDnh</span>
               <p className="font-medium">{renter.gender || '-'}</p>
             </div>
             <div>
-              <span className="text-sm text-gray-500">Quê quán</span>
+              <span className="text-sm text-gray-500">Qu\u00EA qu\u00E1n</span>
               <p className="font-medium">{renter.hometown || '-'}</p>
             </div>
             <div>
-              <span className="text-sm text-gray-500">Nghề nghiệp</span>
+              <span className="text-sm text-gray-500">Ngh\u1EC1 nghi\u1EC7p</span>
               <p className="font-medium">{renter.occupation || '-'}</p>
             </div>
             <div>
-              <span className="text-sm text-gray-500">Nơi làm việc</span>
+              <span className="text-sm text-gray-500">N\u01A1i l\u00E0m vi\u1EC7c</span>
               <p className="font-medium">{renter.workplace || '-'}</p>
             </div>
             <div>
-              <span className="text-sm text-gray-500">Liên hệ khẩn cấp</span>
+              <span className="text-sm text-gray-500">Li\u00EAn h\u1EC7 kh\u1EA9n c\u1EA5p</span>
               <p className="font-medium">
                 {renter.emergency_contact_name
                   ? `${renter.emergency_contact_name} (${renter.emergency_contact_phone || '-'})`
@@ -124,7 +106,7 @@ export default function RenterDetailPage() {
               </p>
             </div>
             <div>
-              <span className="text-sm text-gray-500">Phòng hiện tại</span>
+              <span className="text-sm text-gray-500">Ph\u00F2ng hi\u1EC7n t\u1EA1i</span>
               <p className="font-medium">
                 {renter.current_unit_number
                   ? `${renter.current_unit_number} - ${renter.current_property_name}`
@@ -135,45 +117,39 @@ export default function RenterDetailPage() {
         </div>
       </div>
 
-      {/* Ảnh CMND */}
+      {/* Anh CCCD */}
       <div className="bg-white p-6 rounded-lg shadow mb-6">
-        <h2 className="text-lg font-semibold mb-4">Giấy tờ tùy thân</h2>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <p className="text-sm text-gray-500 mb-2">Mặt trước</p>
-            {renter.id_photo_front_url ? (
-              <img src={renter.id_photo_front_url} alt="CMND mặt trước" className="w-full h-48 object-cover rounded-lg border" />
-            ) : (
-              <div className="w-full h-48 bg-gray-100 rounded-lg border flex items-center justify-center text-gray-400">
-                Chưa có ảnh
+        <h2 className="text-lg font-semibold mb-4">{'\u1EA2nh CCCD'}</h2>
+        {renter.id_photo_links && renter.id_photo_links.length > 0 ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {renter.id_photo_links.map((link, index) => (
+              <div key={index} className="flex flex-col items-center gap-2">
+                {brokenImages.has(index) ? (
+                  <div className="w-full h-[100px] bg-gray-100 rounded-lg border flex items-center justify-center text-gray-400 text-sm">
+                    {'\u1EA2nh kh\u00F4ng kh\u1EA3 d\u1EE5ng'}
+                  </div>
+                ) : (
+                  <img
+                    src={link}
+                    alt={`CCCD ${index + 1}`}
+                    className="w-full h-[100px] object-cover rounded-lg border"
+                    onError={() => handleImageError(index)}
+                  />
+                )}
+                <a
+                  href={link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-blue-600 hover:text-blue-800"
+                >
+                  Xem \u1EA3nh
+                </a>
               </div>
-            )}
-            <input type="file" ref={frontInputRef} onChange={handleFrontUpload} className="hidden" accept="image/*" />
-            <button
-              onClick={() => frontInputRef.current?.click()}
-              className="mt-2 text-sm text-blue-600 hover:text-blue-800"
-            >
-              Tải lên mặt trước
-            </button>
+            ))}
           </div>
-          <div>
-            <p className="text-sm text-gray-500 mb-2">Mặt sau</p>
-            {renter.id_photo_back_url ? (
-              <img src={renter.id_photo_back_url} alt="CMND mặt sau" className="w-full h-48 object-cover rounded-lg border" />
-            ) : (
-              <div className="w-full h-48 bg-gray-100 rounded-lg border flex items-center justify-center text-gray-400">
-                Chưa có ảnh
-              </div>
-            )}
-            <input type="file" ref={backInputRef} onChange={handleBackUpload} className="hidden" accept="image/*" />
-            <button
-              onClick={() => backInputRef.current?.click()}
-              className="mt-2 text-sm text-blue-600 hover:text-blue-800"
-            >
-              Tải lên mặt sau
-            </button>
-          </div>
-        </div>
+        ) : (
+          <p className="text-gray-500">Ch\u01B0a c\u00F3 \u1EA3nh CCCD</p>
+        )}
       </div>
 
       {/* Tab */}
@@ -188,7 +164,7 @@ export default function RenterDetailPage() {
                   : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
-              Hợp đồng
+              H\u1EE3p \u0111\u1ED3ng
             </button>
             <button
               onClick={() => setActiveTab('notes')}
@@ -198,7 +174,7 @@ export default function RenterDetailPage() {
                   : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
-              Ghi chú
+              Ghi ch\u00FA
             </button>
           </div>
         </div>
@@ -206,16 +182,16 @@ export default function RenterDetailPage() {
           {activeTab === 'contracts' && (
             <div>
               {renter.contracts_history.length === 0 ? (
-                <p className="text-gray-500">Chưa có lịch sử hợp đồng.</p>
+                <p className="text-gray-500">Ch\u01B0a c\u00F3 l\u1ECBch s\u1EED h\u1EE3p \u0111\u1ED3ng.</p>
               ) : (
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead>
                     <tr>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Số HĐ</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Phòng</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Thời gian</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Tiền thuê</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Trạng thái</th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">S\u1ED1 H\u0110</th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Ph\u00F2ng</th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Th\u1EDDi gian</th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Ti\u1EC1n thu\u00EA</th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Tr\u1EA1ng th\u00E1i</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
@@ -250,7 +226,7 @@ export default function RenterDetailPage() {
               {renter.notes ? (
                 <p className="text-gray-700 whitespace-pre-wrap">{renter.notes}</p>
               ) : (
-                <p className="text-gray-500">Chưa có ghi chú.</p>
+                <p className="text-gray-500">Ch\u01B0a c\u00F3 ghi ch\u00FA.</p>
               )}
             </div>
           )}
