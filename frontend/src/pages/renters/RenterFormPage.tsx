@@ -101,20 +101,20 @@ export default function RenterFormPage() {
     <div>
       <div className="flex items-center gap-4 mb-6">
         <button onClick={() => navigate('/renters')} className="text-gray-500 hover:text-gray-700">
-          &larr; Quay l&#7841;i
+          &larr; Quay lại
         </button>
         <h1 className="text-2xl font-bold text-gray-900">
-          {isEdit ? 'S\u1EEDa ng\u01B0\u1EDDi thu\u00EA' : 'Th\u00EAm ng\u01B0\u1EDDi thu\u00EA'}
+          {isEdit ? 'Sửa người thuê' : 'Thêm người thuê'}
         </h1>
       </div>
 
       <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow space-y-6">
         {/* Thong tin ca nhan */}
         <div>
-          <h2 className="text-lg font-semibold mb-4">Th\u00F4ng tin c\u00E1 nh\u00E2n</h2>
+          <h2 className="text-lg font-semibold mb-4">Thông tin cá nhân</h2>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">H\u1ECD t\u00EAn *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Họ tên *</label>
               <input
                 type="text"
                 required
@@ -124,20 +124,20 @@ export default function RenterFormPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Gi\u1EDBi t\u00EDnh</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Giới tính</label>
               <select
                 value={form.gender}
                 onChange={(e) => updateField('gender', e.target.value)}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2"
               >
-                <option value="">Ch\u1ECDn...</option>
+                <option value="">Chọn...</option>
                 <option value="male">Nam</option>
-                <option value="female">N\u1EEF</option>
-                <option value="other">Kh\u00E1c</option>
+                <option value="female">Nữ</option>
+                <option value="other">Khác</option>
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Ng\u00E0y sinh</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Ngày sinh</label>
               <input
                 type="date"
                 value={form.date_of_birth}
@@ -146,7 +146,7 @@ export default function RenterFormPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Qu\u00EA qu\u00E1n</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Quê quán</label>
               <input
                 type="text"
                 value={form.hometown}
@@ -159,10 +159,10 @@ export default function RenterFormPage() {
 
         {/* Thong tin CMND */}
         <div>
-          <h2 className="text-lg font-semibold mb-4">Th\u00F4ng tin CMND/CCCD</h2>
+          <h2 className="text-lg font-semibold mb-4">Thông tin CMND/CCCD</h2>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">S\u1ED1 CMND/CCCD</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Số CMND/CCCD</label>
               <input
                 type="text"
                 value={form.id_number}
@@ -171,7 +171,7 @@ export default function RenterFormPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Ng\u00E0y c\u1EA5p</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Ngày cấp</label>
               <input
                 type="date"
                 value={form.id_issued_date}
@@ -180,7 +180,7 @@ export default function RenterFormPage() {
               />
             </div>
             <div className="col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">N\u01A1i c\u1EA5p</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Nơi cấp</label>
               <input
                 type="text"
                 value={form.id_issued_place}
@@ -193,8 +193,8 @@ export default function RenterFormPage() {
 
         {/* Anh CCCD */}
         <div>
-          <h2 className="text-lg font-semibold mb-4">\u1EA2nh CCCD</h2>
-          <p className="text-sm text-gray-500 mb-3">Link \u1EA3nh CCCD (t\u1ED1i \u0111a 5)</p>
+          <h2 className="text-lg font-semibold mb-4">Ảnh CCCD</h2>
+          <p className="text-sm text-gray-500 mb-3">Link ảnh CCCD (tối đa 5)</p>
           <div className="space-y-2">
             {(form.id_photo_links || []).map((link, index) => (
               <div key={index} className="flex gap-2">
@@ -202,7 +202,7 @@ export default function RenterFormPage() {
                   type="text"
                   value={link}
                   onChange={(e) => updatePhotoLink(index, e.target.value)}
-                  placeholder="D\u00E1n link \u1EA3nh CCCD..."
+                  placeholder="Dán link ảnh CCCD..."
                   className="flex-1 border border-gray-300 rounded-lg px-3 py-2"
                 />
                 <button
@@ -221,19 +221,19 @@ export default function RenterFormPage() {
               onClick={addPhotoLink}
               className="mt-2 text-sm text-blue-600 hover:text-blue-800"
             >
-              + Th\u00EAm link
+              + Thêm link
             </button>
           ) : (
-            <p className="mt-2 text-sm text-gray-400">\u0110\u00E3 \u0111\u1EA1t t\u1ED1i \u0111a 5 link</p>
+            <p className="mt-2 text-sm text-gray-400">Đã đạt tối đa 5 link</p>
           )}
         </div>
 
         {/* Lien he */}
         <div>
-          <h2 className="text-lg font-semibold mb-4">Th\u00F4ng tin li\u00EAn h\u1EC7</h2>
+          <h2 className="text-lg font-semibold mb-4">Thông tin liên hệ</h2>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">S\u1ED1 \u0111i\u1EC7n tho\u1EA1i</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Số điện thoại</label>
               <input
                 type="tel"
                 value={form.phone}
@@ -255,10 +255,10 @@ export default function RenterFormPage() {
 
         {/* Lien he khan cap */}
         <div>
-          <h2 className="text-lg font-semibold mb-4">Li\u00EAn h\u1EC7 kh\u1EA9n c\u1EA5p</h2>
+          <h2 className="text-lg font-semibold mb-4">Liên hệ khẩn cấp</h2>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">T\u00EAn ng\u01B0\u1EDDi li\u00EAn h\u1EC7</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Tên người liên hệ</label>
               <input
                 type="text"
                 value={form.emergency_contact_name}
@@ -267,7 +267,7 @@ export default function RenterFormPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">S\u0110T ng\u01B0\u1EDDi li\u00EAn h\u1EC7</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">SĐT người liên hệ</label>
               <input
                 type="tel"
                 value={form.emergency_contact_phone}
@@ -280,10 +280,10 @@ export default function RenterFormPage() {
 
         {/* Thong tin cong viec */}
         <div>
-          <h2 className="text-lg font-semibold mb-4">Th\u00F4ng tin c\u00F4ng vi\u1EC7c</h2>
+          <h2 className="text-lg font-semibold mb-4">Thông tin công việc</h2>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Ngh\u1EC1 nghi\u1EC7p</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Nghề nghiệp</label>
               <input
                 type="text"
                 value={form.occupation}
@@ -292,7 +292,7 @@ export default function RenterFormPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">N\u01A1i l\u00E0m vi\u1EC7c</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Nơi làm việc</label>
               <input
                 type="text"
                 value={form.workplace}
@@ -305,12 +305,12 @@ export default function RenterFormPage() {
 
         {/* Ghi chu */}
         <div>
-          <h2 className="text-lg font-semibold mb-4">Ghi ch\u00FA</h2>
+          <h2 className="text-lg font-semibold mb-4">Ghi chú</h2>
           <textarea
             value={form.notes}
             onChange={(e) => updateField('notes', e.target.value)}
             className="w-full border border-gray-300 rounded-lg px-3 py-2 h-24"
-            placeholder="Ghi ch\u00FA v\u1EC1 ng\u01B0\u1EDDi thu\u00EA..."
+            placeholder="Ghi chú về người thuê..."
           />
         </div>
 
@@ -321,13 +321,13 @@ export default function RenterFormPage() {
             onClick={() => navigate('/renters')}
             className="text-gray-600 px-4 py-2 rounded-lg hover:bg-gray-100"
           >
-            H\u1EE7y
+            Hủy
           </button>
           <button
             type="submit"
             className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
           >
-            {isEdit ? 'C\u1EADp nh\u1EADt' : 'T\u1EA1o m\u1EDBi'}
+            {isEdit ? 'Cập nhật' : 'Tạo mới'}
           </button>
         </div>
       </form>

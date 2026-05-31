@@ -21,11 +21,11 @@ export default function RenterDetailPage() {
   });
 
   if (isLoading) {
-    return <div className="text-center py-8 text-gray-500">{'\u0110ang t\u1EA3i...'}</div>;
+    return <div className="text-center py-8 text-gray-500">Đang tải...</div>;
   }
 
   if (!renter) {
-    return <div className="text-center py-8 text-gray-500">Kh\u00F4ng t\u00ECm th\u1EA5y ng\u01B0\u1EDDi thu\u00EA.</div>;
+    return <div className="text-center py-8 text-gray-500">Không tìm thấy người thuê.</div>;
   }
 
   const handleImageError = (index: number) => {
@@ -38,7 +38,7 @@ export default function RenterDetailPage() {
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-4">
           <button onClick={() => navigate('/renters')} className="text-gray-500 hover:text-gray-700">
-            &larr; Quay l&#7841;i
+            &larr; Quay lại
           </button>
           <h1 className="text-2xl font-bold text-gray-900">{renter.full_name}</h1>
         </div>
@@ -47,13 +47,13 @@ export default function RenterDetailPage() {
             to={`/renters/${id}/edit`}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
           >
-            S\u1EEDa
+            Sửa
           </Link>
           <button
             onClick={() => inviteMutation.mutate()}
             className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
           >
-            G\u1EEDi l\u1EDDi m\u1EDDi
+            Gửi lời mời
           </button>
         </div>
       </div>
@@ -66,7 +66,7 @@ export default function RenterDetailPage() {
           </div>
           <div className="grid grid-cols-2 gap-4 flex-1">
             <div>
-              <span className="text-sm text-gray-500">S\u1ED1 \u0111i\u1EC7n tho\u1EA1i</span>
+              <span className="text-sm text-gray-500">Số điện thoại</span>
               <p className="font-medium">{renter.phone || '-'}</p>
             </div>
             <div>
@@ -74,31 +74,31 @@ export default function RenterDetailPage() {
               <p className="font-medium">{renter.email || '-'}</p>
             </div>
             <div>
-              <span className="text-sm text-gray-500">S\u1ED1 CMND/CCCD</span>
+              <span className="text-sm text-gray-500">Số CMND/CCCD</span>
               <p className="font-medium">{renter.id_number || '-'}</p>
             </div>
             <div>
-              <span className="text-sm text-gray-500">Ng\u00E0y sinh</span>
+              <span className="text-sm text-gray-500">Ngày sinh</span>
               <p className="font-medium">{renter.date_of_birth || '-'}</p>
             </div>
             <div>
-              <span className="text-sm text-gray-500">Gi\u1EDBi t\u00EDnh</span>
+              <span className="text-sm text-gray-500">Giới tính</span>
               <p className="font-medium">{renter.gender || '-'}</p>
             </div>
             <div>
-              <span className="text-sm text-gray-500">Qu\u00EA qu\u00E1n</span>
+              <span className="text-sm text-gray-500">Quê quán</span>
               <p className="font-medium">{renter.hometown || '-'}</p>
             </div>
             <div>
-              <span className="text-sm text-gray-500">Ngh\u1EC1 nghi\u1EC7p</span>
+              <span className="text-sm text-gray-500">Nghề nghiệp</span>
               <p className="font-medium">{renter.occupation || '-'}</p>
             </div>
             <div>
-              <span className="text-sm text-gray-500">N\u01A1i l\u00E0m vi\u1EC7c</span>
+              <span className="text-sm text-gray-500">Nơi làm việc</span>
               <p className="font-medium">{renter.workplace || '-'}</p>
             </div>
             <div>
-              <span className="text-sm text-gray-500">Li\u00EAn h\u1EC7 kh\u1EA9n c\u1EA5p</span>
+              <span className="text-sm text-gray-500">Liên hệ khẩn cấp</span>
               <p className="font-medium">
                 {renter.emergency_contact_name
                   ? `${renter.emergency_contact_name} (${renter.emergency_contact_phone || '-'})`
@@ -106,7 +106,7 @@ export default function RenterDetailPage() {
               </p>
             </div>
             <div>
-              <span className="text-sm text-gray-500">Ph\u00F2ng hi\u1EC7n t\u1EA1i</span>
+              <span className="text-sm text-gray-500">Phòng hiện tại</span>
               <p className="font-medium">
                 {renter.current_unit_number
                   ? `${renter.current_unit_number} - ${renter.current_property_name}`
@@ -119,14 +119,14 @@ export default function RenterDetailPage() {
 
       {/* Anh CCCD */}
       <div className="bg-white p-6 rounded-lg shadow mb-6">
-        <h2 className="text-lg font-semibold mb-4">{'\u1EA2nh CCCD'}</h2>
+        <h2 className="text-lg font-semibold mb-4">Ảnh CCCD</h2>
         {renter.id_photo_links && renter.id_photo_links.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {renter.id_photo_links.map((link, index) => (
               <div key={index} className="flex flex-col items-center gap-2">
                 {brokenImages.has(index) ? (
                   <div className="w-full h-[100px] bg-gray-100 rounded-lg border flex items-center justify-center text-gray-400 text-sm">
-                    {'\u1EA2nh kh\u00F4ng kh\u1EA3 d\u1EE5ng'}
+                    Ảnh không khả dụng
                   </div>
                 ) : (
                   <img
@@ -142,13 +142,13 @@ export default function RenterDetailPage() {
                   rel="noopener noreferrer"
                   className="text-sm text-blue-600 hover:text-blue-800"
                 >
-                  Xem \u1EA3nh
+                  Xem ảnh
                 </a>
               </div>
             ))}
           </div>
         ) : (
-          <p className="text-gray-500">Ch\u01B0a c\u00F3 \u1EA3nh CCCD</p>
+          <p className="text-gray-500">Chưa có ảnh CCCD</p>
         )}
       </div>
 
@@ -164,7 +164,7 @@ export default function RenterDetailPage() {
                   : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
-              H\u1EE3p \u0111\u1ED3ng
+              Hợp đồng
             </button>
             <button
               onClick={() => setActiveTab('notes')}
@@ -174,7 +174,7 @@ export default function RenterDetailPage() {
                   : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
-              Ghi ch\u00FA
+              Ghi chú
             </button>
           </div>
         </div>
@@ -182,16 +182,16 @@ export default function RenterDetailPage() {
           {activeTab === 'contracts' && (
             <div>
               {renter.contracts_history.length === 0 ? (
-                <p className="text-gray-500">Ch\u01B0a c\u00F3 l\u1ECBch s\u1EED h\u1EE3p \u0111\u1ED3ng.</p>
+                <p className="text-gray-500">Chưa có lịch sử hợp đồng.</p>
               ) : (
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead>
                     <tr>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">S\u1ED1 H\u0110</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Ph\u00F2ng</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Th\u1EDDi gian</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Ti\u1EC1n thu\u00EA</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Tr\u1EA1ng th\u00E1i</th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Số HĐ</th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Phòng</th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Thời gian</th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Tiền thuê</th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Trạng thái</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
@@ -226,7 +226,7 @@ export default function RenterDetailPage() {
               {renter.notes ? (
                 <p className="text-gray-700 whitespace-pre-wrap">{renter.notes}</p>
               ) : (
-                <p className="text-gray-500">Ch\u01B0a c\u00F3 ghi ch\u00FA.</p>
+                <p className="text-gray-500">Chưa có ghi chú.</p>
               )}
             </div>
           )}
