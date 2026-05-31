@@ -27,6 +27,7 @@ CREATE TABLE profiles (
     role TEXT NOT NULL CHECK (role IN ('sysadmin', 'owner', 'manager', 'accountant', 'maintenance', 'cleaner', 'renter')),
     avatar_url TEXT,
     is_active BOOLEAN DEFAULT TRUE,
+    address TEXT,
     notes TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -59,10 +60,14 @@ CREATE TABLE invitations (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     token UUID UNIQUE DEFAULT gen_random_uuid(),
     email TEXT NOT NULL,
+    full_name TEXT,
+    phone TEXT,
+    address TEXT,
+    notes TEXT,
     role TEXT NOT NULL CHECK (role IN ('owner', 'manager', 'accountant', 'maintenance', 'cleaner', 'renter')),
     organization_id UUID NOT NULL REFERENCES organizations(id),
     property_id UUID REFERENCES properties(id),
-    expires_at TIMESTAMPTZ NOT NULL,
+    expires_at TIMESTAMPTZ,
     accepted_at TIMESTAMPTZ,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );

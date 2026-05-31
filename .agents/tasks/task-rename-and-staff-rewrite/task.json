@@ -1,7 +1,14 @@
 {
   "task_id": "task-rename-and-staff-rewrite",
   "task_description": "Rename the app to 'My Home' and replace the staff invitation flow with a direct 'Add Staff' creation flow",
-  "status": "in_progress",
+  "status": "completed",
   "feature_order": ["FEAT-001", "FEAT-002", "FEAT-003"],
-  "blocked_reason": null
+  "blocked_reason": null,
+  "verification": {
+    "build": "pass",
+    "tests": "pass",
+    "test_quality": "pass",
+    "docker_build": "skipped",
+    "summary": "TypeScript compiles clean, Vite production build succeeds, all Python files pass py_compile. Review issues fixed: added migration for missing columns, duplicate email guard, delete confirmation."
+  }
 }
