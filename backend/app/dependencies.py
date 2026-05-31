@@ -24,26 +24,47 @@ async def get_current_user(
     logger = logging.getLogger("app")
     
     token = credentials.credentials
+    
+    # Supabase JWTs can use HS256 or HS384 depending on the project config.
+    # Read the actual algorithm from the token header.
+    allowed_algorithms = ["HS256", "HS384", "HS512"]
+    
     try:
-        # Try decoding with the raw secret first
-        payload = jwt.decode(
-            token,
-            settings.JWT_SECRET,
-            algorithms=["HS256"],
-            options={"verify_aud": False},
-        )
-    except JWTError:
+        header = jwt.get_unverified_header(token)
+        token_alg = header.get("alg", "HS256")
+        logger.debug(f"JWT token algorithm: {token_alg}")
+    except Exception:
+        token_alg = None
+
+    payload = None
+    last_error = None
+    
+    # Try with the raw secret string
+    for alg_list in [[token_alg] if token_alg else allowed_algorithms, allowed_algorithms]:
         try:
-            # Supabase JWT secrets are often base64-encoded, try decoded version
+            payload = jwt.decode(
+                token,
+                settings.JWT_SECRET,
+                algorithms=alg_list,
+                options={"verify_aud": False},
+            )
+            break
+        except JWTError as e:
+            last_error = e
+    
+    # If raw secret failed, try base64-decoded secret
+    if payload is None:
+        try:
             decoded_secret = base64.b64decode(settings.JWT_SECRET)
+            alg_list = [token_alg] if token_alg else allowed_algorithms
             payload = jwt.decode(
                 token,
                 decoded_secret,
-                algorithms=["HS256"],
+                algorithms=alg_list,
                 options={"verify_aud": False},
             )
         except Exception as e:
-            logger.error(f"JWT decode failed: {type(e).__name__}: {e}")
+            logger.error(f"JWT decode failed (alg={token_alg}): {type(e).__name__}: {e}")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid or expired token",
